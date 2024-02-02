@@ -3,9 +3,6 @@ using OpenQA.Selenium.Chrome;
 namespace automation;
 public class Program : IDisposable
 {
-  private const int ESPERA_LONGA = 5000;
-  private const int ESPERA_MEDIA = 3000;
-  private const int ESPERA_CURTA = 1500;
   private readonly ChromeDriver driver;
   private readonly Configuration configuration;
   public Program(Configuration configuration)
@@ -16,7 +13,7 @@ public class Program : IDisposable
   }
   public void Autenticar()
   {
-    System.Threading.Thread.Sleep(ESPERA_LONGA);
+    System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
     if (this.driver.FindElements(By.Id("SignOutStatusMessage")).Any())
     {
       this.driver.Navigate().GoToUrl(this.configuration.website);
@@ -26,33 +23,33 @@ public class Program : IDisposable
       this.driver.FindElement(By.Id("username")).SendKeys(configuration.usuario);
       this.driver.FindElement(By.Id("password")).SendKeys(configuration.palavra);
       this.driver.FindElement(By.Id("sign-in")).Click();
-      System.Threading.Thread.Sleep(ESPERA_CURTA);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
     }
     if (this.driver.FindElements(By.Name("loginfmt")).Any())
     {
       this.driver.FindElements(By.Name("loginfmt")).Single().SendKeys(configuration.usuario);
       this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(ESPERA_CURTA);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
       this.driver.FindElements(By.Name("passwd")).Single().SendKeys(configuration.palavra);
       this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(ESPERA_CURTA);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
     }
     if (this.driver.FindElements(By.Id("lightbox")).Any())
     {
       var xpath_account = "//*[@id='tilesHolder']/div[1]/div/div[1]/div/div[1]/img";
       this.driver.FindElement(By.XPath(xpath_account)).Click();
-      System.Threading.Thread.Sleep(ESPERA_CURTA);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
       this.driver.FindElements(By.Name("passwd")).Single().SendKeys(configuration.palavra);
       this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(ESPERA_CURTA);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
     }
     if (this.driver.FindElements(By.Name("DontShowAgain")).Any())
     {
       this.driver.FindElements(By.Name("DontShowAgain")).Single().Click();
       this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(ESPERA_CURTA);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
     }
-    System.Threading.Thread.Sleep(ESPERA_LONGA);
+    System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
   }
   public void Inicializar()
   {
