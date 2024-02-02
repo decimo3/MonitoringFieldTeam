@@ -7,6 +7,11 @@ public class Startup
     using var program = new Program(configuration);
     program.Autenticar();
     program.Inicializar();
-    Console.Read();
+    while(true)
+    {
+      program.Atualizar();
+      System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
+      Console.Read();
+    }
   }
 }
