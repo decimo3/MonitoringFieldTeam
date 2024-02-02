@@ -16,6 +16,11 @@ public class Program : IDisposable
   }
   public void Autenticar()
   {
+    System.Threading.Thread.Sleep(ESPERA_LONGA);
+    if (this.driver.FindElements(By.Id("SignOutStatusMessage")).Any())
+    {
+      this.driver.Navigate().GoToUrl(this.configuration.website);
+    }
     if (this.driver.FindElements(By.Id("welcome-message")).Any())
     {
       this.driver.FindElement(By.Id("username")).SendKeys(configuration.usuario);
