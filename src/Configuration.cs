@@ -4,6 +4,9 @@ using OpenQA.Selenium.Chrome;
 namespace automation;
 public class Configuration
 {
+  public const int ESPERA_LONGA = 5000;
+  public const int ESPERA_MEDIA = 3000;
+  public const int ESPERA_CURTA = 1500;
   public readonly string usuario;
   public readonly string palavra;
   public readonly ChromeOptions options;
