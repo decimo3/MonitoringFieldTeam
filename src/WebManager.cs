@@ -53,7 +53,39 @@ public class Program : IDisposable
   }
   public void Inicializar()
   {
-    
+    // Selecionar a visualização do gráfico de Gantt
+    this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
+    // Abrir menu de seleção de preferências
+    this.driver.FindElements(By.ClassName("toolbar-item")).Where(e => e.Text == "Exibir").First().Click();
+    // Selecionar para exibir de forma herarquica
+    this.driver.FindElements(By.ClassName("oj-complete")).Where(e => e.Text == "Aplicar de forma hierárquica").First().Click();
+    // Selecionar para exibir a rota do recurso
+    this.driver.FindElements(By.ClassName("oj-complete")).Where(e => e.Text == "Exibir rota do recurso").First().Click();
+    // Aplicar as preferências de seleções
+    this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
+    System.Threading.Thread.Sleep(Configuration.ESPERA_MEDIA);
+  }
+  public void Atualizar()
+  {
+    // Selecionar o balde correto conforme parâmetro RECURSO
+    this.driver.FindElements(By.ClassName("rtl-prov-name")).Where(e => e.Text == this.configuration.recurso).First().Click();
+    System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
+    var ordens = this.driver.FindElements(By.ClassName("toaGantt-tl")).Where(e => e.GetAttribute("aid") == "9147181");
+    // TODO: Coletar todas as informações necessárias
+    // TODO: Verificar desvios de comportamento
+    // TODO: Comparar com as informações anteriores
+    // TODO: Notificar se houver os novos desvios 
+  }
+  private void Procurar(By query)
+  {
+    var elementos = this.driver.FindElements(query);
+    foreach (var elemento in elementos)
+    {
+      System.Console.WriteLine(elemento.GetDomProperty("innerHTML"));
+      var json_elemento = System.Text.Json.JsonSerializer.Serialize<IWebElement>(elemento);
+      System.Console.WriteLine(json_elemento);
+    }
+    System.Console.WriteLine();
   }
   protected virtual void Dispose(bool disposing)
   {
