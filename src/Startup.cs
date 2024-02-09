@@ -4,12 +4,12 @@ public class Startup
   public static void Main(string[] args)
   {
     var configuration = new Configuration();
-    using var program = new Program(configuration);
-    program.Autenticar();
-    program.Inicializar();
+    using var WebHandler = new Manager(configuration);
+    WebHandler.Autenticar();
+    WebHandler.Inicializar();
     while(true)
     {
-      program.Atualizar();
+      WebHandler.Atualizar();
       System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
       Console.Read();
     }

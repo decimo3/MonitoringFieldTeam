@@ -1,11 +1,11 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 namespace automation;
-public class Program : IDisposable
+public class Manager : IDisposable
 {
   private readonly ChromeDriver driver;
   private readonly Configuration configuration;
-  public Program(Configuration configuration)
+  public Manager(Configuration configuration)
   {
     this.configuration = configuration;
     this.driver = new ChromeDriver(this.configuration.options);
