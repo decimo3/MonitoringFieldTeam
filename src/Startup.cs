@@ -12,6 +12,8 @@ public class Startup
     while(true)
     {
       WebHandler.Atualizar();
+      var rotas = WebHandler.Coletar();
+      Decoder.Analisador(rotas);
       Console.Read();
     }
   }
