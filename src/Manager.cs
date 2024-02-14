@@ -71,11 +71,16 @@ public class Manager : IDisposable
     // Selecionar o balde correto conforme parâmetro RECURSO
     this.driver.FindElements(By.ClassName("rtl-prov-name")).Where(e => e.Text == this.configuration.recurso).First().Click();
     System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
-    var ordens = this.driver.FindElements(By.ClassName("toaGantt-tl")).Where(e => e.GetAttribute("aid") == "9147181");
-    // TODO: Coletar todas as informações necessárias
-    // TODO: Verificar desvios de comportamento
-    // TODO: Comparar com as informações anteriores
-    // TODO: Notificar se houver os novos desvios 
+  }
+  public List<String> Coletar()
+  {
+    var lista_recursos = new List<String>();
+    var elementos = this.driver.FindElements(By.ClassName("toaGantt-tl"));
+    foreach (var elemento in elementos)
+    {
+      lista_recursos.Add(elemento.GetDomProperty("innerHTML"));
+    }
+    return lista_recursos;
   }
   private void Procurar(By query)
   {
