@@ -17,6 +17,7 @@ public class Manager : IDisposable
     if (this.driver.FindElements(By.Id("SignOutStatusMessage")).Any())
     {
       this.driver.Navigate().GoToUrl(this.configuration.website);
+      System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
     }
     if (this.driver.FindElements(By.Id("welcome-message")).Any())
     {

@@ -1,4 +1,6 @@
-﻿namespace automation;
+﻿using automation.schemas;
+
+namespace automation;
 public class Startup
 {
   public static void Main(string[] args)
@@ -10,7 +12,6 @@ public class Startup
     while(true)
     {
       WebHandler.Atualizar();
-      System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
       Console.Read();
     }
   }
