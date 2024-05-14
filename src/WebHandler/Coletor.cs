@@ -6,7 +6,6 @@ public partial class Manager
 {
   public void Coletor()
   {
-    var espelhos = new List<Espelho>();
     // Coleta de nome de recurso e par_pid
     for(var i = 1; true; i++)
     {
@@ -24,7 +23,7 @@ public partial class Manager
         texto = recursos.FindElement(By.XPath(".//div")).Text;
       }
       var par_pid = Int32.Parse(recursos.GetAttribute("par_pid"));
-      espelhos.Add(new Espelho(texto, par_pid));
+      this.atual.Add(new Espelho(texto, par_pid));
     }
     /////////////////////////////////
     //                             //
@@ -64,7 +63,7 @@ public partial class Manager
             servico_obj.data_activity_status = (int)Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
             servico_obj.data_activity_worktype = Int32.Parse(servico.GetDomAttribute("data-activity-worktype"));
             servico_obj.data_activity_duration = Int32.Parse(servico.GetDomAttribute("data-activity-duration"));
-            espelhos.Where(s => s.par_pid == servico_obj.par_pid).Single().servicos.Add(servico_obj);
+            this.atual.Where(s => s.par_pid == servico_obj.par_pid).Single().servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
           if(ordem_classes.Contains("toaGantt-tl-shift")) {}
@@ -75,7 +74,7 @@ public partial class Manager
         }
       }
     }
-    foreach (var espelho in espelhos)
+    foreach (var espelho in this.atual)
     {
       var json_conf = new System.Text.Json.JsonSerializerOptions();
       json_conf.WriteIndented = true;

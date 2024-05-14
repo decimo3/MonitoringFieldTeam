@@ -1,9 +1,12 @@
+using Automation.Persistence;
 using OpenQA.Selenium.Chrome;
 namespace Automation.WebScraper;
 public partial class Manager : IDisposable
 {
   private readonly ChromeDriver driver;
   private readonly Configuration configuration;
+  public List<Espelho> velho { get; set; } = new();
+  public List<Espelho> atual { get; set; } = new();
   public Manager(Configuration configuration)
   {
     this.configuration = configuration;
