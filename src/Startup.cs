@@ -1,20 +1,17 @@
-﻿using automation.schemas;
-
-namespace automation;
+﻿namespace Automation;
 public class Startup
 {
   public static void Main(string[] args)
   {
     var configuration = new Configuration();
-    using var WebHandler = new Manager(configuration);
+    using var WebHandler = new WebScraper.Manager(configuration);
     WebHandler.Autenticar();
     WebHandler.Inicializar();
     while(true)
     {
       WebHandler.Atualizar();
-      var rotas = WebHandler.Coletar();
-      Decoder.Analisador(rotas);
-      Console.Read();
+      WebHandler.Coletor();
+      System.Threading.Thread.Sleep(Configuration.ESPERA_TOTAL);
     }
   }
 }
