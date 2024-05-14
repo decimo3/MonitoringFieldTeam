@@ -1,16 +1,7 @@
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-namespace automation;
-public class Manager : IDisposable
+namespace Automation.WebScraper;
+public partial class Manager
 {
-  private readonly ChromeDriver driver;
-  private readonly Configuration configuration;
-  public Manager(Configuration configuration)
-  {
-    this.configuration = configuration;
-    this.driver = new ChromeDriver(this.configuration.options);
-    this.driver.Manage().Window.Maximize();
-  }
   public void Autenticar()
   {
     System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
@@ -51,60 +42,5 @@ public class Manager : IDisposable
       System.Threading.Thread.Sleep(Configuration.ESPERA_CURTA);
     }
     System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
-  }
-  public void Inicializar()
-  {
-    // Selecionar a visualização do gráfico de Gantt
-    this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
-    // Abrir menu de seleção de preferências
-    this.driver.FindElements(By.ClassName("toolbar-item")).Where(e => e.Text == "Exibir").First().Click();
-    // Selecionar para exibir de forma herarquica
-    this.driver.FindElements(By.ClassName("oj-complete")).Where(e => e.Text == "Aplicar de forma hierárquica").First().Click();
-    // Selecionar para exibir a rota do recurso
-    this.driver.FindElements(By.ClassName("oj-complete")).Where(e => e.Text == "Exibir rota do recurso").First().Click();
-    // Aplicar as preferências de seleções
-    this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
-    System.Threading.Thread.Sleep(Configuration.ESPERA_MEDIA);
-  }
-  public void Atualizar()
-  {
-    // Selecionar o balde correto conforme parâmetro RECURSO
-    this.driver.FindElements(By.ClassName("rtl-prov-name")).Where(e => e.Text == this.configuration.recurso).First().Click();
-    System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
-  }
-  public List<String> Coletar()
-  {
-    var lista_recursos = new List<String>();
-    var elementos = this.driver.FindElements(By.ClassName("toaGantt-tl"));
-    foreach (var elemento in elementos)
-    {
-      lista_recursos.Add(elemento.GetDomProperty("innerHTML"));
-    }
-    return lista_recursos;
-  }
-  private void Procurar(By query)
-  {
-    var elementos = this.driver.FindElements(query);
-    foreach (var elemento in elementos)
-    {
-      System.Console.WriteLine(elemento.GetDomProperty("innerHTML"));
-      var json_elemento = System.Text.Json.JsonSerializer.Serialize<IWebElement>(elemento);
-      System.Console.WriteLine(json_elemento);
-    }
-    System.Console.WriteLine();
-  }
-  protected virtual void Dispose(bool disposing)
-  {
-    if (disposing)
-    {
-      // Dispose managed resources here.
-      this.driver.Quit();
-    }
-    // Dispose unmanaged resources here.
-  }
-  public void Dispose()
-  {
-    Dispose(true);
-    GC.SuppressFinalize(this);
   }
 }
