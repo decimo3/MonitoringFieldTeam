@@ -81,6 +81,14 @@ public partial class Manager
           if(ordem_classes.Contains("toaGantt-queue")) {}
           // Verifica se é uma alteração na tempo
           if(ordem_classes.Contains("toaGantt-tl-gpsmark")) {}
+          if(ordem_classes.Contains("toaGantt-tw"))
+          {
+            var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
+            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
+            espelho.tw_alert_display = (estilos["display"] != 0) ? true : false;
+            espelho.tw_alert_left = estilos["left"];
+            continue;
+          }
         }
       }
     }
