@@ -76,7 +76,16 @@ public partial class Manager
             this.atual.Where(s => s.par_pid == par_pid).Single().servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
-          if(ordem_classes.Contains("toaGantt-tl-shift")) {}
+          if(ordem_classes.Contains("toaGantt-tl-shift"))
+          {
+            var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
+            espelho.shift_start = Int32.Parse(servico.GetDomAttribute("start"));
+            espelho.shift_dur = Int32.Parse(servico.GetDomAttribute("dur"));
+            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
+            espelho.shift_left = estilos["left"];
+            espelho.shift_width = estilos["width"];
+            continue;
+          }
           // verifica se é uma alteração da jornada
           if(ordem_classes.Contains("toaGantt-queue")) {}
           // Verifica se é uma alteração na tempo
