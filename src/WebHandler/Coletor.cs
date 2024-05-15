@@ -59,7 +59,11 @@ public partial class Manager
           // Verifica se é uma ordem de servico
           if(ordem_classes.Contains("toaGantt-tb"))
           {
-            if(ordem_classes.Contains("final")) continue;
+            if(ordem_classes.Contains("final"))
+            {
+              this.atual.Where(s => s.par_pid == par_pid).Single().final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
+              continue;
+            }
             var servico_obj = new Servico();
             servico_obj.par_pid = Int32.Parse(servico.GetDomAttribute("par_pid"));
             servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid"));
