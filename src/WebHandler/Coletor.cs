@@ -80,13 +80,14 @@ public partial class Manager
         }
       }
     }
-    foreach (var espelho in this.atual)
-    {
-      var json_conf = new System.Text.Json.JsonSerializerOptions();
-      json_conf.WriteIndented = true;
-      var json_text = System.Text.Json.JsonSerializer.Serialize<Espelho>(espelho, json_conf);
-      System.Console.WriteLine(json_text);
-    }
+    var json_conf = new System.Text.Json.JsonSerializerOptions();
+    json_conf.WriteIndented = true;
+    var json_text = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.atual, json_conf);
+    var filename = $"./ofs/{this.configuration.recurso}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.json";
+    System.IO.File.WriteAllText(filename, json_text);
+    System.Console.WriteLine($"Arquivo {filename} exportado!");
+    this.Comparar();
+    this.Renovar();
   }
   public static Dictionary<String,Int32> ColetarStyle(String texto_estilo)
   {
