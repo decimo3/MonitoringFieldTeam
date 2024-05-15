@@ -50,7 +50,7 @@ public partial class Manager
       }
       if(gantt_classes.Contains("toaGantt-tl"))
       {
-        System.Console.WriteLine(gantt.GetAttribute("par_pid"));
+        var par_pid = Int32.Parse(gantt.GetAttribute("par_pid"));
         var servicos = gantt.FindElements(By.XPath($".//div"));
         if(!servicos.Any()) break;
         foreach (var servico in servicos)
@@ -69,7 +69,7 @@ public partial class Manager
             servico_obj.data_activity_status = (int)Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
             servico_obj.data_activity_worktype = Int32.Parse(servico.GetDomAttribute("data-activity-worktype"));
             servico_obj.data_activity_duration = Int32.Parse(servico.GetDomAttribute("data-activity-duration"));
-            this.atual.Where(s => s.par_pid == servico_obj.par_pid).Single().servicos.Add(servico_obj);
+            this.atual.Where(s => s.par_pid == par_pid).Single().servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
           if(ordem_classes.Contains("toaGantt-tl-shift")) {}
