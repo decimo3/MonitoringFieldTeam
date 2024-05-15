@@ -30,7 +30,13 @@ public partial class Manager
     // Até aqui está tudo bem!     //
     //                             //
     /////////////////////////////////
-    // TODO -  Retornar até o topo da lista
+    // Retornar até o topo da lista
+    for(var a = 0; a < this.atual.Count; a++)
+    {
+      var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
+      var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
+      new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, -1).Perform();
+    }
     for(var i = 1; true; i++)
     {
       var gantt_path = this.configuration.pathfind["ESPELHOS_"].Replace("_", i.ToString());
