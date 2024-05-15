@@ -17,7 +17,7 @@ public partial class Manager
       while(String.IsNullOrEmpty(texto))
       {
         // TODO - Scroll down para obter nome dos demais recursos
-        var tabela = this.driver.FindElement(By.XPath("/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[2]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]"));
+        var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
         var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
         new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, 1).Perform();
         texto = recursos.FindElement(By.XPath(".//div")).Text;
