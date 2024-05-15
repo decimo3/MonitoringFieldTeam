@@ -88,4 +88,24 @@ public partial class Manager
       System.Console.WriteLine(json_text);
     }
   }
+  public static Dictionary<String,Int32> ColetarStyle(String texto_estilo)
+  {
+    var resposta = new Dictionary<String,Int32>();
+    var estilos = texto_estilo.Trim().Split(";");
+    foreach (var estilo in estilos)
+    {
+      if(String.IsNullOrEmpty(estilo)) continue;
+      var key_val = estilo.Replace(" ", "").Split(":");
+      if(key_val.Length != 2) continue;
+      var valor_sanitizado = key_val[1].Replace("px", "");
+      if(Int32.TryParse(valor_sanitizado, out Int32 valor_numero))
+      {
+        resposta.Add(key_val[0], valor_numero);
+        continue;
+      }
+      if(key_val[1] == "none") resposta.Add(key_val[0], 0);
+      if(key_val[1] == "block") resposta.Add(key_val[0], 1);
+    }
+    return resposta;
+  }
 }
