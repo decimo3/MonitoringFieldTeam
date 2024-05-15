@@ -87,7 +87,30 @@ public partial class Manager
             continue;
           }
           // verifica se é uma alteração da jornada
-          if(ordem_classes.Contains("toaGantt-queue")) {}
+          if(ordem_classes.Contains("toaGantt-queue"))
+          {
+            if(ordem_classes.Contains("toaGantt-queue-start"))
+            {
+              var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
+              espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
+              espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              continue;
+            }
+            if(ordem_classes.Contains("toaGantt-queue-reactivated"))
+            {
+              var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
+              espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
+              espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              continue;
+            }
+            if(ordem_classes.Contains("toaGantt-queue-end"))
+            {
+              var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
+              espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
+              espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              continue;
+            }
+          }
           // Verifica se é uma alteração na tempo
           if(ordem_classes.Contains("toaGantt-tl-gpsmark")) {}
           if(ordem_classes.Contains("toaGantt-tw"))
