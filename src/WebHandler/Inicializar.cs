@@ -14,6 +14,6 @@ public partial class Manager
     this.driver.FindElements(By.ClassName("oj-complete")).Where(e => e.Text == "Exibir rota do recurso").First().Click();
     // Aplicar as preferências de seleções
     this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
-    System.Threading.Thread.Sleep(Configuration.ESPERA_LONGA);
+    System.Threading.Thread.Sleep(configuration.ESPERA_LONGA);
   }
 }

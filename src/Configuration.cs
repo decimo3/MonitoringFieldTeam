@@ -2,10 +2,10 @@ using OpenQA.Selenium.Chrome;
 namespace Automation;
 public class Configuration
 {
-  public const int ESPERA_LONGA = 5000;
-  public const int ESPERA_MEDIA = 3000;
-  public const int ESPERA_CURTA = 1500;
-  public const int ESPERA_TOTAL = 60_000;
+  public readonly int ESPERA_LONGA = 5000;
+  public readonly int ESPERA_MEDIA = 3000;
+  public readonly int ESPERA_CURTA = 1500;
+  public readonly int ESPERA_TOTAL = 60_000;
   public readonly string usuario;
   public readonly string palavra;
   public readonly ChromeOptions options = new();
@@ -14,9 +14,15 @@ public class Configuration
   public readonly string gchrome;
   public readonly string recurso;
   public readonly Dictionary<String, String> pathfind = new();
-  public Int32 minutes_per_pixel { get; set; }
+  public readonly Int32 minutes_per_pixel;
   public Configuration()
   {
+    if(System.Environment.GetCommandLineArgs().Contains("slower"))
+    {
+      ESPERA_LONGA *= 2;
+      ESPERA_MEDIA *= 2;
+      ESPERA_CURTA *= 2;
+    }
     var configuracoes = ArquivoConfiguracao();
     this.usuario = configuracoes["USUARIO"];
     this.palavra = configuracoes["PALAVRA"];

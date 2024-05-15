@@ -11,7 +11,7 @@ public class Startup
     {
       WebHandler.Atualizar();
       WebHandler.Coletor();
-      System.Threading.Thread.Sleep(Configuration.ESPERA_TOTAL);
+      System.Threading.Thread.Sleep(configuration.ESPERA_TOTAL);
     }
   }
 }
