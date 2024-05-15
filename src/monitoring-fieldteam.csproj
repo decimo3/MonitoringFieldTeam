@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
+    <None Include="path.conf" CopyToOutputDirectory="PreserveNewest" />
+    <None Include=".env" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
