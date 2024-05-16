@@ -18,7 +18,7 @@ namespace Automation.WebScraper
         foreach (var relatorio in this.relatorios)
         {
           string_builder.Append(relatorio.Key);
-          string_builder.Append(" - ");
+          string_builder.Append(" ");
           string_builder.Append(relatorio.Value);
           string_builder.Append('\n');
         }
