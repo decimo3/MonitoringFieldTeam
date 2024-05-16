@@ -15,8 +15,10 @@ public class Configuration
   public readonly string recurso;
   public readonly Dictionary<String, String> pathfind = new();
   public readonly Int32 minutes_per_pixel;
+  public readonly bool is_development = false;
   public Configuration()
   {
+    is_development = System.Environment.GetCommandLineArgs().Contains("debug");
     if(System.Environment.GetCommandLineArgs().Contains("slower"))
     {
       ESPERA_LONGA *= 2;

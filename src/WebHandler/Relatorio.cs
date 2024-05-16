@@ -5,6 +5,7 @@ namespace Automation.WebScraper
   {
     public void Relatorio()
     {
+      if(this.configuration.is_development)
       {
         var conf = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.espelhos, conf);
