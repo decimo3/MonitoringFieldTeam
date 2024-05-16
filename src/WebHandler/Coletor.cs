@@ -51,6 +51,7 @@ public partial class Manager
       if(gantt_classes.Contains("toaGantt-tl"))
       {
         var par_pid = Int32.Parse(gantt.GetAttribute("par_pid"));
+        var espelho = this.espelhos.Where(s => s.par_pid == par_pid).Single();
         var servicos = gantt.FindElements(By.XPath($".//div"));
         if(!servicos.Any()) break;
         foreach (var servico in servicos)
@@ -61,7 +62,7 @@ public partial class Manager
           {
             if(ordem_classes.Contains("final"))
             {
-              this.atual.Where(s => s.par_pid == par_pid).Single().final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
+              this.espelhos.Where(s => s.par_pid == par_pid).Single().final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
               continue;
             }
             var servico_obj = new Servico();
@@ -73,12 +74,11 @@ public partial class Manager
             servico_obj.data_activity_status = (int)Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
             servico_obj.data_activity_worktype = Int32.Parse(servico.GetDomAttribute("data-activity-worktype"));
             servico_obj.data_activity_duration = Int32.Parse(servico.GetDomAttribute("data-activity-duration"));
-            this.atual.Where(s => s.par_pid == par_pid).Single().servicos.Add(servico_obj);
+            this.espelhos.Where(s => s.par_pid == par_pid).Single().servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
           if(ordem_classes.Contains("toaGantt-tl-shift"))
           {
-            var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
             espelho.shift_start = Int32.Parse(servico.GetDomAttribute("start"));
             espelho.shift_dur = Int32.Parse(servico.GetDomAttribute("dur"));
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
@@ -91,31 +91,40 @@ public partial class Manager
           {
             if(ordem_classes.Contains("toaGantt-queue-start"))
             {
-              var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
               espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
               continue;
             }
             if(ordem_classes.Contains("toaGantt-queue-reactivated"))
             {
-              var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
-              espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
-              espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              espelho.queue_reactivated_start = Int32.Parse(servico.GetDomAttribute("start"));
+              espelho.queue_reactivated_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
               continue;
             }
             if(ordem_classes.Contains("toaGantt-queue-end"))
             {
-              var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
-              espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
-              espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              espelho.queue_end_start = Int32.Parse(servico.GetDomAttribute("start"));
+              espelho.queue_end_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
               continue;
             }
           }
           // Verifica se é uma alteração na tempo
-          if(ordem_classes.Contains("toaGantt-tl-gpsmark")) {}
+          if(ordem_classes.Contains("toaGantt-tl-gpsmark"))
+          {
+            var roteiro = new Roteiro();
+            roteiro.start = Int32.Parse(servico.GetDomAttribute("start"));
+            roteiro.dur = Int32.Parse(servico.GetDomAttribute("dur"));
+            if(ordem_classes.Contains("gps-status-normal")) roteiro.status = Roteiro.Status.normal;
+            if(ordem_classes.Contains("gps-status-idle")) roteiro.status = Roteiro.Status.idle;
+            if(ordem_classes.Contains("gps-status-alert")) roteiro.status = Roteiro.Status.alert;
+            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
+            roteiro.style_width = estilos["width"];
+            roteiro.style_left = estilos["left"];
+            espelho.roteiro.Add(roteiro);
+            continue;
+          }
           if(ordem_classes.Contains("toaGantt-tw"))
           {
-            var espelho = this.atual.Where(s => s.par_pid == par_pid).Single();
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             espelho.tw_alert_display = (estilos["display"] != 0) ? true : false;
             espelho.tw_alert_left = estilos["left"];
