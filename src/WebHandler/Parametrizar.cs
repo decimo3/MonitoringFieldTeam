@@ -6,8 +6,6 @@ namespace Automation.WebScraper
   {
     public void Refresh()
     {
-      this.espelhos = new();
-      this.relatorios = new();
       this.driver.Navigate().Refresh();
       System.Threading.Thread.Sleep(this.configuration.ESPERA_LONGA);
     }

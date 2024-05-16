@@ -29,8 +29,6 @@ namespace Automation.WebScraper
         System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
         System.Console.WriteLine(texto);
       }
-      this.espelhos = new();
-      this.relatorios = new();
     }
   }
 }

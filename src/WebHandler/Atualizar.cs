@@ -20,6 +20,8 @@ public partial class Manager
     // Aplicar as preferências de seleções
     this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
     System.Threading.Thread.Sleep(configuration.ESPERA_LONGA);
+    this.espelhos = new();
+    this.relatorios = new();
     this.agora = DateTime.Now;
   }
 }
