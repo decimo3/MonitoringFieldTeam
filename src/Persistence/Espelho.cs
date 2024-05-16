@@ -22,7 +22,11 @@ namespace Automation.Persistence
     public List<Roteiro> roteiro { get; set; } = new();
     public Espelho(String recurso, Int32 par_pid)
     {
-      this.recurso = recurso.Trim();
+      var abreviado = recurso.Trim();
+      abreviado = abreviado.Replace(" - Corte", "C");
+      abreviado = abreviado.Replace(" - Religa", "R");
+      abreviado = abreviado.Replace(" - Equipe ", ""); 
+      this.recurso = abreviado;
       this.par_pid = par_pid;
     }
   }
