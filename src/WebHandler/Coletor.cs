@@ -16,14 +16,14 @@ public partial class Manager
       var texto = recursos.FindElement(By.XPath(".//div")).Text;
       while(String.IsNullOrEmpty(texto))
       {
-        // TODO - Scroll down para obter nome dos demais recursos
+        // DONE - Scroll down para obter nome dos demais recursos
         var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
         var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
         new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, 1).Perform();
         texto = recursos.FindElement(By.XPath(".//div")).Text;
       }
       var par_pid = Int32.Parse(recursos.GetAttribute("par_pid"));
-      this.atual.Add(new Espelho(texto, par_pid));
+      this.espelhos.Add(new Espelho(texto, par_pid));
     }
     /////////////////////////////////
     //                             //
@@ -31,7 +31,7 @@ public partial class Manager
     //                             //
     /////////////////////////////////
     // Retornar até o topo da lista
-    for(var a = 0; a < this.atual.Count; a++)
+    for(var a = 0; a < this.espelhos.Count; a++)
     {
       var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
       var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
@@ -133,14 +133,6 @@ public partial class Manager
         }
       }
     }
-    var json_conf = new System.Text.Json.JsonSerializerOptions();
-    json_conf.WriteIndented = true;
-    var json_text = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.atual, json_conf);
-    var filename = $"./ofs/{this.configuration.recurso}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.json";
-    System.IO.File.WriteAllText(filename, json_text);
-    System.Console.WriteLine($"Arquivo {filename} exportado!");
-    this.Comparar();
-    this.Renovar();
   }
   public static Dictionary<String,Int32> ColetarStyle(String texto_estilo)
   {
