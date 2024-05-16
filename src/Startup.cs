@@ -6,12 +6,28 @@ public class Startup
     var configuration = new Configuration();
     using var WebHandler = new WebScraper.Manager(configuration);
     WebHandler.Autenticar();
-    WebHandler.Inicializar();
     while(true)
     {
-      WebHandler.Atualizar();
-      WebHandler.Coletor();
-      System.Threading.Thread.Sleep(configuration.ESPERA_TOTAL);
+      try
+      {
+        Console.WriteLine($"{DateTime.Now} - Atualizando a página...");
+        WebHandler.Atualizar();
+        Console.WriteLine($"{DateTime.Now} - Atualizando os parâmetros...");
+        WebHandler.Parametrizar();
+        Console.WriteLine($"{DateTime.Now} - Coletando as informações...");
+        WebHandler.Coletor();
+        Console.WriteLine($"{DateTime.Now} - Comparando os resultados...");
+        WebHandler.Comparar();
+        Console.WriteLine($"{DateTime.Now} - Exportando as análises...");
+        WebHandler.Relatorio();
+      }
+      catch (System.Exception erro)
+      {
+        WebHandler.Refresh();
+        Console.WriteLine($"{DateTime.Now} - Houve um problema na coleta...");
+        Console.WriteLine(erro.Message);
+        Console.WriteLine(erro.StackTrace);
+      }
     }
   }
 }
