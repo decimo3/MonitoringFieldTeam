@@ -9,7 +9,7 @@ namespace Automation.WebScraper
       {
         var conf = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.espelhos, conf);
-        var filename = $"./ofs/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.configuration.recurso}.json";
+        var filename = $"./tmp/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.configuration.recurso}.json";
         System.IO.File.WriteAllText(filename, json);
         System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
       }
@@ -25,7 +25,7 @@ namespace Automation.WebScraper
         }
         string_builder.Append($"\nRelatório extraído em {this.agora}");
         var texto = string_builder.ToString();
-        var filename = $"./ofs/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.configuration.recurso}.txt";
+        var filename = this.configuration.is_development ? $"./tmp/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.configuration.recurso}.txt" : "relatorio_ofs.txt";
         System.IO.File.WriteAllText(filename, texto);
         System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
         System.Console.WriteLine(texto);
