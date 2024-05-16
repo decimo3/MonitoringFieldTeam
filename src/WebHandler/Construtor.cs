@@ -5,8 +5,11 @@ public partial class Manager : IDisposable
 {
   private readonly ChromeDriver driver;
   private readonly Configuration configuration;
-  public List<Espelho> velho { get; set; } = new();
-  public List<Espelho> atual { get; set; } = new();
+  public DateTime agora { get; set; } = DateTime.Now;
+  public List<Espelho> espelhos { get; set; } = new();
+  public Dictionary<String, String> relatorios { get; set; } = new();
+  public Int32 horario_atual { get; set; }
+  public Int32 pixels_por_hora { get; set; }
   public Manager(Configuration configuration)
   {
     this.configuration = configuration;
