@@ -16,11 +16,10 @@ namespace Automation.WebScraper
       this.horario_atual = ColetarStyle(regua_hora_atual.GetDomAttribute("style"))["left"];
       // TODO - Calcular a quantidade de minutos em um pixel de deslocamento
       var regua_hora_hora = this.driver.FindElements(By.ClassName("toaGantt-hour-line"));
-      var espacos_regua_hora = new List<Int32>();
-      foreach (var regua_hora in regua_hora_hora)
-      {
-        espacos_regua_hora.Add(ColetarStyle(regua_hora.GetDomAttribute("style"))["left"]);
-      }
+      var pixel_1th_hora = ColetarStyle(regua_hora_hora[1].GetDomAttribute("style"))["left"];
+      var pixel_2th_hora = ColetarStyle(regua_hora_hora[0].GetDomAttribute("style"))["left"];
+      this.pixels_por_hora = pixel_1th_hora - pixel_2th_hora;
+      this.pixels_por_minuto = this.pixels_por_hora / 60;
     }
   }
 }
