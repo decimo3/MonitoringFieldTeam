@@ -16,6 +16,7 @@ public class Configuration
   public readonly Dictionary<String, String> pathfind = new();
   public readonly Int32 minutes_per_pixel;
   public readonly bool is_development = false;
+  public readonly Int32 TOLERANCIA = 3;
   public Configuration()
   {
     is_development = System.Environment.GetCommandLineArgs().Contains("debug");
@@ -55,7 +56,7 @@ public class Configuration
   private Dictionary<string,string> ArquivoConfiguracao()
   {
     var parametros = new Dictionary<string,string>();
-    var file = System.IO.File.ReadAllLines(".env");
+    var file = System.IO.File.ReadAllLines("ofs.conf");
     foreach (var line in file)
     {
       if (line == null) continue;
