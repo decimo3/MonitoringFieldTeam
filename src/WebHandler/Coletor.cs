@@ -66,6 +66,7 @@ public partial class Manager
               continue;
             }
             var servico_obj = new Servico();
+            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             servico_obj.par_pid = Int32.Parse(servico.GetDomAttribute("par_pid"));
             servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid"));
             servico_obj.start = Int32.Parse(servico.GetDomAttribute("start"));
@@ -74,6 +75,8 @@ public partial class Manager
             servico_obj.data_activity_status = (int)Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
             servico_obj.data_activity_worktype = Int32.Parse(servico.GetDomAttribute("data-activity-worktype"));
             servico_obj.data_activity_duration = Int32.Parse(servico.GetDomAttribute("data-activity-duration"));
+            servico_obj.style_left = estilos["left"];
+            servico_obj.style_width = estilos["width"];
             this.espelhos.Where(s => s.par_pid == par_pid).Single().servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
