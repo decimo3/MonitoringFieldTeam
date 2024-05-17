@@ -9,58 +9,100 @@ namespace Automation.WebScraper
       foreach (var espelho in this.espelhos)
       {
         var janela_final = espelho.shift_left + espelho.shift_width;
+        var nota_atual = espelho.servicos.Where(s => s.data_activity_status != (int)Servico.Status.pending).OrderByDescending(r => r.start).FirstOrDefault();
+        var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).FirstOrDefault();
         // DONE - Verificar se o recurso já está na janela de horário
         if(espelho.shift_left > this.horario_atual) continue;
-        // TODO - Verificar se o recurso já finalizou a rota
-        if(espelho.queue_end_left > 0)
+        // DONE - Verificar se o recurso já finalizou a rota e se ainda está na janela de horário
+        if(espelho.queue_end_left > 0 && (espelho.shift_left + espelho.shift_width) > this.horario_atual)
         {
-          if(espelho.queue_end_left < janela_final)
+          var diff = espelho.queue_end_left - janela_final;
+          if(diff > 0)
           {
-            this.relatorios.Add(espelho.recurso, "deslogou antes do horário");
+            this.relatorios.Add(espelho.recurso, $"deslogou antes! ~{(int)(diff/this.pixels_por_minuto)}min");
           }
           continue;
         }
         // DONE - Verificar se o recurso já está logado ou reativado
         if(espelho.queue_start_left < 0)
         {
-          this.relatorios.Add(espelho.recurso, "ainda não logou!");
+          var diff = this.horario_atual - espelho.shift_left;
+          if((diff/this.pixels_por_minuto) > configuration.TOLERANCIA)
+          {
+          this.relatorios.Add(espelho.recurso, $"ainda não logou! ~{(int)(diff/this.pixels_por_minuto)}min");
           continue;
+          }
         }
         // DONE - Verificar se o recurso ainda tem notas pendentes
         if(espelho.servicos.Where(s => s.data_activity_status == (int)Servico.Status.pending).Count() == 0)
         {
           if(janela_final > this.horario_atual)
-            this.relatorios.Add(espelho.recurso, "sem nota de serviço!");
+          {
+            if(nota_atual == null)
+            {
+              this.relatorios.Add(espelho.recurso, "equipe sem notas!");
+              continue;
+            }
+            var diff = this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
+            this.relatorios.Add(espelho.recurso, $"equipe sem notas! ~{(int)(diff/this.pixels_por_minuto)}min");
+          }
           continue;
         }
-        // TODO - Verificar se o recurso tem alguma nota `enroute` ou `started`
+        {
+        // DONE - Verificar se o recurso tem alguma nota `enroute` ou `started`
         if(espelho.servicos.Where(s => 
           s.data_activity_status == (int)Servico.Status.enroute || 
           s.data_activity_status == (int)Servico.Status.started).Count() == 0)
         {
-          this.relatorios.Add(espelho.recurso, "sem atividade acionada!");
-          continue;
+          var diff = nota_atual == null ? 0 : this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
+          if(diff/this.pixels_por_minuto > configuration.TOLERANCIA)
+          {
+            this.relatorios.Add(espelho.recurso, $"equipe ociosa! ~{(int)(diff/this.pixels_por_minuto)}min");
+            continue;
+          }
         }
-        var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).FirstOrDefault();
+        // DONE
         if(rota_atual == null)
         {
-          this.relatorios.Add(espelho.recurso, "sem registro no GPS!");
+          var diff = this.horario_atual - espelho.shift_left;
+          this.relatorios.Add(espelho.recurso, $"GPS desligado! ~{(int)(diff/this.pixels_por_minuto)}min");
           continue;
         }
-        if(this.horario_atual - (rota_atual.style_left + rota_atual.style_width) > 10)
+        var distancia_do_ultimo_registro_de_rota = this.horario_atual - (rota_atual.style_left + rota_atual.style_width);
+        var minutos_do_ultimo_registro_de_rota = Convert.ToInt32(distancia_do_ultimo_registro_de_rota / this.pixels_por_minuto);
+        if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
         {
-          this.relatorios.Add(espelho.recurso, "sem registro no GPS!");
+          this.relatorios.Add(espelho.recurso, $"GPS sem registro! ~{minutos_do_ultimo_registro_de_rota}min");
           continue;
         }
         if(rota_atual.status == Roteiro.Status.idle)
         {
-          this.relatorios.Add(espelho.recurso, "parado com nota em rota!");
+          if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
+            this.relatorios.Add(espelho.recurso, $"parada indevida! ~{minutos_do_ultimo_registro_de_rota}min");
           continue;
         }
         if(rota_atual.status == Roteiro.Status.alert)
         {
-          this.relatorios.Add(espelho.recurso, "deslocando com nota iniciada!");
+          if(nota_atual == null)
+          {
+            if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
+              this.relatorios.Add(espelho.recurso, $"encerrou deslocando! ~{minutos_do_ultimo_registro_de_rota}min");
+            continue;
+          }
+          if(nota_atual.data_activity_status == (int)Servico.Status.started)
+          {
+            if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
+              this.relatorios.Add(espelho.recurso, $"deslocamanto indevido! ~{minutos_do_ultimo_registro_de_rota}min");
+            continue;
+          }
+          if(nota_atual.data_activity_status == (int)Servico.Status.enroute)
+          {
+            if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
+              this.relatorios.Add(espelho.recurso, $"deslocamento atrasado! ~{minutos_do_ultimo_registro_de_rota}min");
+            continue;
+          }
           continue;
+        }
         }
       }
     }
