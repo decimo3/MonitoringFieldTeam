@@ -1,6 +1,6 @@
 bin
 obj
 www
-.env
 tmp
 ofs
+ofs.conf
