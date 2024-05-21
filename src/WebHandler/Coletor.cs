@@ -6,6 +6,7 @@ public partial class Manager
 {
   public void Coletor()
   {
+    Console.WriteLine($"{DateTime.Now} - Coletando espelhos...");
     // Coleta de nome de recurso e par_pid
     for(var i = 1; true; i++)
     {
@@ -23,53 +24,51 @@ public partial class Manager
         texto = recursos.FindElement(By.XPath(".//div")).Text;
       }
       var par_pid = Int32.Parse(recursos.GetAttribute("par_pid"));
-      this.espelhos.Add(new Espelho(texto, par_pid));
+      var style_top = ColetarStyle(recursos.GetDomAttribute("style"))["top"];
+      this.espelhos.Add(new Espelho(texto, par_pid, style_top));
     }
-    /////////////////////////////////
-    //                             //
-    // Até aqui está tudo bem!     //
-    //                             //
-    /////////////////////////////////
     // Retornar até o topo da lista
+    Console.WriteLine($"{DateTime.Now} - Retornando ao topo...");
     for(var a = 0; a < this.espelhos.Count; a++)
     {
       var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
       var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
       new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, -1).Perform();
     }
+    // Pecorre a lista de linhas do gráfico Gantt
+    Console.WriteLine($"{DateTime.Now} - Coletando atividades...");
     for(var i = 1; true; i++)
     {
       var gantt_path = this.configuration.pathfind["ESPELHOS_"].Replace("_", i.ToString());
       var gantt_query = this.driver.FindElements(By.XPath(gantt_path));
       if(!gantt_query.Any()) break;
       var gantt = gantt_query.Single();
+      var style_top = ColetarStyle(gantt.GetDomAttribute("style"))["top"];
+      var espelho = this.espelhos.Where(s => s.style_top == style_top).Single();
       var gantt_classes = gantt.GetAttribute("class").Split(" ");
-      if(gantt_classes.Contains("toaGantt-hour-line"))
-      {
-        // TODO - mapear colunas de horários
-      }
+      if(gantt_classes.Contains("toaGantt-hour-line")) continue;
       if(gantt_classes.Contains("toaGantt-tl"))
       {
         var par_pid = Int32.Parse(gantt.GetAttribute("par_pid"));
-        var espelho = this.espelhos.Where(s => s.par_pid == par_pid).Single();
-        var servicos = gantt.FindElements(By.XPath($".//div"));
+        var servicos = gantt.FindElements(By.XPath(".//div"));
         if(!servicos.Any()) break;
+        // Pecorre a lista de atividades filhos do elemento
         foreach (var servico in servicos)
         {
-          var ordem_classes = servico.GetAttribute("class").Split(" ");
+          var servico_classes = servico.GetAttribute("class").Split(" ");
           // Verifica se é uma ordem de servico
-          if(ordem_classes.Contains("toaGantt-tb"))
+          if(servico_classes.Contains("toaGantt-tb"))
           {
-            if(ordem_classes.Contains("final"))
+            if(servico_classes.Contains("final"))
             {
-              this.espelhos.Where(s => s.par_pid == par_pid).Single().final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
+              espelho.final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
               continue;
             }
             var servico_obj = new Servico();
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             servico_obj.par_pid = Int32.Parse(servico.GetDomAttribute("par_pid"));
-            servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid"));
             servico_obj.start = Int32.Parse(servico.GetDomAttribute("start"));
+            servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid"));
             servico_obj.dur = Int32.Parse(servico.GetDomAttribute("dur"));
             servico_obj.data_activity_eta = Int32.Parse(servico.GetDomAttribute("data-activity-eta"));
             servico_obj.data_activity_status = (int)Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
@@ -77,10 +76,10 @@ public partial class Manager
             servico_obj.data_activity_duration = Int32.Parse(servico.GetDomAttribute("data-activity-duration"));
             servico_obj.style_left = estilos["left"];
             servico_obj.style_width = estilos["width"];
-            this.espelhos.Where(s => s.par_pid == par_pid).Single().servicos.Add(servico_obj);
+            espelho.servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
-          if(ordem_classes.Contains("toaGantt-tl-shift"))
+          if(servico_classes.Contains("toaGantt-tl-shift"))
           {
             espelho.shift_start = Int32.Parse(servico.GetDomAttribute("start"));
             espelho.shift_dur = Int32.Parse(servico.GetDomAttribute("dur"));
@@ -90,21 +89,21 @@ public partial class Manager
             continue;
           }
           // verifica se é uma alteração da jornada
-          if(ordem_classes.Contains("toaGantt-queue"))
+          if(servico_classes.Contains("toaGantt-queue"))
           {
-            if(ordem_classes.Contains("toaGantt-queue-start"))
+            if(servico_classes.Contains("toaGantt-queue-start"))
             {
               espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
               continue;
             }
-            if(ordem_classes.Contains("toaGantt-queue-reactivated"))
+            if(servico_classes.Contains("toaGantt-queue-reactivated"))
             {
               espelho.queue_reactivated_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_reactivated_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
               continue;
             }
-            if(ordem_classes.Contains("toaGantt-queue-end"))
+            if(servico_classes.Contains("toaGantt-queue-end"))
             {
               espelho.queue_end_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_end_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
@@ -112,21 +111,21 @@ public partial class Manager
             }
           }
           // Verifica se é uma alteração na tempo
-          if(ordem_classes.Contains("toaGantt-tl-gpsmark"))
+          if(servico_classes.Contains("toaGantt-tl-gpsmark"))
           {
             var roteiro = new Roteiro();
             roteiro.start = Int32.Parse(servico.GetDomAttribute("start"));
             roteiro.dur = Int32.Parse(servico.GetDomAttribute("dur"));
-            if(ordem_classes.Contains("gps-status-normal")) roteiro.status = Roteiro.Status.normal;
-            if(ordem_classes.Contains("gps-status-idle")) roteiro.status = Roteiro.Status.idle;
-            if(ordem_classes.Contains("gps-status-alert")) roteiro.status = Roteiro.Status.alert;
+            if(servico_classes.Contains("gps-status-normal")) roteiro.status = Roteiro.Status.normal;
+            if(servico_classes.Contains("gps-status-idle")) roteiro.status = Roteiro.Status.idle;
+            if(servico_classes.Contains("gps-status-alert")) roteiro.status = Roteiro.Status.alert;
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             roteiro.style_width = estilos["width"];
             roteiro.style_left = estilos["left"];
             espelho.roteiro.Add(roteiro);
             continue;
           }
-          if(ordem_classes.Contains("toaGantt-tw"))
+          if(servico_classes.Contains("toaGantt-tw"))
           {
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             espelho.tw_alert_display = (estilos["display"] != 0) ? true : false;
