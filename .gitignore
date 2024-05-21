@@ -5,3 +5,5 @@ tmp
 ofs
 ofs.conf
 chromedriver.exe
+*.txt
+*.csv
