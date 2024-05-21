@@ -5,6 +5,7 @@ namespace Automation.Persistence
   {
     public String recurso { get; set; }
     public Int32 par_pid { get; set; }
+    public Int32 style_top { get; set; }
     public Int32 shift_start { get; set; }
     public Int32 shift_dur { get; set; }
     public Int32 shift_left { get; set; }
@@ -20,7 +21,7 @@ namespace Automation.Persistence
     public Int32 queue_end_start { get; set; }
     public List<Servico> servicos { get; set; } = new();
     public List<Roteiro> roteiro { get; set; } = new();
-    public Espelho(String recurso, Int32 par_pid)
+    public Espelho(String recurso, Int32 par_pid, Int32 style_top)
     {
       var abreviado = recurso.Trim();
       abreviado = abreviado.Replace(" - Corte", "C");
@@ -28,6 +29,7 @@ namespace Automation.Persistence
       abreviado = abreviado.Replace(" - Equipe ", ""); 
       this.recurso = abreviado;
       this.par_pid = par_pid;
+      this.style_top = style_top;
     }
   }
 }
