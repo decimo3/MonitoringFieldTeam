@@ -14,13 +14,10 @@ namespace Automation.WebScraper
         // DONE - Verificar se o recurso já está na janela de horário
         if(espelho.shift_left > this.horario_atual) continue;
         // DONE - Verificar se o recurso já finalizou a rota e se ainda está na janela de horário
-        if(espelho.queue_end_left > 0 && (espelho.shift_left + espelho.shift_width) > this.horario_atual)
+        if(espelho.queue_end_left > 0 && this.horario_atual < janela_final)
         {
-          var diff = espelho.queue_end_left - janela_final;
-          if(diff > 0)
-          {
-            this.relatorios.Add(espelho.recurso, $"deslogou antes! ~{(int)(diff/this.pixels_por_minuto)}min");
-          }
+          var diff = this.horario_atual - espelho.queue_end_left;
+          this.relatorios.Add(espelho.recurso, $"deslogou antes! ~{(int)(diff/this.pixels_por_minuto)}min");
           continue;
         }
         // DONE - Verificar se o recurso já está logado ou reativado
@@ -68,37 +65,35 @@ namespace Automation.WebScraper
           this.relatorios.Add(espelho.recurso, $"GPS desligado! ~{(int)(diff/this.pixels_por_minuto)}min");
           continue;
         }
-        var distancia_do_ultimo_registro_de_rota = this.horario_atual - (rota_atual.style_left + rota_atual.style_width);
-        var minutos_do_ultimo_registro_de_rota = Convert.ToInt32(distancia_do_ultimo_registro_de_rota / this.pixels_por_minuto);
-        if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
+        var distancia_do_inicio_registro_de_rota = this.horario_atual - rota_atual.style_left;
+        var distancia_do_final_registro_de_rota = this.horario_atual - (rota_atual.style_left + rota_atual.style_width);
+        var minutos_do_inicio_registro_de_rota = Convert.ToInt32(distancia_do_inicio_registro_de_rota / this.pixels_por_minuto);
+        var minutos_do_final_registro_de_rota = Convert.ToInt32(distancia_do_final_registro_de_rota / this.pixels_por_minuto);
+        if(minutos_do_final_registro_de_rota >= configuration.TOLERANCIA)
         {
-          this.relatorios.Add(espelho.recurso, $"GPS sem registro! ~{minutos_do_ultimo_registro_de_rota}min");
+          this.relatorios.Add(espelho.recurso, $"GPS sem registro! ~{minutos_do_final_registro_de_rota}min");
           continue;
         }
         if(rota_atual.status == Roteiro.Status.idle)
         {
-          if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
-            this.relatorios.Add(espelho.recurso, $"parada indevida! ~{minutos_do_ultimo_registro_de_rota}min");
+          this.relatorios.Add(espelho.recurso, $"parada indevida! ~{minutos_do_inicio_registro_de_rota}min");
           continue;
         }
         if(rota_atual.status == Roteiro.Status.alert)
         {
           if(nota_atual == null)
           {
-            if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
-              this.relatorios.Add(espelho.recurso, $"encerrou deslocando! ~{minutos_do_ultimo_registro_de_rota}min");
+            this.relatorios.Add(espelho.recurso, $"encerrou deslocando! ~{minutos_do_inicio_registro_de_rota}min");
             continue;
           }
           if(nota_atual.data_activity_status == (int)Servico.Status.started)
           {
-            if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
-              this.relatorios.Add(espelho.recurso, $"deslocamanto indevido! ~{minutos_do_ultimo_registro_de_rota}min");
+            this.relatorios.Add(espelho.recurso, $"deslocamento indevido! ~{minutos_do_inicio_registro_de_rota}min");
             continue;
           }
           if(nota_atual.data_activity_status == (int)Servico.Status.enroute)
           {
-            if(minutos_do_ultimo_registro_de_rota > configuration.TOLERANCIA)
-              this.relatorios.Add(espelho.recurso, $"deslocamento atrasado! ~{minutos_do_ultimo_registro_de_rota}min");
+            this.relatorios.Add(espelho.recurso, $"deslocamento atrasado! ~{minutos_do_inicio_registro_de_rota}min");
             continue;
           }
           continue;
