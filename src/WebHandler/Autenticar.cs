@@ -26,9 +26,9 @@ public partial class Manager
       this.driver.FindElement(By.Id("idSIButton9")).Click();
       System.Threading.Thread.Sleep(configuration.ESPERA_CURTA);
     }
-    if (this.driver.FindElements(By.Id("lightbox")).Any())
+    var xpath_account = "//*[@id='tilesHolder']/div[1]/div/div[1]/div/div[1]/img";
+    if (this.driver.FindElements(By.XPath(xpath_account)).Any())
     {
-      var xpath_account = "//*[@id='tilesHolder']/div[1]/div/div[1]/div/div[1]/img";
       this.driver.FindElement(By.XPath(xpath_account)).Click();
       System.Threading.Thread.Sleep(configuration.ESPERA_CURTA);
       this.driver.FindElements(By.Name("passwd")).Single().SendKeys(configuration.palavra);
