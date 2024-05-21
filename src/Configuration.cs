@@ -2,9 +2,9 @@ using OpenQA.Selenium.Chrome;
 namespace Automation;
 public class Configuration
 {
-  public readonly int ESPERA_LONGA = 5000;
-  public readonly int ESPERA_MEDIA = 3000;
-  public readonly int ESPERA_CURTA = 1500;
+  public readonly int ESPERA_LONGA = 10_000;
+  public readonly int ESPERA_MEDIA = 6_000;
+  public readonly int ESPERA_CURTA = 3_000;
   public readonly int ESPERA_TOTAL = 60_000;
   public readonly string usuario;
   public readonly string palavra;
@@ -25,6 +25,12 @@ public class Configuration
       ESPERA_LONGA *= 2;
       ESPERA_MEDIA *= 2;
       ESPERA_CURTA *= 2;
+    }
+    if(System.Environment.GetCommandLineArgs().Contains("faster"))
+    {
+      ESPERA_LONGA /= 2;
+      ESPERA_MEDIA /= 2;
+      ESPERA_CURTA /= 2;
     }
     var configuracoes = ArquivoConfiguracao();
     this.usuario = configuracoes["USUARIO"];
