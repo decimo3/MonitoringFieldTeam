@@ -10,7 +10,7 @@ namespace Automation.WebScraper
       {
         var janela_final = espelho.shift_left + espelho.shift_width;
         var nota_atual = espelho.servicos.Where(s => s.data_activity_status != (int)Servico.Status.pending).OrderByDescending(r => r.start).FirstOrDefault();
-        var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).FirstOrDefault();
+        var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).ThenByDescending(r => r.dur).FirstOrDefault();
         // DONE - Verificar se o recurso já está na janela de horário
         if(espelho.shift_left > this.horario_atual) continue;
         // DONE - Verificar se o recurso já finalizou a rota e se ainda está na janela de horário
