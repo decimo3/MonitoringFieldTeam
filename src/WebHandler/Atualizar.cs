@@ -5,7 +5,10 @@ public partial class Manager
   public void Atualizar()
   {
     // Selecionar o balde correto conforme parâmetro RECURSO
-    this.driver.FindElements(By.ClassName("rtl-prov-name")).Where(e => e.Text == this.configuration.recurso).First().Click();
+    var baldes = this.driver.FindElements(By.ClassName("rtl-prov-name"));
+    // Verifica se foi encontrado algum elemento 
+    if(!baldes.Any()) System.Environment.Exit(1);
+    baldes.Where(e => e.Text == this.configuration.recurso).First().Click();
     System.Threading.Thread.Sleep(configuration.ESPERA_MEDIA);
     // Selecionar a visualização do gráfico de Gantt
     this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
