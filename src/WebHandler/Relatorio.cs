@@ -15,6 +15,10 @@ namespace Automation.WebScraper
       }
       if(relatorios.Length == 0)
       {
+        System.Console.WriteLine($"{DateTime.Now} - Nenhum ofensor ao IDG nesta análise!");
+        return;
+      }
+      {
         this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n\n");
         this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
         var texto = this.relatorios.ToString();
@@ -22,10 +26,6 @@ namespace Automation.WebScraper
         System.IO.File.WriteAllText(filename, texto);
         System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
         System.Console.WriteLine(texto);
-      }
-      else
-      {
-        System.Console.WriteLine($"{DateTime.Now} - Nenhum ofensor ao IDG nesta análise!");
       }
     }
   }
