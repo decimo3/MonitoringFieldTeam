@@ -1,3 +1,4 @@
+using System.Text;
 using Automation.Persistence;
 using OpenQA.Selenium.Chrome;
 namespace Automation.WebScraper;
@@ -8,7 +9,7 @@ public partial class Manager : IDisposable
   private readonly Configuration configuration;
   public DateTime agora { get; set; } = DateTime.Now;
   public List<Espelho> espelhos { get; set; } = new();
-  public Dictionary<String, String> relatorios { get; set; } = new();
+  public StringBuilder relatorios { get; set; } = new();
   public Int32 horario_atual { get; set; }
   public Double pixels_por_hora { get; set; }
   public Double pixels_por_minuto { get; set; }
