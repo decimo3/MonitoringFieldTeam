@@ -105,5 +105,12 @@ namespace Automation.WebScraper
         }
       }
     }
+    public void Concatenar(String recurso, String aviso, Int32? tempo = null)
+    {
+      this.relatorios.Append(recurso);
+      this.relatorios.Append($" {aviso}!");
+      if(tempo != null)
+        this.relatorios.Append($" ~{tempo}min");
+    }
   }
 }
