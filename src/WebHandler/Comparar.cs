@@ -15,7 +15,12 @@ namespace Automation.WebScraper
         var distancia_do_tamanho_da_janela = janela_final - espelho.shift_left;
         if(distancia_do_tamanho_da_janela < (this.pixels_por_hora * 9))
         {
-          Concatenar(espelho.recurso, "janela encurtada", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
+          Concatenar(espelho.recurso, "jornada encurtada", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
+          continue;
+        }
+        if(distancia_do_tamanho_da_janela > (this.pixels_por_hora * 9))
+        {
+          Concatenar(espelho.recurso, "jornada extendida", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
           continue;
         }
         // DONE - Verificar se o recurso já está na janela de horário
