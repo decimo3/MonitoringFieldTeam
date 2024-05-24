@@ -24,7 +24,7 @@ namespace Automation.WebScraper
           continue;
         }
         // DONE - Verificar se o recurso já está na janela de horário
-        if(espelho.shift_left > this.horario_atual) continue;
+        if(this.horario_atual < espelho.shift_left) continue;
         // DONE - Verificar se o recurso já finalizou a rota e se ainda está na janela de horário
         if(espelho.queue_end_left > 0 && this.horario_atual < janela_final)
         {
@@ -43,13 +43,13 @@ namespace Automation.WebScraper
           }
         }
         // DONE - Verificar se o recurso ainda tem notas pendentes
-        if(espelho.servicos.Where(s =>
-          s.data_activity_status == (int)Servico.Status.pending ||
-          s.data_activity_status == (int)Servico.Status.enroute ||
-          s.data_activity_status == (int)Servico.Status.started
-          ).Count() == 0)
+        if(this.horario_atual < janela_final)
         {
-          if(janela_final > this.horario_atual)
+          if(espelho.servicos.Where(s =>
+            s.data_activity_status == (int)Servico.Status.pending ||
+            s.data_activity_status == (int)Servico.Status.enroute ||
+            s.data_activity_status == (int)Servico.Status.started
+            ).Count() == 0)
           {
             if(nota_atual == null)
             {
@@ -112,7 +112,6 @@ namespace Automation.WebScraper
             Concatenar(espelho.recurso, "deslocamento atrasado", minutos_do_inicio_registro_de_rota);
             continue;
           }
-          continue;
         }
         }
       }
@@ -123,6 +122,7 @@ namespace Automation.WebScraper
       this.relatorios.Append($" {aviso}!");
       if(tempo != null)
         this.relatorios.Append($" ~{tempo}min");
+      this.relatorios.Append('\n');
     }
   }
 }
