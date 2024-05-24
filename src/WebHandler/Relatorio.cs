@@ -13,19 +13,11 @@ namespace Automation.WebScraper
         System.IO.File.WriteAllText(filename, json);
         System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
       }
-      if(relatorios.Any())
+      if(relatorios.Length == 0)
       {
-        var string_builder = new System.Text.StringBuilder();
-        string_builder.Append("*MONITORADORES DE OFENSORES DO IDG*\n\n");
-        foreach (var relatorio in this.relatorios)
-        {
-          string_builder.Append(relatorio.Key);
-          string_builder.Append(" ");
-          string_builder.Append(relatorio.Value);
-          string_builder.Append('\n');
-        }
-        string_builder.Append($"\n_Relatório extraído em {this.agora}_");
-        var texto = string_builder.ToString();
+        this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n\n");
+        this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
+        var texto = this.relatorios.ToString();
         var filename = this.configuration.is_development ? $"./tmp/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.configuration.recurso}.txt" : "relatorio_ofs.txt";
         System.IO.File.WriteAllText(filename, texto);
         System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
