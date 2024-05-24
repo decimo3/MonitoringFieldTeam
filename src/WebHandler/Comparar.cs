@@ -31,7 +31,11 @@ namespace Automation.WebScraper
           }
         }
         // DONE - Verificar se o recurso ainda tem notas pendentes
-        if(espelho.servicos.Where(s => s.data_activity_status == (int)Servico.Status.pending).Count() == 0)
+        if(espelho.servicos.Where(s =>
+          s.data_activity_status == (int)Servico.Status.pending ||
+          s.data_activity_status == (int)Servico.Status.enroute ||
+          s.data_activity_status == (int)Servico.Status.started
+          ).Count() == 0)
         {
           if(janela_final > this.horario_atual)
           {
@@ -41,7 +45,7 @@ namespace Automation.WebScraper
               continue;
             }
             var diff = this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
-            this.relatorios.Add(espelho.recurso, $"equipe sem notas! ~{(int)(diff/this.pixels_por_minuto)}min");
+            this.relatorios.Add(espelho.recurso, $"na ultima nota! ~{(int)(diff/this.pixels_por_minuto)}min");
           }
           continue;
         }
