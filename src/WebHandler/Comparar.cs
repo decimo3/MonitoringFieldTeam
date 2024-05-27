@@ -21,14 +21,19 @@ namespace Automation.WebScraper
         var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).ThenByDescending(r => r.dur).FirstOrDefault();
         var nota_atual = notas_pendentes.FirstOrDefault();
         // DONE - Verificar se a janela do recurso está com horário mínimo
+        // DONE - Adicionada exceção para equipes de vistoria do LIDE;
+        if(!espelho.recurso.Contains("LOIV"))
+        {
         var distancia_do_tamanho_da_janela = janela_final - espelho.shift_left;
-        if(distancia_do_tamanho_da_janela < (this.pixels_por_hora * 9))
+        var distancia_esperada_para_a_janela = espelho.recurso.Contains("LOI") ? (int)Double.Round(this.pixels_por_hora * 9.83333) : this.pixels_por_hora * 9;
+        if(distancia_do_tamanho_da_janela < distancia_esperada_para_a_janela)
         {
           Concatenar(espelho.recurso, "jornada encurtada", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
         }
-        if(distancia_do_tamanho_da_janela > (this.pixels_por_hora * 9))
+        if(distancia_do_tamanho_da_janela > distancia_esperada_para_a_janela)
         {
           Concatenar(espelho.recurso, "jornada extendida", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
+        }
         }
         // DONE - Verificar se o recurso já está na janela de horário
         if(this.horario_atual < espelho.shift_left) continue;
