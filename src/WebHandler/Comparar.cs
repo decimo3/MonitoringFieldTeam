@@ -9,19 +9,26 @@ namespace Automation.WebScraper
       foreach (var espelho in this.espelhos)
       {
         var janela_final = espelho.shift_left + espelho.shift_width;
-        var nota_atual = espelho.servicos.Where(s => s.data_activity_status != (int)Servico.Status.pending).OrderByDescending(r => r.start).FirstOrDefault();
+        var notas_pendentes = espelho.servicos.Where(s =>
+          s.data_activity_status == (int)Servico.Status.pending ||
+          s.data_activity_status == (int)Servico.Status.enroute ||
+          s.data_activity_status == (int)Servico.Status.started
+        ).OrderBy(r => r.start).ThenBy(s => s.dur).ToList();
+        var nota_anterior = espelho.servicos.Where(s =>
+          s.data_activity_status == (int)Servico.Status.complete ||
+          s.data_activity_status == (int)Servico.Status.notdone
+        ).OrderByDescending(s => s.start).ThenByDescending(s => s.dur).FirstOrDefault();
         var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).ThenByDescending(r => r.dur).FirstOrDefault();
+        var nota_atual = notas_pendentes.FirstOrDefault();
         // DONE - Verificar se a janela do recurso está com horário mínimo
         var distancia_do_tamanho_da_janela = janela_final - espelho.shift_left;
         if(distancia_do_tamanho_da_janela < (this.pixels_por_hora * 9))
         {
           Concatenar(espelho.recurso, "jornada encurtada", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
-          continue;
         }
         if(distancia_do_tamanho_da_janela > (this.pixels_por_hora * 9))
         {
           Concatenar(espelho.recurso, "jornada extendida", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
-          continue;
         }
         // DONE - Verificar se o recurso já está na janela de horário
         if(this.horario_atual < espelho.shift_left) continue;
@@ -45,36 +52,46 @@ namespace Automation.WebScraper
         // DONE - Verificar se o recurso ainda tem notas pendentes
         if(this.horario_atual < janela_final)
         {
-          if(espelho.servicos.Where(s =>
-            s.data_activity_status == (int)Servico.Status.pending ||
-            s.data_activity_status == (int)Servico.Status.enroute ||
-            s.data_activity_status == (int)Servico.Status.started
-            ).Count() == 0)
+          if(nota_atual == null)
           {
-            if(nota_atual == null)
-            {
-              Concatenar(espelho.recurso, "equipe sem notas");
-              continue;
-            }
-            var diff = this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
-            Concatenar(espelho.recurso, "na ultima nota", (int)(diff/this.pixels_por_minuto));
+            Concatenar(espelho.recurso, "equipe sem notas");
+            continue;
           }
-          continue;
-        }
-        {
-        // DONE - Verificar se o recurso tem alguma nota `enroute` ou `started`
-        if(espelho.servicos.Where(s => 
-          s.data_activity_status == (int)Servico.Status.enroute || 
-          s.data_activity_status == (int)Servico.Status.started).Count() == 0)
-        {
-          var diff = nota_atual == null ? 0 : this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
-          if(diff/this.pixels_por_minuto > configuration.TOLERANCIA)
+          if(notas_pendentes.Count() == 1)
           {
+            var diff = this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
+            Concatenar(espelho.recurso, "na última nota", (int)(diff/this.pixels_por_minuto));
+          }
+        }
+        // DONE - Verificar se o recurso tem alguma nota `enroute` ou `started`
+        if(nota_atual == null || nota_atual.data_activity_status == (int)Servico.Status.pending)
+        {
+          if(nota_anterior == null)
+          {
+            var diff = this.horario_atual - espelho.shift_left;
             Concatenar(espelho.recurso, "equipe ociosa", (int)(diff/this.pixels_por_minuto));
             continue;
           }
+          else
+          {
+            var diff = this.horario_atual - (nota_anterior.style_left + nota_anterior.style_width);
+            if(diff/this.pixels_por_minuto >= configuration.TOLERANCIA)
+            {
+              Concatenar(espelho.recurso, "equipe ociosa", (int)(diff/this.pixels_por_minuto));
+              continue;
+            }
+          }
         }
-        // DONE
+
+        if(nota_atual != null && nota_atual.data_activity_status == (int)Servico.Status.started)
+        {
+          if(this.horario_atual > nota_atual.style_left + nota_atual.style_width)
+          {
+            var diff = this.horario_atual - (nota_atual.style_left + nota_atual.style_width);
+            Concatenar(espelho.recurso, "atendimento atrasado", (int)(diff/this.pixels_por_minuto));
+          }
+        }
+
         if(rota_atual == null)
         {
           var diff = this.horario_atual - espelho.shift_left;
@@ -112,7 +129,6 @@ namespace Automation.WebScraper
             Concatenar(espelho.recurso, "deslocamento atrasado", minutos_do_inicio_registro_de_rota);
             continue;
           }
-        }
         }
       }
     }
