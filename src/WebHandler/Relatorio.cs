@@ -13,13 +13,11 @@ namespace Automation.WebScraper
         System.IO.File.WriteAllText(filename, json);
         System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
       }
-      if(relatorios.Length == 0)
+      if(relatorios.Length > 0)
       {
-        System.Console.WriteLine($"{DateTime.Now} - Nenhum ofensor ao IDG nesta análise!");
-        return;
-      }
-      {
-        this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n\n");
+        var balde_nome = this.configuration.recurso[this.configuration.contador_de_baldes];
+        this.relatorios.Insert(0, $"_Balde de recursos: *{balde_nome}*_\n\n");
+        this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
         this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
         var texto = this.relatorios.ToString();
         var filename = this.configuration.is_development ? $"./tmp/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.configuration.recurso}.txt" : "relatorio_ofs.txt";
@@ -27,6 +25,11 @@ namespace Automation.WebScraper
         System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
         System.Console.WriteLine(texto);
       }
+      else
+      {
+        System.Console.WriteLine($"{DateTime.Now} - Nenhum ofensor ao IDG nesta análise!");
+      }
+      this.configuration.contador_de_baldes = (this.configuration.contador_de_baldes + 1) % this.configuration.recurso.Count;
     }
   }
 }

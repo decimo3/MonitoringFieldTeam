@@ -27,6 +27,5 @@ public partial class Manager
     this.espelhos = new();
     this.relatorios = new();
     this.agora = DateTime.Now;
-    this.configuration.contador_de_baldes = (this.configuration.contador_de_baldes + 1) % this.configuration.recurso.Count;
   }
 }
