@@ -12,11 +12,12 @@ public class Configuration
   public readonly string caminho;
   public readonly string website;
   public readonly string gchrome;
-  public readonly string recurso;
+  public readonly List<String> recurso;
   public readonly Dictionary<String, String> pathfind = new();
   public readonly Int32 minutes_per_pixel;
   public readonly bool is_development = false;
   public readonly Int32 TOLERANCIA = 3;
+  public Int32 contador_de_baldes { get; set; }
   public Configuration()
   {
     is_development = System.Environment.GetCommandLineArgs().Contains("debug");
@@ -36,8 +37,8 @@ public class Configuration
     this.usuario = configuracoes["USUARIO"];
     this.palavra = configuracoes["PALAVRA"];
     this.website = configuracoes["WEBSITE"];
-    this.recurso = configuracoes["RECURSO"];
     this.gchrome = configuracoes["GCHROME"];
+    this.recurso = configuracoes["RECURSO"].Split(",").ToList();
     this.caminho = @$"{System.IO.Directory.GetCurrentDirectory()}\www";
     this.options.AddArgument($@"--user-data-dir={this.caminho}");
     this.options.AddArgument($@"--app={this.website}");

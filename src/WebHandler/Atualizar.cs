@@ -8,7 +8,8 @@ public partial class Manager
     var baldes = this.driver.FindElements(By.ClassName("rtl-prov-name"));
     // Verifica se foi encontrado algum elemento 
     if(!baldes.Any()) System.Environment.Exit(1);
-    baldes.Where(e => e.Text == this.configuration.recurso).First().Click();
+    var balde = this.configuration.recurso[this.configuration.contador_de_baldes];
+    baldes.Where(e => e.Text == balde).First().Click();
     System.Threading.Thread.Sleep(configuration.ESPERA_MEDIA);
     // Selecionar a visualização do gráfico de Gantt
     this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
@@ -26,5 +27,6 @@ public partial class Manager
     this.espelhos = new();
     this.relatorios = new();
     this.agora = DateTime.Now;
+    this.configuration.contador_de_baldes = (this.configuration.contador_de_baldes + 1) % this.configuration.recurso.Count;
   }
 }
