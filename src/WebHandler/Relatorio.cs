@@ -16,7 +16,8 @@ namespace Automation.WebScraper
       if(relatorios.Length > 0)
       {
         var balde_nome = this.configuration.recurso[this.configuration.contador_de_baldes];
-        this.relatorios.Insert(0, $"_Balde de recursos: *{balde_nome}*_\n\n");
+
+        this.relatorios.Insert(0, $"_Balde de recursos: *{balde_nome.Split('>').Last()}*_\n\n");
         this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
         this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
         var texto = this.relatorios.ToString();
