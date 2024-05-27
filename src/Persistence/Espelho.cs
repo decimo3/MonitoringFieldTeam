@@ -23,10 +23,17 @@ namespace Automation.Persistence
     public List<Roteiro> roteiro { get; set; } = new();
     public Espelho(String recurso, Int32 par_pid, Int32 style_top)
     {
+      // Remove spaces before and after text;
       var abreviado = recurso.Trim();
+      // Change long-dash for simple dash;
+      abreviado = abreviado.Replace('–', '-');
+      // Remove double spaces by singles
+      abreviado = abreviado.Replace("  ", " ");
+      // Abbreviates words that determine the type of activity
       abreviado = abreviado.Replace(" - Corte", "C");
       abreviado = abreviado.Replace(" - Religa", "R");
-      abreviado = abreviado.Replace(" - Equipe ", ""); 
+      // Remove the word 'team' to shorten the resource name
+      abreviado = abreviado.Replace(" - Equipe ", "");
       this.recurso = abreviado;
       this.par_pid = par_pid;
       this.style_top = style_top;
