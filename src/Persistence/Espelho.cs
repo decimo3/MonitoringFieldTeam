@@ -32,6 +32,7 @@ namespace Automation.Persistence
       // Abbreviates words that determine the type of activity
       abreviado = abreviado.Replace(" - Corte", "C");
       abreviado = abreviado.Replace(" - Religa", "R");
+      abreviado = abreviado.Replace(" - Vistoriador ", "V");
       // Remove the word 'team' to shorten the resource name
       abreviado = abreviado.Replace(" - Equipe ", "");
       this.recurso = abreviado;
