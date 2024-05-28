@@ -24,8 +24,32 @@ namespace Automation.WebScraper
         // DONE - Adicionada exceção para equipes de vistoria do LIDE;
         if(!espelho.recurso.Contains("LOIV"))
         {
+        var distancia_esperada_para_a_janela = 0;
         var distancia_do_tamanho_da_janela = janela_final - espelho.shift_left;
-        var distancia_esperada_para_a_janela = espelho.recurso.Contains("LOI") ? (int)Double.Round(this.pixels_por_hora * 9.83333) : this.pixels_por_hora * 9;
+        var prefixo_do_recurso = espelho.recurso.Substring(0, espelho.recurso.Length - 3);
+        var numero_do_recurso = Int32.Parse(espelho.recurso.Substring(espelho.recurso.Length - 3));
+        switch (prefixo_do_recurso)
+        {
+          case "LOI":
+            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
+          break;
+          case "CCBIC":
+          case "CCBIR":
+          case "CCOIC":
+          case "CCOIR":
+          case "OMBEC":
+            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.8);
+          break;
+          case "OMOER":
+            if(numero_do_recurso < 20)
+              distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
+            else
+              distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.8);
+          break;
+          default:
+            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
+          break;
+        }
         if(distancia_do_tamanho_da_janela < distancia_esperada_para_a_janela)
         {
           Concatenar(espelho.recurso, "jornada encurtada", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
