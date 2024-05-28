@@ -68,7 +68,7 @@ public partial class Manager
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             servico_obj.par_pid = Int32.Parse(servico.GetDomAttribute("par_pid"));
             servico_obj.start = Int32.Parse(servico.GetDomAttribute("start"));
-            servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid"));
+            servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid").Split('|').Last());
             servico_obj.dur = Int32.Parse(servico.GetDomAttribute("dur"));
             servico_obj.data_activity_eta = Int32.Parse(servico.GetDomAttribute("data-activity-eta"));
             servico_obj.data_activity_status = (int)Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
