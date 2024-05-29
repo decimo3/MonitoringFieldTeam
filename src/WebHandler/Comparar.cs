@@ -31,20 +31,18 @@ namespace Automation.WebScraper
         switch (prefixo_do_recurso)
         {
           case "LOI":
-            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
-          break;
           case "CCBIC":
           case "CCBIR":
           case "CCOIC":
           case "CCOIR":
           case "OMBEC":
-            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.8);
+            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
           break;
           case "OMOER":
             if(numero_do_recurso < 20)
               distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
             else
-              distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.8);
+              distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
           break;
           default:
             distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
