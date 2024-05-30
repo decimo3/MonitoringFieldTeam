@@ -27,6 +27,7 @@ public partial class Manager
       var style_top = ColetarStyle(recursos.GetDomAttribute("style"))["top"];
       this.espelhos.Add(new Espelho(texto, par_pid, style_top));
     }
+    if(!this.espelhos.Any()) return;
     // Retornar até o topo da lista
     Console.WriteLine($"{DateTime.Now} - Retornando ao topo...");
     for(var a = 0; a < this.espelhos.Count; a++)
