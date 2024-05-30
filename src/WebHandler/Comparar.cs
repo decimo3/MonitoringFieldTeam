@@ -29,13 +29,16 @@ namespace Automation.WebScraper
         var distancia_do_tamanho_da_janela = janela_final - espelho.shift_left;
         var prefixo_do_recurso = espelho.recurso.Substring(0, espelho.recurso.Length - 3);
         var numero_do_recurso = Int32.Parse(espelho.recurso.Substring(espelho.recurso.Length - 3));
+        // [09:00 - 9] // [09:48 - 9.8] // [09:50 - 9.83333]
         switch (prefixo_do_recurso)
         {
+          case "CCOIC":
+          case "CCOIR":
+            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
+          break;
           case "LOI":
           case "CCBIC":
           case "CCBIR":
-          case "CCOIC":
-          case "CCOIR":
           case "OMBEC":
             distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
           break;
@@ -76,6 +79,11 @@ namespace Automation.WebScraper
             Concatenar(espelho.recurso, "ainda não logou", (int)(diff/this.pixels_por_minuto));
             continue;
           }
+        }
+        if(espelho.queue_start_left > 0 && this.horario_atual < espelho.shift_left)
+        {
+          var diff = espelho.shift_left - espelho.queue_start_left;
+          Concatenar(espelho.recurso, "logou antes", (int)(diff/this.pixels_por_minuto));
         }
         // DONE - Verificar se o recurso ainda tem notas pendentes
         if(this.horario_atual < janela_final)
