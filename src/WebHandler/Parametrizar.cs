@@ -7,7 +7,7 @@ namespace Automation.WebScraper
     public void Refresh()
     {
       this.driver.Navigate().Refresh();
-      System.Threading.Thread.Sleep(this.configuration.ESPERA_LONGA);
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
     }
     public void Parametrizar()
     {

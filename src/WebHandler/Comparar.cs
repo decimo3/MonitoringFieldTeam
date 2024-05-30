@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Automation.Persistence;
 
 namespace Automation.WebScraper
@@ -6,9 +7,11 @@ namespace Automation.WebScraper
   {
     public void Comparar()
     {
+      if(!this.espelhos.Any()) return;
       foreach (var espelho in this.espelhos)
       {
         var janela_final = espelho.shift_left + espelho.shift_width;
+        var janela_tamanho = janela_final - espelho.shift_left;
         var notas_pendentes = espelho.servicos.Where(s =>
           s.data_activity_status == (int)Servico.Status.pending ||
           s.data_activity_status == (int)Servico.Status.enroute ||
@@ -22,39 +25,24 @@ namespace Automation.WebScraper
         var nota_atual = notas_pendentes.FirstOrDefault();
         // DONE - Verificar se a janela do recurso está com horário mínimo
         // DONE - Adicionada exceção para equipes de vistoria do LIDE;
-        if(!espelho.recurso.Contains("LOIV"))
-        {
-        var distancia_esperada_para_a_janela = 0;
-        var distancia_do_tamanho_da_janela = janela_final - espelho.shift_left;
+        // [09:00 - 9] // [09:50 - 9.83333]
+        Int32 minutos_esperados_para_a_janela = 0;
         var prefixo_do_recurso = espelho.recurso.Substring(0, espelho.recurso.Length - 3);
         var numero_do_recurso = Int32.Parse(espelho.recurso.Substring(espelho.recurso.Length - 3));
-        switch (prefixo_do_recurso)
+        
+        if(!this.cfg.HORARIOS.TryGetValue(prefixo_do_recurso, out minutos_esperados_para_a_janela))
+          minutos_esperados_para_a_janela = EncontrarChave(this.cfg.HORARIOS, prefixo_do_recurso, numero_do_recurso);
+
+        if(minutos_esperados_para_a_janela != 0)
         {
-          case "LOI":
-          case "CCBIC":
-          case "CCBIR":
-          case "CCOIC":
-          case "CCOIR":
-          case "OMBEC":
-            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
-          break;
-          case "OMOER":
-            if(numero_do_recurso < 20)
-              distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
-            else
-              distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9.83333);
-          break;
-          default:
-            distancia_esperada_para_a_janela = (int)Double.Round(this.pixels_por_hora * 9);
-          break;
+        var tamanho_esperado_para_a_janela = System.Math.Ceiling(minutos_esperados_para_a_janela * this.pixels_por_minuto);
+        if(janela_tamanho < tamanho_esperado_para_a_janela)
+        {
+          Concatenar(espelho.recurso, "jornada encurtada", (int)(janela_tamanho/this.pixels_por_minuto));
         }
-        if(distancia_do_tamanho_da_janela < distancia_esperada_para_a_janela)
+        if(janela_tamanho > tamanho_esperado_para_a_janela)
         {
-          Concatenar(espelho.recurso, "jornada encurtada", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
-        }
-        if(distancia_do_tamanho_da_janela > distancia_esperada_para_a_janela)
-        {
-          Concatenar(espelho.recurso, "jornada extendida", (int)(distancia_do_tamanho_da_janela/this.pixels_por_minuto));
+          Concatenar(espelho.recurso, "jornada extendida", (int)(janela_tamanho/this.pixels_por_minuto));
         }
         }
         // DONE - Verificar se o recurso já está na janela de horário
@@ -70,12 +58,21 @@ namespace Automation.WebScraper
         if(espelho.queue_start_left < 0)
         {
           var diff = this.horario_atual - espelho.shift_left;
-          if((diff/this.pixels_por_minuto) > configuration.TOLERANCIA)
+          if((diff/this.pixels_por_minuto) > cfg.TOLERANCIA)
           {
             Concatenar(espelho.recurso, "ainda não logou", (int)(diff/this.pixels_por_minuto));
             continue;
           }
         }
+        if(espelho.queue_start_left > 0)
+        {
+          if(this.horario_atual < espelho.shift_left)
+          {
+            var diff = espelho.shift_left - espelho.queue_start_left;
+            Concatenar(espelho.recurso, "logou antes", (int)(diff/this.pixels_por_minuto));
+          }
+        }
+        if(espelho.queue_end_left > 0) continue;
         // DONE - Verificar se o recurso ainda tem notas pendentes
         if(this.horario_atual < janela_final)
         {
@@ -102,7 +99,7 @@ namespace Automation.WebScraper
           else
           {
             var diff = this.horario_atual - (nota_anterior.style_left + nota_anterior.style_width);
-            if(diff/this.pixels_por_minuto >= configuration.TOLERANCIA)
+            if(diff/this.pixels_por_minuto >= cfg.TOLERANCIA)
             {
               Concatenar(espelho.recurso, "equipe ociosa", (int)(diff/this.pixels_por_minuto));
               continue;
@@ -129,7 +126,7 @@ namespace Automation.WebScraper
         var distancia_do_final_registro_de_rota = this.horario_atual - (rota_atual.style_left + rota_atual.style_width);
         var minutos_do_inicio_registro_de_rota = Convert.ToInt32(distancia_do_inicio_registro_de_rota / this.pixels_por_minuto);
         var minutos_do_final_registro_de_rota = Convert.ToInt32(distancia_do_final_registro_de_rota / this.pixels_por_minuto);
-        if(minutos_do_final_registro_de_rota >= configuration.TOLERANCIA)
+        if(minutos_do_final_registro_de_rota >= cfg.TOLERANCIA)
         {
           Concatenar(espelho.recurso, "GPS sem registro", minutos_do_final_registro_de_rota);
           continue;
@@ -166,6 +163,27 @@ namespace Automation.WebScraper
       if(tempo != null)
         this.relatorios.Append($" ~{tempo}min");
       this.relatorios.Append('\n');
+    }
+    public Int32 EncontrarChave(Dictionary<String, Int32> dicionario, String prefixo, Int32 numero)
+    {
+      var chaves = dicionario.Keys.ToList();
+      var padrao = @"^([A-Z]{3,5})[\[]([0-9]{1,2})\.([0-9]{1,2})[\]]$";
+      var regex = new Regex(padrao);
+      foreach(var chave in chaves)
+      {
+        var match = regex.Match(chave);
+        if(match != null && match.Groups[1].Value == prefixo)
+        {
+          if(numero >= Int32.Parse(match.Groups[2].Value))
+          {
+            if(numero <= Int32.Parse(match.Groups[3].Value))
+            {
+              return dicionario[chave];
+            }
+          }
+        }
+      }
+      return 0;
     }
   }
 }

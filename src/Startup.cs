@@ -3,8 +3,8 @@ public class Startup
 {
   public static void Main(string[] args)
   {
-    var configuration = new Configuration();
-    using var WebHandler = new WebScraper.Manager(configuration);
+    var cfg = new Configuration();
+    using var WebHandler = new WebScraper.Manager(cfg);
     WebHandler.Autenticar();
     while(true)
     {
@@ -20,6 +20,11 @@ public class Startup
         WebHandler.Comparar();
         Console.WriteLine($"{DateTime.Now} - Exportando as análises...");
         WebHandler.Relatorio();
+        if(cfg.ENVIRONMENT)
+        {
+          Console.WriteLine($"{DateTime.Now} - Realizando a captura de tela...");
+          WebHandler.Fotografo();
+        }
       }
       catch (System.Exception erro)
       {
