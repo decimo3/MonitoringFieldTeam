@@ -2,91 +2,49 @@ using OpenQA.Selenium.Chrome;
 namespace Automation;
 public class Configuration
 {
-  public readonly int ESPERA_LONGA = 10_000;
-  public readonly int ESPERA_MEDIA = 6_000;
-  public readonly int ESPERA_CURTA = 3_000;
-  public readonly int ESPERA_TOTAL = 60_000;
-  public readonly string usuario;
-  public readonly string palavra;
-  public readonly ChromeOptions options = new();
-  public readonly string caminho;
-  public readonly string website;
-  public readonly string gchrome;
-  public readonly List<String> recurso;
-  public readonly Dictionary<String, String> pathfind = new();
-  public readonly Int32 minutes_per_pixel;
-  public readonly bool is_development = false;
+  public readonly String DATAFOLDER;
+  public readonly String DOWNFOLDER;
   public readonly Int32 TOLERANCIA = 3;
-  public Int32 contador_de_baldes { get; set; }
+  public readonly List<String> PISCINAS;
+  public readonly Boolean ENVIRONMENT = false;
+  public readonly Dictionary<String, String> CONFIGURACAO = new();
+  public readonly Dictionary<String, String> CAMINHOS = new();
+  public readonly Dictionary<String, Int32> ESPERAS = new()
+  {
+    {"TOTAL", 60_000},
+    {"LONGA", 10_000},
+    {"MEDIA", 6_000},
+    {"CURTA", 3_000},
+  };
   public Configuration()
   {
-    is_development = System.Environment.GetCommandLineArgs().Contains("debug");
+    this.ENVIRONMENT = System.Environment.GetCommandLineArgs().Contains("debug");
+
+    this.DATAFOLDER = @$"{System.IO.Directory.GetCurrentDirectory()}\.www";
+    if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
+    this.DOWNFOLDER = @$"{System.IO.Directory.GetCurrentDirectory()}\.odl";
+    if(!System.IO.Directory.Exists(this.DOWNFOLDER)) System.IO.Directory.CreateDirectory(this.DOWNFOLDER);
+
     if(System.Environment.GetCommandLineArgs().Contains("slower"))
-    {
-      ESPERA_LONGA *= 2;
-      ESPERA_MEDIA *= 2;
-      ESPERA_CURTA *= 2;
-    }
+      foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] *= 2;
     if(System.Environment.GetCommandLineArgs().Contains("faster"))
-    {
-      ESPERA_LONGA /= 2;
-      ESPERA_MEDIA /= 2;
-      ESPERA_CURTA /= 2;
-    }
-    var configuracoes = ArquivoConfiguracao();
-    this.usuario = configuracoes["USUARIO"];
-    this.palavra = configuracoes["PALAVRA"];
-    this.website = configuracoes["WEBSITE"];
-    this.gchrome = configuracoes["GCHROME"];
-    this.recurso = configuracoes["RECURSO"].Split(",").ToList();
-    this.caminho = @$"{System.IO.Directory.GetCurrentDirectory()}\www";
-    this.options.AddArgument($@"--user-data-dir={this.caminho}");
-    this.options.AddArgument($@"--app={this.website}");
-    this.options.BinaryLocation = this.gchrome;
-    VerificarAtributos();
-    DefinicaoCaminho();
+      foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] /= 2;
+    
+    this.CONFIGURACAO = ArquivoConfiguracao("ofs.conf");
+    this.PISCINAS = this.CONFIGURACAO["RECURSO"].Split(",").ToList();
+    this.CAMINHOS = ArquivoConfiguracao("path.conf");
   }
-  private void VerificarAtributos()
-  {
-    var atributos = typeof(Configuration).GetProperties();
-    foreach (var atributo in atributos)
-    {
-      if (!atributo.CanRead) continue;
-      var erro = $"O parâmetro {atributo.Name.ToUpper()} não foi encontrado!";
-      if (atributo.GetValue(this) == null)
-        throw new InvalidOperationException(erro);
-      if (atributo.PropertyType == typeof(String))
-        if ((String)atributo.GetValue(this)! != String.Empty)
-          throw new InvalidOperationException(erro);
-    }
-  }
-  private Dictionary<string,string> ArquivoConfiguracao()
+  private Dictionary<String,String> ArquivoConfiguracao(String filename, char delimiter = '=')
   {
     var parametros = new Dictionary<string,string>();
-    var file = System.IO.File.ReadAllLines("ofs.conf");
-    foreach (var line in file)
-    {
-      if (line == null) continue;
-      if (line == String.Empty) continue;
-      var args = line.Split('=');
-      if (args.Length != 2) throw new IndexOutOfRangeException("O arquivo contém valores inválidos!");
-      var cfg = args[0];
-      var val = args[1];
-      parametros.Add(cfg, val);
-    }
-    return parametros;
-  }
-  private void DefinicaoCaminho()
-  {
-    var file = System.IO.File.ReadAllLines("path.conf");
+    var file = System.IO.File.ReadAllLines(filename);
     foreach (var line in file)
     {
       if(String.IsNullOrEmpty(line)) continue;
-      var args = line.Split('=');
-      if (args.Length != 2) continue;
-      var cfg = args[0];
-      var val = args[1];
-      this.pathfind.Add(cfg, val);
+      var args = line.Split(delimiter);
+      if(args.Length != 2) continue;
+      parametros.Add(args[0], args[1]);
     }
+    return parametros;
   }
 }
