@@ -20,6 +20,11 @@ public class Startup
         WebHandler.Comparar();
         Console.WriteLine($"{DateTime.Now} - Exportando as análises...");
         WebHandler.Relatorio();
+        if(configuration.is_development)
+        {
+          Console.WriteLine($"{DateTime.Now} - Realizando a captura de tela...");
+          WebHandler.Fotografo();
+        }
       }
       catch (System.Exception erro)
       {
