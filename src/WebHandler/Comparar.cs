@@ -74,7 +74,7 @@ namespace Automation.WebScraper
         if(espelho.queue_start_left < 0)
         {
           var diff = this.horario_atual - espelho.shift_left;
-          if((diff/this.pixels_por_minuto) > configuration.TOLERANCIA)
+          if((diff/this.pixels_por_minuto) > cfg.TOLERANCIA)
           {
             Concatenar(espelho.recurso, "ainda não logou", (int)(diff/this.pixels_por_minuto));
             continue;
@@ -111,7 +111,7 @@ namespace Automation.WebScraper
           else
           {
             var diff = this.horario_atual - (nota_anterior.style_left + nota_anterior.style_width);
-            if(diff/this.pixels_por_minuto >= configuration.TOLERANCIA)
+            if(diff/this.pixels_por_minuto >= cfg.TOLERANCIA)
             {
               Concatenar(espelho.recurso, "equipe ociosa", (int)(diff/this.pixels_por_minuto));
               continue;
@@ -138,7 +138,7 @@ namespace Automation.WebScraper
         var distancia_do_final_registro_de_rota = this.horario_atual - (rota_atual.style_left + rota_atual.style_width);
         var minutos_do_inicio_registro_de_rota = Convert.ToInt32(distancia_do_inicio_registro_de_rota / this.pixels_por_minuto);
         var minutos_do_final_registro_de_rota = Convert.ToInt32(distancia_do_final_registro_de_rota / this.pixels_por_minuto);
-        if(minutos_do_final_registro_de_rota >= configuration.TOLERANCIA)
+        if(minutos_do_final_registro_de_rota >= cfg.TOLERANCIA)
         {
           Concatenar(espelho.recurso, "GPS sem registro", minutos_do_final_registro_de_rota);
           continue;

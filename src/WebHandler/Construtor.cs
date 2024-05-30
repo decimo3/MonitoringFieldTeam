@@ -4,23 +4,28 @@ using OpenQA.Selenium.Chrome;
 namespace Automation.WebScraper;
 public partial class Manager : IDisposable
 {
+  private readonly Configuration cfg;
   private readonly ChromeDriver driver;
   private readonly ChromeDriverService service;
-  private readonly Configuration configuration;
+  private readonly ChromeOptions options = new();
   public DateTime agora { get; set; } = DateTime.Now;
   public List<Espelho> espelhos { get; set; } = new();
   public StringBuilder relatorios { get; set; } = new();
   public Int32 horario_atual { get; set; }
   public Double pixels_por_hora { get; set; }
   public Double pixels_por_minuto { get; set; }
-  public Manager(Configuration configuration)
+  public Int32 contador_de_baldes { get; set; }
+  public Manager(Configuration cfg)
   {
-    this.service = configuration.is_development ?
+    this.service = cfg.ENVIRONMENT ?
       ChromeDriverService.CreateDefaultService() :
       ChromeDriverService.CreateDefaultService(System.IO.Directory.GetCurrentDirectory());
-    this.driver = new ChromeDriver(this.service, configuration.options);
+    this.options.AddArgument($@"--user-data-dir={cfg.DATAFOLDER}");
+    this.options.AddArgument($@"--app={cfg.CONFIGURACAO["WEBSITE"]}");
+    this.options.BinaryLocation = cfg.CONFIGURACAO["GCHROME"];
+    this.driver = new ChromeDriver(this.service, options);
     this.driver.Manage().Window.Maximize();
-    this.configuration = configuration;
+    this.cfg = cfg;
   }
   protected virtual void Dispose(bool disposing)
   {

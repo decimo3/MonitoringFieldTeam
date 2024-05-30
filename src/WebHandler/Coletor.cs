@@ -10,7 +10,7 @@ public partial class Manager
     // Coleta de nome de recurso e par_pid
     for(var i = 1; true; i++)
     {
-      var recursos_path = this.configuration.pathfind["RECURSOS_"].Replace("_", i.ToString());
+      var recursos_path = this.cfg.CAMINHOS["RECURSOS_"].Replace("_", i.ToString());
       var recursos_query = this.driver.FindElements(By.XPath(recursos_path));
       if(!recursos_query.Any()) break;
       var recursos = recursos_query.Single();
@@ -18,7 +18,7 @@ public partial class Manager
       while(String.IsNullOrEmpty(texto))
       {
         // DONE - Scroll down para obter nome dos demais recursos
-        var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
+        var tabela = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CONTAINER"]));
         var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
         new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, 1).Perform();
         texto = recursos.FindElement(By.XPath(".//div")).Text;
@@ -32,7 +32,7 @@ public partial class Manager
     Console.WriteLine($"{DateTime.Now} - Retornando ao topo...");
     for(var a = 0; a < this.espelhos.Count; a++)
     {
-      var tabela = this.driver.FindElement(By.XPath(this.configuration.pathfind["CONTAINER"]));
+      var tabela = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CONTAINER"]));
       var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
       new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, -1).Perform();
     }
@@ -40,7 +40,7 @@ public partial class Manager
     Console.WriteLine($"{DateTime.Now} - Coletando atividades...");
     for(var i = 1; true; i++)
     {
-      var gantt_path = this.configuration.pathfind["ESPELHOS_"].Replace("_", i.ToString());
+      var gantt_path = this.cfg.CAMINHOS["ESPELHOS_"].Replace("_", i.ToString());
       var gantt_query = this.driver.FindElements(By.XPath(gantt_path));
       if(!gantt_query.Any()) break;
       var gantt = gantt_query.Single();
