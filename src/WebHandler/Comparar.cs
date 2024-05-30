@@ -80,11 +80,15 @@ namespace Automation.WebScraper
             continue;
           }
         }
-        if(espelho.queue_start_left > 0 && this.horario_atual < espelho.shift_left)
+        if(espelho.queue_start_left > 0)
         {
-          var diff = espelho.shift_left - espelho.queue_start_left;
-          Concatenar(espelho.recurso, "logou antes", (int)(diff/this.pixels_por_minuto));
+          if(this.horario_atual < espelho.shift_left)
+          {
+            var diff = espelho.shift_left - espelho.queue_start_left;
+            Concatenar(espelho.recurso, "logou antes", (int)(diff/this.pixels_por_minuto));
+          }
         }
+        if(espelho.queue_end_left > 0) continue;
         // DONE - Verificar se o recurso ainda tem notas pendentes
         if(this.horario_atual < janela_final)
         {
