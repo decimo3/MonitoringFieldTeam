@@ -9,6 +9,7 @@ public class Configuration
   public readonly Boolean ENVIRONMENT = false;
   public readonly Dictionary<String, String> CONFIGURACAO = new();
   public readonly Dictionary<String, String> CAMINHOS = new();
+  public readonly Dictionary<String, Double> HORARIOS = new();
   public readonly Dictionary<String, Int32> ESPERAS = new()
   {
     {"TOTAL", 60_000},
@@ -33,6 +34,12 @@ public class Configuration
     this.CONFIGURACAO = ArquivoConfiguracao("ofs.conf");
     this.PISCINAS = this.CONFIGURACAO["RECURSO"].Split(",").ToList();
     this.CAMINHOS = ArquivoConfiguracao("path.conf");
+    foreach(var horario in this.CONFIGURACAO["HORARIO"].Split(",").ToList())
+    {
+      var horario_string = horario.Split('|');
+      if(horario_string.Length != 2) continue;
+      this.HORARIOS.Add(horario_string.First(), Double.Parse(horario_string.Last().Replace('.', ',')));
+    }
   }
   private Dictionary<String,String> ArquivoConfiguracao(String filename, char delimiter = '=')
   {
