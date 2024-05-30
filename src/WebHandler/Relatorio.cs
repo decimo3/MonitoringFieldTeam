@@ -5,6 +5,13 @@ namespace Automation.WebScraper
   {
     public void Relatorio()
     {
+      var balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
+      if(!this.espelhos.Any())
+      {
+        this.contador_de_baldes = (this.contador_de_baldes + 1) % this.cfg.PISCINAS.Count;
+        System.Console.WriteLine($"{DateTime.Now} - O balde {balde_nome} está vazio!");
+        return;
+      }
       if(this.cfg.ENVIRONMENT)
       {
         var conf = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
