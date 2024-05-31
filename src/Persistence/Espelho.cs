@@ -20,7 +20,7 @@ namespace Automation.Persistence
     public Int32 queue_end_left { get; set; }
     public Int32 queue_end_start { get; set; }
     public List<Servico> servicos { get; set; } = new();
-    public List<Roteiro> roteiro { get; set; } = new();
+    public List<Roteiro> roteiros { get; set; } = new();
     public Espelho(String recurso, Int32 par_pid, Int32 style_top)
     {
       // Remove spaces before and after text;

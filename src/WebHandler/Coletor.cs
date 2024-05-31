@@ -114,16 +114,16 @@ public partial class Manager
           // Verifica se é uma alteração na tempo
           if(servico_classes.Contains("toaGantt-tl-gpsmark"))
           {
-            var roteiro = new Roteiro();
-            roteiro.start = Int32.Parse(servico.GetDomAttribute("start"));
-            roteiro.dur = Int32.Parse(servico.GetDomAttribute("dur"));
-            if(servico_classes.Contains("gps-status-normal")) roteiro.status = Roteiro.Status.normal;
-            if(servico_classes.Contains("gps-status-idle")) roteiro.status = Roteiro.Status.idle;
-            if(servico_classes.Contains("gps-status-alert")) roteiro.status = Roteiro.Status.alert;
+            var roteiros = new Roteiro();
+            roteiros.start = Int32.Parse(servico.GetDomAttribute("start"));
+            roteiros.dur = Int32.Parse(servico.GetDomAttribute("dur"));
+            if(servico_classes.Contains("gps-status-normal")) roteiros.status = Roteiro.Status.normal;
+            if(servico_classes.Contains("gps-status-idle")) roteiros.status = Roteiro.Status.idle;
+            if(servico_classes.Contains("gps-status-alert")) roteiros.status = Roteiro.Status.alert;
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
-            roteiro.style_width = estilos["width"];
-            roteiro.style_left = estilos["left"];
-            espelho.roteiro.Add(roteiro);
+            roteiros.style_width = estilos["width"];
+            roteiros.style_left = estilos["left"];
+            espelho.roteiros.Add(roteiros);
             continue;
           }
           if(servico_classes.Contains("toaGantt-tw"))
