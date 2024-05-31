@@ -1,9 +1,11 @@
 bin
 obj
 .www
-tmp
+.tmp
 .odl
 ofs.conf
 chromedriver.exe
 *.txt
 *.csv
+*.json
+*.html
