@@ -13,15 +13,15 @@ namespace Automation.WebScraper
         var janela_final = espelho.shift_left + espelho.shift_width;
         var janela_tamanho = janela_final - espelho.shift_left;
         var notas_pendentes = espelho.servicos.Where(s =>
-          s.data_activity_status == (int)Servico.Status.pending ||
-          s.data_activity_status == (int)Servico.Status.enroute ||
-          s.data_activity_status == (int)Servico.Status.started
+          s.data_activity_status == Servico.Status.pending ||
+          s.data_activity_status == Servico.Status.enroute ||
+          s.data_activity_status == Servico.Status.started
         ).OrderBy(r => r.start).ThenBy(s => s.dur).ToList();
         var nota_anterior = espelho.servicos.Where(s =>
-          s.data_activity_status == (int)Servico.Status.complete ||
-          s.data_activity_status == (int)Servico.Status.notdone
+          s.data_activity_status == Servico.Status.complete ||
+          s.data_activity_status == Servico.Status.notdone
         ).OrderByDescending(s => s.start).ThenByDescending(s => s.dur).FirstOrDefault();
-        var rota_atual = espelho.roteiro.OrderByDescending(r => r.start).ThenByDescending(r => r.dur).FirstOrDefault();
+        var rota_atual = espelho.roteiros.OrderByDescending(r => r.start).ThenByDescending(r => r.dur).FirstOrDefault();
         var nota_atual = notas_pendentes.FirstOrDefault();
         // DONE - Verificar se a janela do recurso está com horário mínimo
         // DONE - Adicionada exceção para equipes de vistoria do LIDE;
@@ -88,7 +88,7 @@ namespace Automation.WebScraper
           }
         }
         // DONE - Verificar se o recurso tem alguma nota `enroute` ou `started`
-        if(nota_atual == null || nota_atual.data_activity_status == (int)Servico.Status.pending)
+        if(nota_atual == null || nota_atual.data_activity_status == Servico.Status.pending)
         {
           if(nota_anterior == null)
           {
@@ -107,7 +107,7 @@ namespace Automation.WebScraper
           }
         }
 
-        if(nota_atual != null && nota_atual.data_activity_status == (int)Servico.Status.started)
+        if(nota_atual != null && nota_atual.data_activity_status == Servico.Status.started)
         {
           if(this.horario_atual > nota_atual.style_left + nota_atual.style_width)
           {
@@ -143,12 +143,12 @@ namespace Automation.WebScraper
             Concatenar(espelho.recurso, "encerrou deslocando", minutos_do_inicio_registro_de_rota);
             continue;
           }
-          if(nota_atual.data_activity_status == (int)Servico.Status.started)
+          if(nota_atual.data_activity_status == Servico.Status.started)
           {
             Concatenar(espelho.recurso, "deslocamento indevido", minutos_do_inicio_registro_de_rota);
             continue;
           }
-          if(nota_atual.data_activity_status == (int)Servico.Status.enroute)
+          if(nota_atual.data_activity_status == Servico.Status.enroute)
           {
             Concatenar(espelho.recurso, "deslocamento atrasado", minutos_do_inicio_registro_de_rota);
             continue;
