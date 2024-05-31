@@ -20,6 +20,8 @@ public class Startup
         WebHandler.Comparar();
         Console.WriteLine($"{DateTime.Now} - Exportando as análises...");
         WebHandler.Relatorio();
+        Console.WriteLine($"{DateTime.Now} - Realizando análise final...");
+        WebHandler.Finalizacao();
         if(cfg.ENVIRONMENT)
         {
           Console.WriteLine($"{DateTime.Now} - Realizando a captura de tela...");
