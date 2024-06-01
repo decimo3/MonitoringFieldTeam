@@ -9,10 +9,13 @@ namespace Automation.Persistence
     public Double logout_horario { get; set; }
     public Double login_considerado { get; set; }
     public Double logout_considerado { get; set; }
-    public Double tempo_checklist { get; set; }
-    public Double tempo_intervalo { get; set; }
+    public Double checklist_tempo { get; set; }
+    public Double checklist_considerado { get; set; }
+    public Double intervalo_tempo { get; set; }
+    public Double intervalo_considerado { get; set; }
     public Double tempo_indisponivel { get; set; }
-    public Double tempo_jornada { get; set; }
+    public Double jornada_tempo { get; set; }
+    public Double jornada_considerado { get; set; }
     public Double tempo_deslocando { get; set; }
     public Double tempo_executando { get; set; }
     public Double tempo_rejeitando { get; set; }
@@ -24,12 +27,13 @@ namespace Automation.Persistence
     public Double roteiro_alerta { get; set; }
     public Double roteiro_parado { get; set; }
     public Double roteiro_andando { get; set; }
+    public Double roteiro_desligado { get; set; }
     // Produto da ocupacao pela jornada
     public Double proporcao_ocupacao { get; set; }
     // Produto do executando pela ocupacao
-    public Double proporcao_eficacia { get; set; }
-    // Produto da eficacia pelas estimativas
     public Double proporcao_eficiencia { get; set; }
+    // Produto da eficacia pelas estimativas
+    public Double proporcao_eficacia { get; set; }
     // ocupacao * eficacia * eficiencia
     public Double proporcao_indice { get; set; }
   }

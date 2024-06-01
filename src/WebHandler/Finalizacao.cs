@@ -24,7 +24,7 @@ namespace Automation.WebScraper
         relatorio.logout_horario = GetTimeOnly(espelho.queue_end_start);
         relatorio.login_considerado = relatorio.login_horario < relatorio.login_calendario ? relatorio.login_horario : relatorio.login_calendario;
         relatorio.logout_considerado = relatorio.logout_horario > relatorio.logout_calendario ? relatorio.logout_horario : relatorio.logout_calendario;
-        relatorio.tempo_jornada = relatorio.logout_considerado - relatorio.login_considerado;
+        relatorio.jornada_tempo = relatorio.logout_considerado - relatorio.login_considerado;
         foreach (var roteiro in espelho.roteiros)
         {
           switch (roteiro.status)
@@ -40,17 +40,23 @@ namespace Automation.WebScraper
             break;
           }
         }
+        var roteiro_registrando = relatorio.roteiro_andando + relatorio.roteiro_parado + relatorio.roteiro_alerta;
+        relatorio.roteiro_desligado = relatorio.jornada_tempo - roteiro_registrando;
         foreach (var servico in espelho.servicos)
         {
           servico.innerText = servico.innerText.Trim();
           if(servico.innerText == "Início de turno")
           {
-            relatorio.tempo_checklist += GetTimeOnly(servico.data_activity_duration);
+            var checklist_tolerancia = GetTimeOnly(30);
+            relatorio.checklist_tempo += GetTimeOnly(servico.data_activity_duration);
+            relatorio.checklist_considerado = relatorio.checklist_tempo > checklist_tolerancia ? checklist_tolerancia : relatorio.checklist_tempo;
             continue;
           }
           if(servico.innerText == "Intervalo para almoço")
           {
-            relatorio.tempo_intervalo += GetTimeOnly(servico.data_activity_duration);
+            var intervalo_tolerancia = GetTimeOnly(60);
+            relatorio.intervalo_tempo += GetTimeOnly(servico.data_activity_duration);
+            relatorio.intervalo_considerado = relatorio.intervalo_tempo > intervalo_tolerancia ? intervalo_tolerancia : relatorio.intervalo_tempo;
             continue;
           }
           if(servico.innerText == "INDISPONIBILIDADE")
@@ -71,11 +77,14 @@ namespace Automation.WebScraper
             continue;
           }
         }
+        relatorio.jornada_considerado = relatorio.jornada_tempo - (relatorio.intervalo_considerado + relatorio.checklist_considerado);
         relatorio.tempo_eficiencia = relatorio.tempo_executando + relatorio.tempo_deslocando;
         relatorio.tempo_ocupacao = relatorio.tempo_eficiencia + relatorio.tempo_rejeitando;
-        relatorio.tempo_ociosidade = relatorio.tempo_jornada - relatorio.tempo_ocupacao;
-        relatorio.proporcao_ocupacao = relatorio.tempo_ocupacao / relatorio.tempo_jornada;
-        relatorio.proporcao_eficiencia = relatorio.tempo_eficiencia / relatorio.proporcao_ocupacao;
+        relatorio.tempo_ociosidade = relatorio.jornada_considerado - relatorio.tempo_ocupacao;
+        relatorio.proporcao_ocupacao = relatorio.tempo_ocupacao / relatorio.jornada_considerado;
+        relatorio.proporcao_eficiencia = relatorio.tempo_eficiencia / relatorio.tempo_ocupacao;
+        relatorio.proporcao_eficacia = 1; // TODO - Coletar o valor correto de acordo com o relatório do IDG
+        relatorio.proporcao_indice = relatorio.proporcao_ocupacao * relatorio.proporcao_eficiencia * relatorio.proporcao_eficacia;
         relatorios.Add(relatorio);
       }
       var balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
