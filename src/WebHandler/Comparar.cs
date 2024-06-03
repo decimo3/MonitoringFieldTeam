@@ -32,20 +32,19 @@ namespace Automation.WebScraper
         if(!this.cfg.HORARIOS.TryGetValue(prefixo_do_recurso, out minutos_esperados_para_a_janela))
           minutos_esperados_para_a_janela = EncontrarChave(this.cfg.HORARIOS, prefixo_do_recurso, numero_do_recurso);
 
-        if(minutos_esperados_para_a_janela != 0)
+        if(minutos_esperados_para_a_janela != 0 && espelho.queue_start_start > 0)
         {
-        var tamanho_esperado_para_a_janela = System.Math.Ceiling(minutos_esperados_para_a_janela * this.pixels_por_minuto);
-        if(janela_tamanho < tamanho_esperado_para_a_janela)
+        if(espelho.shift_dur < minutos_esperados_para_a_janela)
         {
-          Concatenar(espelho.recurso, "jornada encurtada", (int)(janela_tamanho/this.pixels_por_minuto));
+          Concatenar(espelho.recurso, "jornada encurtada", espelho.shift_dur);
         }
-        if(janela_tamanho > tamanho_esperado_para_a_janela)
+        if(espelho.shift_dur > minutos_esperados_para_a_janela)
         {
-          Concatenar(espelho.recurso, "jornada extendida", (int)(janela_tamanho/this.pixels_por_minuto));
+          Concatenar(espelho.recurso, "jornada extendida", espelho.shift_dur);
         }
         }
         // DONE - Verificar se o recurso já está na janela de horário
-        if(this.horario_atual < espelho.shift_left) continue;
+        if(this.horario_atual < espelho.shift_left && espelho.queue_start_start < 0) continue;
         // DONE - Verificar se o recurso já finalizou a rota e se ainda está na janela de horário
         if(espelho.queue_end_left > 0 && this.horario_atual < janela_final)
         {
