@@ -6,8 +6,8 @@ public partial class Manager
   {
     // Verifica se não foi direcionado a página de logout
     if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"]) System.Environment.Exit(1);
-    var balde_nome = this.cfg.PISCINAS[this.contador_de_baldes];
-    var sub_baldes = balde_nome.Split('>');
+    var piscina = this.cfg.PISCINAS[this.contador_de_baldes];
+    var sub_baldes = piscina.Split('>');
     var baldes = this.driver.FindElements(By.ClassName("edt-item"));
     var i = 0;
     var j = 0;

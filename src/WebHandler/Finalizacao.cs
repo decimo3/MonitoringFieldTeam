@@ -11,7 +11,6 @@ namespace Automation.WebScraper
     }
     public void Finalizacao()
     {
-      if(!this.espelhos.Any()) return;
       if(!this.espelhos.All(e => e.queue_end_left > 0)) return;
       var relatorios = new List<Relatorio>();
       foreach (var espelho in espelhos)
@@ -87,8 +86,7 @@ namespace Automation.WebScraper
         relatorio.proporcao_indice = relatorio.proporcao_ocupacao * relatorio.proporcao_eficiencia * relatorio.proporcao_eficacia;
         relatorios.Add(relatorio);
       }
-      var balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
-      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{balde_nome}.csv";
+      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.csv";
       var csv = TableMaker<Relatorio>.Serialize(relatorios);
       System.IO.File.WriteAllText(filename, csv);
       System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");

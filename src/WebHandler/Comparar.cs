@@ -7,7 +7,6 @@ namespace Automation.WebScraper
   {
     public void Comparar()
     {
-      if(!this.espelhos.Any()) return;
       foreach (var espelho in this.espelhos)
       {
         var janela_final = espelho.shift_left + espelho.shift_width;

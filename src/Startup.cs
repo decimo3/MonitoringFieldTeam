@@ -10,12 +10,15 @@ public class Startup
     {
       try
       {
+        if(!WebHandler.TemFinalizacao())
+        {
         Console.WriteLine($"{DateTime.Now} - Atualizando a página...");
         WebHandler.Atualizar();
         Console.WriteLine($"{DateTime.Now} - Atualizando os parâmetros...");
         WebHandler.Parametrizar();
         Console.WriteLine($"{DateTime.Now} - Coletando as informações...");
-        WebHandler.Coletor();
+        if(WebHandler.Coletor())
+        {
         Console.WriteLine($"{DateTime.Now} - Comparando os resultados...");
         WebHandler.Comparar();
         Console.WriteLine($"{DateTime.Now} - Exportando as análises...");
@@ -27,6 +30,9 @@ public class Startup
           Console.WriteLine($"{DateTime.Now} - Realizando a captura de tela...");
           WebHandler.Fotografo();
         }
+        }
+        }
+        WebHandler.ProximoBalde();
       }
       catch (System.Exception erro)
       {

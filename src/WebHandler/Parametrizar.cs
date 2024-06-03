@@ -21,5 +21,16 @@ namespace Automation.WebScraper
       this.pixels_por_hora = pixel_1th_hora - pixel_2th_hora;
       this.pixels_por_minuto = this.pixels_por_hora / 60;
     }
+    public void ProximoBalde()
+    {
+      this.contador_de_baldes = (this.contador_de_baldes + 1) % this.cfg.PISCINAS.Count;
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
+    }
+    public bool TemFinalizacao()
+    {
+      this.balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
+      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.csv";
+      return System.IO.File.Exists(filename);
+    }
   }
 }

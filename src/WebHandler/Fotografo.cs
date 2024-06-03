@@ -4,9 +4,7 @@ namespace Automation.WebScraper
   {
     public void Fotografo()
     {
-      if(!this.espelhos.Any()) return;
-      var balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
-      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd_HHmmss")}_{balde_nome}.png";
+      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.png";
       var largura_script = "return document.body.parentNode.scrollWidth";
       var tamanho_script = "return document.body.parentNode.scrollHeight";
       var largura_retorno = (Int64)this.driver.ExecuteScript(largura_script);

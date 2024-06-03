@@ -4,7 +4,7 @@ using OpenQA.Selenium.Interactions;
 namespace Automation.WebScraper;
 public partial class Manager
 {
-  public void Coletor()
+  public bool Coletor()
   {
     Console.WriteLine($"{DateTime.Now} - Coletando espelhos...");
     // Coleta de nome de recurso e par_pid
@@ -27,7 +27,11 @@ public partial class Manager
       var style_top = ColetarStyle(recursos.GetDomAttribute("style"))["top"];
       this.espelhos.Add(new Espelho(texto, par_pid, style_top));
     }
-    if(!this.espelhos.Any()) return;
+    if(!this.espelhos.Any())
+    {
+      System.Console.WriteLine($"{DateTime.Now} - O balde {this.balde_nome} está vazio!");
+      return false;
+    }
     // Retornar até o topo da lista
     Console.WriteLine($"{DateTime.Now} - Retornando ao topo...");
     for(var a = 0; a < this.espelhos.Count; a++)
@@ -145,6 +149,7 @@ public partial class Manager
         }
       }
     }
+    return true;
   }
   public static Dictionary<String,Int32> ColetarStyle(String texto_estilo)
   {
