@@ -2,7 +2,7 @@ using Automation.Persistence;
 namespace Automation;
 public static class TableMaker<T>
 {
-  public static readonly char separador = '|';
+  public static readonly char separador = ';';
   public static String Serialize(List<T> relatorios)
   {
     if (relatorios == null || relatorios.Count == 0)
@@ -20,6 +20,8 @@ public static class TableMaker<T>
   }
   public static Dictionary<String, Int32> Cabecalho(T obj)
   {
+    if (obj == null)
+      throw new ArgumentException("The report cannot be null.");
     var contador = 0;
     Type tipo = obj.GetType();
     var cabecalhos = new Dictionary<String, Int32>();
@@ -33,6 +35,8 @@ public static class TableMaker<T>
   }
   public static List<String> Rodape(T obj, Dictionary<String,Int32> keys)
   {
+    if (obj == null)
+      throw new ArgumentException("The report cannot be null.");
     Type tipo = obj.GetType();
     var rodape = new List<String>(new string[keys.Count]);
     var atributos = tipo.GetProperties();
@@ -42,7 +46,7 @@ public static class TableMaker<T>
       var value = atributo.GetValue(obj);
       if(value != null)
       {
-        rodape[index] = value.ToString();
+        rodape[index] = value.ToString() ?? String.Empty;
       }
     }
     return rodape;
