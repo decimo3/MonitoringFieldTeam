@@ -29,8 +29,9 @@ namespace Automation.WebScraper
     public bool TemFinalizacao()
     {
       this.balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
-      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.csv";
-      return System.IO.File.Exists(filename);
+      var filename_done = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
+      var filename_send = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.send.csv";
+      return System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
     }
   }
 }

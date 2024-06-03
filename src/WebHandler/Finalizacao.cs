@@ -86,7 +86,7 @@ namespace Automation.WebScraper
         relatorio.proporcao_indice = relatorio.proporcao_ocupacao * relatorio.proporcao_eficiencia * relatorio.proporcao_eficacia;
         relatorios.Add(relatorio);
       }
-      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.csv";
+      var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
       var csv = TableMaker<Relatorio>.Serialize(relatorios);
       System.IO.File.WriteAllText(filename, csv);
       System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
