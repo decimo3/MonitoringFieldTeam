@@ -36,6 +36,27 @@
         "${workspaceFolder}/src/monitoring-fieldteam.csproj"
       ],
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "kill_chromedriver",
+      "command": "taskkill",
+      "type": "shell",
+      "args": [
+        "/F",
+        "/IM",
+        "chromedriver.exe"
+      ],
+      "dependsOn": "kill_chromebrowser"
+    },
+    {
+      "label": "kill_chromebrowser",
+      "command": "taskkill",
+      "type": "shell",
+      "args": [
+        "/F",
+        "/IM",
+        "chrome.exe"
+      ],
     }
   ]
 }
