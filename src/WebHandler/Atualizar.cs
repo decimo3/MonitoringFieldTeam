@@ -50,7 +50,7 @@ public partial class Manager
     var checkbox_exibir_rota = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CHECK_ROUTE"]));
     if(!checkbox_exibir_rota.Selected) checkbox_exibir_rota.Click();
     // Ajusta o zoom da página para visualizar toda linha do tempo
-    this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["ZOOM_FIT"])).Click();
+    // this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["ZOOM_FIT"])).Click();
     // Aplicar as preferências de seleções
     this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
     System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
