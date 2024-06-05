@@ -22,6 +22,9 @@ namespace Automation.WebScraper
         ).OrderByDescending(s => s.start).ThenByDescending(s => s.dur).FirstOrDefault();
         var rota_atual = espelho.roteiros.OrderByDescending(r => r.start).ThenByDescending(r => r.dur).FirstOrDefault();
         var nota_atual = notas_pendentes.FirstOrDefault();
+        // DONE - Verificar se o recurso já está na janela de horário
+        if(this.horario_atual < espelho.shift_left && espelho.queue_start_start < 0) continue;
+        if(this.horario_atual > janela_final && espelho.queue_end_start > 0) continue;
         // DONE - Verificar se a janela do recurso está com horário mínimo
         // DONE - Adicionada exceção para equipes de vistoria do LIDE;
         // [09:00 - 9] // [09:50 - 9.83333]
@@ -43,8 +46,6 @@ namespace Automation.WebScraper
           Concatenar(espelho.recurso, "jornada extendida", espelho.shift_dur);
         }
         }
-        // DONE - Verificar se o recurso já está na janela de horário
-        if(this.horario_atual < espelho.shift_left && espelho.queue_start_start < 0) continue;
         // DONE - Verificar se o recurso já finalizou a rota e se ainda está na janela de horário
         if(espelho.queue_end_left > 0 && this.horario_atual < janela_final)
         {
