@@ -23,7 +23,7 @@ namespace Automation.Persistence
     public Double estima_executando { get; set; }
     public Double tempo_ocupacao { get; set; }
     public Double tempo_ociosidade { get; set; }
-    public Double tempo_eficiencia { get; set; }
+    public Double tempo_produtivo { get; set; }
     public Double roteiro_alerta { get; set; }
     public Double roteiro_parado { get; set; }
     public Double roteiro_andando { get; set; }
@@ -31,10 +31,10 @@ namespace Automation.Persistence
     // Produto da ocupacao pela jornada
     public Double proporcao_ocupacao { get; set; }
     // Produto do executando pela ocupacao
+    public Double proporcao_produtivo { get; set; }
+    // Produto da produtivo pelas estimativas
     public Double proporcao_eficiencia { get; set; }
-    // Produto da eficacia pelas estimativas
-    public Double proporcao_eficacia { get; set; }
-    // ocupacao * eficacia * eficiencia
+    // ocupacao * produtivo * eficiencia
     public Double proporcao_indice { get; set; }
   }
 }

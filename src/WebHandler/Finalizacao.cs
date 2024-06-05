@@ -77,13 +77,13 @@ namespace Automation.WebScraper
           }
         }
         relatorio.jornada_considerado = relatorio.jornada_tempo - (relatorio.intervalo_considerado + relatorio.checklist_considerado);
-        relatorio.tempo_eficiencia = relatorio.tempo_executando + relatorio.tempo_deslocando;
-        relatorio.tempo_ocupacao = relatorio.tempo_eficiencia + relatorio.tempo_rejeitando;
+        relatorio.tempo_produtivo = relatorio.tempo_executando + relatorio.tempo_deslocando;
+        relatorio.tempo_ocupacao = relatorio.tempo_produtivo + relatorio.tempo_rejeitando;
         relatorio.tempo_ociosidade = relatorio.jornada_considerado - relatorio.tempo_ocupacao;
         relatorio.proporcao_ocupacao = relatorio.tempo_ocupacao / relatorio.jornada_considerado;
-        relatorio.proporcao_eficiencia = relatorio.tempo_eficiencia / relatorio.tempo_ocupacao;
-        relatorio.proporcao_eficacia = 1; // TODO - Coletar o valor correto de acordo com o relatório do IDG
-        relatorio.proporcao_indice = relatorio.proporcao_ocupacao * relatorio.proporcao_eficiencia * relatorio.proporcao_eficacia;
+        relatorio.proporcao_produtivo = relatorio.tempo_produtivo / relatorio.tempo_ocupacao;
+        relatorio.proporcao_eficiencia = 1; // TODO - Coletar o valor correto de acordo com o relatório do IDG
+        relatorio.proporcao_indice = relatorio.proporcao_ocupacao * relatorio.proporcao_produtivo * relatorio.proporcao_eficiencia;
         relatorios.Add(relatorio);
       }
       var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
