@@ -26,16 +26,11 @@ namespace Automation.WebScraper
         if(this.horario_atual < espelho.shift_left && espelho.queue_start_start < 0) continue;
         if(this.horario_atual > janela_final && espelho.queue_end_start > 0) continue;
         // DONE - Verificar se a janela do recurso está com horário mínimo
-        // DONE - Adicionada exceção para equipes de vistoria do LIDE;
-        // [09:00 - 9] // [09:50 - 9.83333]
         Int32 minutos_esperados_para_a_janela = 0;
         var prefixo_do_recurso = espelho.recurso.Substring(0, espelho.recurso.Length - 3);
         var numero_do_recurso = Int32.Parse(espelho.recurso.Substring(espelho.recurso.Length - 3));
-        
-        if(!this.cfg.HORARIOS.TryGetValue(prefixo_do_recurso, out minutos_esperados_para_a_janela))
-          minutos_esperados_para_a_janela = EncontrarChave(this.cfg.HORARIOS, prefixo_do_recurso, numero_do_recurso);
-
-        if(minutos_esperados_para_a_janela != 0 && espelho.queue_start_start > 0)
+        minutos_esperados_para_a_janela = EncontrarChave(this.cfg.HORARIOS, prefixo_do_recurso, numero_do_recurso);
+        if(minutos_esperados_para_a_janela != 0 && espelho.queue_start_start > 0 && espelho.queue_end_start < 0)
         {
         if(espelho.shift_dur < minutos_esperados_para_a_janela)
         {
@@ -165,6 +160,8 @@ namespace Automation.WebScraper
     }
     public Int32 EncontrarChave(Dictionary<String, Int32> dicionario, String prefixo, Int32 numero)
     {
+      if(this.cfg.HORARIOS.TryGetValue(prefixo, out Int32 minutos_esperados_para_a_janela))
+        return minutos_esperados_para_a_janela;
       var chaves = dicionario.Keys.ToList();
       var padrao = @"^([A-Z]{3,5})[\[]([0-9]{1,2})\.([0-9]{1,2})[\]]$";
       var regex = new Regex(padrao);
