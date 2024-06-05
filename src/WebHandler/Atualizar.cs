@@ -54,6 +54,7 @@ public partial class Manager
     // Aplicar as preferências de seleções
     this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
     System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
+    this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
     this.espelhos = new();
     this.relatorios = new();
     this.agora = DateTime.Now;

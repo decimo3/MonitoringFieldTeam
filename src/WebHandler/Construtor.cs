@@ -15,7 +15,8 @@ public partial class Manager : IDisposable
   public Double pixels_por_hora { get; set; }
   public Double pixels_por_minuto { get; set; }
   public Int32 contador_de_baldes { get; set; }
-  public String balde_nome  { get; set; } = String.Empty;
+  public String balde_nome { get; set; } = String.Empty;
+  public DateOnly datalabel { get; set; }
   public Manager(Configuration cfg)
   {
     this.service = cfg.ENVIRONMENT ?
