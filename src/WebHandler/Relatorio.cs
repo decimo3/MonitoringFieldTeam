@@ -9,7 +9,7 @@ namespace Automation.WebScraper
       {
         var conf = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
         var json = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.espelhos, conf);
-        var filename = $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.json";
+        var filename = $"{this.cfg.DOWNFOLDER}\\{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.json";
         System.IO.File.WriteAllText(filename, json);
         System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
       }
@@ -19,7 +19,7 @@ namespace Automation.WebScraper
         this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
         this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
         var texto = this.relatorios.ToString();
-        var filename = this.cfg.ENVIRONMENT ? $"{this.cfg.DOWNFOLDER}/{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.txt" : "relatorio_ofs.txt";
+        var filename = this.cfg.ENVIRONMENT ? $"{this.cfg.DOWNFOLDER}\\{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.txt" : "relatorio_ofs.txt";
         System.IO.File.WriteAllText(filename, texto);
         System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
         System.Console.WriteLine(texto);
