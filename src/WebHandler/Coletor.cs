@@ -14,7 +14,7 @@ public partial class Manager
       var recursos_query = this.driver.FindElements(By.XPath(recursos_path));
       if(!recursos_query.Any()) break;
       var recursos = recursos_query.Single();
-      var texto = recursos.FindElement(By.XPath(".//div")).Text;
+      var texto = recursos.GetAttribute("innerText");
       while(String.IsNullOrEmpty(texto))
       {
         // DONE - Scroll down para obter nome dos demais recursos
@@ -89,7 +89,7 @@ public partial class Manager
             var trajeto = servico.FindElement(By.XPath(".//div"));
             servico_obj.travel_dur = Int32.Parse(trajeto.GetDomAttribute("dur"));
             servico_obj.travel_style_width = ColetarStyle(servico.GetDomAttribute("style"))["width"];
-            servico_obj.innerText = servico.Text;
+            servico_obj.innerText = servico.GetAttribute("innerText");
             espelho.servicos.Add(servico_obj);
           }
           // Verifica se é uma janela de tempo
