@@ -15,14 +15,6 @@ public partial class Manager
       if(!recursos_query.Any()) break;
       var recursos = recursos_query.Single();
       var texto = recursos.GetAttribute("innerText");
-      while(String.IsNullOrEmpty(texto))
-      {
-        // DONE - Scroll down para obter nome dos demais recursos
-        var tabela = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CONTAINER"]));
-        var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
-        new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, 1).Perform();
-        texto = recursos.FindElement(By.XPath(".//div")).Text;
-      }
       var par_pid = Int32.Parse(recursos.GetAttribute("par_pid"));
       var style_top = ColetarStyle(recursos.GetDomAttribute("style"))["top"];
       this.espelhos.Add(new Espelho(texto, par_pid, style_top));
@@ -31,14 +23,6 @@ public partial class Manager
     {
       System.Console.WriteLine($"{DateTime.Now} - O balde {this.balde_nome} está vazio!");
       return false;
-    }
-    // Retornar até o topo da lista
-    Console.WriteLine($"{DateTime.Now} - Retornando ao topo...");
-    for(var a = 0; a < this.espelhos.Count; a++)
-    {
-      var tabela = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CONTAINER"]));
-      var scrollOrigin = new WheelInputDevice.ScrollOrigin { Element = tabela };
-      new Actions(this.driver).ScrollFromOrigin(scrollOrigin, 0, -1).Perform();
     }
     // Pecorre a lista de linhas do gráfico Gantt
     Console.WriteLine($"{DateTime.Now} - Coletando atividades...");
