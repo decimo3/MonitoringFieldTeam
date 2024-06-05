@@ -11,7 +11,18 @@ namespace Automation.WebScraper
     }
     public void Finalizacao()
     {
-      if(!this.espelhos.All(e => e.queue_end_left > 0)) return;
+      var pendentes = this.espelhos.Where(e => e.queue_end_left < 0).ToList();
+      if(pendentes.Count() > 1) return;
+      var ultima_equipe = pendentes.SingleOrDefault();
+      if(ultima_equipe != null)
+      {
+        if(ultima_equipe.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return;
+        var ultimo_servico = ultima_equipe.servicos.OrderByDescending(s => s.start).First();
+        var hora_encerramento_ultima_nota = TimeSpan.FromMinutes(ultimo_servico.start + ultimo_servico.dur);
+        var hora_limite_para_encerramento = TimeOnly.FromDateTime(DateTime.Now.AddHours(-1)).ToTimeSpan();
+        if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return;
+        this.espelhos.Where(e => e.recurso == ultima_equipe.recurso).Single().queue_end_start = Int32.MaxValue;
+      }
       var relatorios = new List<Relatorio>();
       foreach (var espelho in espelhos)
       {
