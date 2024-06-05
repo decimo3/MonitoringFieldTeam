@@ -36,10 +36,10 @@ public class Startup
       }
       catch (System.Exception erro)
       {
-        WebHandler.Refresh();
         Console.WriteLine($"{DateTime.Now} - Houve um problema na coleta...");
         Console.WriteLine(erro.Message);
         Console.WriteLine(erro.StackTrace);
+        WebHandler.Refresh();
       }
     }
   }
