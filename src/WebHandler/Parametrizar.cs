@@ -31,7 +31,9 @@ namespace Automation.WebScraper
       this.balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
       var filename_done = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
       var filename_send = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.send.csv";
-      return System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
+      var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
+      if(tem_finalizacao == true && this.datalabel < DateOnly.FromDateTime(DateTime.Now)) System.Environment.Exit(0);
+      return tem_finalizacao;
     }
   }
 }
