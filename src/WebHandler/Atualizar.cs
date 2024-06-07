@@ -13,6 +13,11 @@ public partial class Manager
     var j = 0;
     while(true)
     {
+      if(i == baldes.Count)
+      {
+        Console.WriteLine($"O balde {sub_baldes[j]} não foi encontrado!");
+        ProximoBalde();
+      }
       var texto = baldes[i].GetAttribute("innerText");
       if(String.IsNullOrEmpty(texto)) continue;
       if(texto.Contains(sub_baldes[j]))
