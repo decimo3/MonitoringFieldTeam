@@ -42,8 +42,10 @@ public partial class Manager
         var servicos = gantt.FindElements(By.XPath(".//div"));
         if(!servicos.Any()) break;
         // Pecorre a lista de atividades filhos do elemento
+        var j = 0;
         foreach (var servico in servicos)
         {
+          SimpleProgressBar(j, servicos.Count, espelho.recurso);
           var servico_classes = servico.GetAttribute("class").Split(" ");
           // Verifica se é uma ordem de servico
           if(servico_classes.Contains("toaGantt-tb"))
@@ -51,6 +53,7 @@ public partial class Manager
             if(servico_classes.Contains("final"))
             {
               espelho.final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
+              j++;
               continue;
             }
             var servico_obj = new Servico();
@@ -75,6 +78,8 @@ public partial class Manager
             servico_obj.travel_style_width = ColetarStyle(servico.GetDomAttribute("style"))["width"];
             servico_obj.innerText = servico.GetAttribute("innerText");
             espelho.servicos.Add(servico_obj);
+            j++;
+            continue;
           }
           // Verifica se é uma janela de tempo
           if(servico_classes.Contains("toaGantt-tl-shift"))
@@ -84,6 +89,7 @@ public partial class Manager
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             espelho.shift_left = estilos["left"];
             espelho.shift_width = estilos["width"];
+            j++;
             continue;
           }
           // verifica se é uma alteração da jornada
@@ -93,18 +99,21 @@ public partial class Manager
             {
               espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              j++;
               continue;
             }
             if(servico_classes.Contains("toaGantt-queue-reactivated"))
             {
               espelho.queue_reactivated_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_reactivated_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              j++;
               continue;
             }
             if(servico_classes.Contains("toaGantt-queue-end"))
             {
               espelho.queue_end_start = Int32.Parse(servico.GetDomAttribute("start"));
               espelho.queue_end_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              j++;
               continue;
             }
           }
@@ -121,6 +130,7 @@ public partial class Manager
             roteiros.style_width = estilos["width"];
             roteiros.style_left = estilos["left"];
             espelho.roteiros.Add(roteiros);
+            j++;
             continue;
           }
           if(servico_classes.Contains("toaGantt-tw"))
@@ -128,8 +138,10 @@ public partial class Manager
             var estilos = ColetarStyle(servico.GetDomAttribute("style"));
             espelho.tw_alert_display = (estilos["display"] != 0) ? true : false;
             espelho.tw_alert_left = estilos["left"];
+            j++;
             continue;
           }
+          j++;
         }
       }
     }
