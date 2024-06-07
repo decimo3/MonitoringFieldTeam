@@ -26,6 +26,7 @@ namespace Automation.WebScraper
       {
         var relatorio = new Relatorio();
         relatorio.recurso = espelho.recurso;
+        relatorio.data_referencia = this.datalabel;
         relatorio.login_calendario = GetTimeOnly(espelho.shift_start);
         relatorio.login_horario = GetTimeOnly(espelho.queue_start_start);
         relatorio.logout_calendario = GetTimeOnly(espelho.shift_start + espelho.shift_dur);
