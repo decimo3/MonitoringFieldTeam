@@ -1,8 +1,8 @@
 bin
 obj
-.www
-.tmp
-.odl
+www
+tmp
+odl
 ofs.conf
 chromedriver.exe
 *.txt

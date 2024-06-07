@@ -21,9 +21,9 @@ public class Configuration
   {
     this.ENVIRONMENT = System.Environment.GetCommandLineArgs().Contains("debug");
 
-    this.DATAFOLDER = @$"{System.IO.Directory.GetCurrentDirectory()}\.www";
+    this.DATAFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\www";
     if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
-    this.DOWNFOLDER = @$"{System.IO.Directory.GetCurrentDirectory()}\.odl";
+    this.DOWNFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\odl";
     if(!System.IO.Directory.Exists(this.DOWNFOLDER)) System.IO.Directory.CreateDirectory(this.DOWNFOLDER);
 
     if(System.Environment.GetCommandLineArgs().Contains("slower"))
