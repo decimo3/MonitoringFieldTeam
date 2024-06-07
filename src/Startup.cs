@@ -6,6 +6,11 @@ public class Startup
     var cfg = new Configuration();
     using var WebHandler = new WebScraper.Manager(cfg);
     WebHandler.Autenticar();
+    if(cfg.ENVIRONMENT)
+    {
+      Console.WriteLine($"{DateTime.Now} - Selecione a data desejada e aperte alguma tecla para continuar.");
+      Console.Read();
+    }
     while(true)
     {
       try
