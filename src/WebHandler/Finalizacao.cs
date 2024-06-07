@@ -21,7 +21,7 @@ namespace Automation.WebScraper
         if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return;
         pendente.queue_end_start = (int)TimeOnly.FromDateTime(DateTime.Now).ToTimeSpan().TotalMinutes + 1440;
       }
-      var relatorios = new List<Relatorio>();
+      var relatorios = new List<Relatorio_DTO>();
       foreach (var espelho in espelhos)
       {
         var relatorio = new Relatorio();
@@ -94,10 +94,11 @@ namespace Automation.WebScraper
         relatorio.proporcao_produtivo = relatorio.tempo_produtivo / relatorio.tempo_ocupacao;
         relatorio.proporcao_eficiencia = 1; // TODO - Coletar o valor correto de acordo com o relatório do IDG
         relatorio.proporcao_indice = relatorio.proporcao_ocupacao * relatorio.proporcao_produtivo * relatorio.proporcao_eficiencia;
-        relatorios.Add(relatorio);
+        var relatorio_dto = new Relatorio_DTO(relatorio);
+        relatorios.Add(relatorio_dto);
       }
       var filename = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
-      var csv = TableMaker<Relatorio>.Serialize(relatorios);
+      var csv = TableMaker<Relatorio_DTO>.Serialize(relatorios);
       System.IO.File.WriteAllText(filename, csv);
       System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
     }

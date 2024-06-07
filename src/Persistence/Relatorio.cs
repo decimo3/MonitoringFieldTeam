@@ -2,6 +2,7 @@ namespace Automation.Persistence
 {
   public class Relatorio
   {
+    public DateOnly data_referencia { get; set; }
     public String recurso { get; set; } = String.Empty;
     public Double login_calendario { get; set; }
     public Double logout_calendario { get; set; }
