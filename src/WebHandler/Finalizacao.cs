@@ -12,16 +12,14 @@ namespace Automation.WebScraper
     public void Finalizacao()
     {
       var pendentes = this.espelhos.Where(e => e.queue_end_left < 0).ToList();
-      if(pendentes.Count() > 1) return;
-      var ultima_equipe = pendentes.SingleOrDefault();
-      if(ultima_equipe != null)
+      foreach (var pendente in pendentes)
       {
-        if(ultima_equipe.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return;
-        var ultimo_servico = ultima_equipe.servicos.OrderByDescending(s => s.start).First();
+        if(pendente.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return;
+        var ultimo_servico = pendente.servicos.OrderBy(s => s.start).First();
         var hora_encerramento_ultima_nota = TimeSpan.FromMinutes(ultimo_servico.start + ultimo_servico.dur);
-        var hora_limite_para_encerramento = TimeOnly.FromDateTime(DateTime.Now.AddHours(-1)).ToTimeSpan();
+        var hora_limite_para_encerramento = hora_encerramento_ultima_nota.Add(new TimeSpan(hours: 2, minutes: 0, seconds: 0));
         if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return;
-        this.espelhos.Where(e => e.recurso == ultima_equipe.recurso).Single().queue_end_start = Int32.MaxValue;
+        pendente.queue_end_start = (int)TimeOnly.FromDateTime(DateTime.Now).ToTimeSpan().TotalMinutes + 1440;
       }
       var relatorios = new List<Relatorio>();
       foreach (var espelho in espelhos)
