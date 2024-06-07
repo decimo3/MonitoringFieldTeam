@@ -51,7 +51,8 @@ namespace Automation.WebScraper
           }
         }
         var roteiro_registrando = relatorio.roteiro_andando + relatorio.roteiro_parado + relatorio.roteiro_alerta;
-        relatorio.roteiro_desligado = relatorio.jornada_tempo - roteiro_registrando;
+        if(roteiro_registrando > relatorio.jornada_tempo) relatorio.roteiro_desligado = 0;
+        else relatorio.roteiro_desligado = relatorio.jornada_tempo - roteiro_registrando;
         foreach (var servico in espelho.servicos)
         {
           servico.innerText = servico.innerText.Trim();
