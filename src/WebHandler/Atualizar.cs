@@ -15,8 +15,8 @@ public partial class Manager
     {
       if(i == baldes.Count)
       {
-        Console.WriteLine($"O balde {sub_baldes[j]} não foi encontrado!");
         ProximoBalde();
+        throw new InvalidOperationException($"O balde {sub_baldes[j]} não foi encontrado!");
       }
       var texto = baldes[i].GetAttribute("innerText");
       if(String.IsNullOrEmpty(texto)) continue;
