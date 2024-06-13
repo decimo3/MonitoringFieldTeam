@@ -1,4 +1,4 @@
-﻿namespace Automation;
+namespace Automation;
 public class Startup
 {
   public static void Main(string[] args)
@@ -18,7 +18,7 @@ public class Startup
         if(!WebHandler.TemFinalizacao())
         {
         Console.WriteLine($"{DateTime.Now} - Atualizando a página...");
-        WebHandler.Atualizar();
+        WebHandler.Atualizar(cfg.PISCINAS[WebHandler.contador_de_baldes]);
         Console.WriteLine($"{DateTime.Now} - Atualizando os parâmetros...");
         WebHandler.Parametrizar();
         Console.WriteLine($"{DateTime.Now} - Coletando as informações...");

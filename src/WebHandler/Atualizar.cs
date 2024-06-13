@@ -2,11 +2,10 @@ using OpenQA.Selenium;
 namespace Automation.WebScraper;
 public partial class Manager
 {
-  public void Atualizar()
+  public void Atualizar(String piscina)
   {
     // Verifica se não foi direcionado a página de logout
     if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"]) System.Environment.Exit(1);
-    var piscina = this.cfg.PISCINAS[this.contador_de_baldes];
     var sub_baldes = piscina.Split('>');
     var baldes = this.driver.FindElements(By.ClassName("edt-item"));
     var i = 0;
