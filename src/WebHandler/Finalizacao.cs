@@ -20,7 +20,7 @@ namespace Automation.WebScraper
         var hora_encerramento_ultima_nota = TimeSpan.FromMinutes(ultimo_servico.start + ultimo_servico.dur);
         var hora_limite_para_encerramento = hora_encerramento_ultima_nota.Add(new TimeSpan(hours: 2, minutes: 0, seconds: 0));
         if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return;
-        pendente.queue_end_start = (int)TimeOnly.FromDateTime(DateTime.Now).ToTimeSpan().TotalMinutes + 1440;
+        pendente.queue_end_start = (pendente.queue_start_start < pendente.shift_start) ? pendente.queue_start_start + 1440 : pendente.shift_start + 1440;
       }
       var relatorios = new List<Relatorio_DTO>();
       foreach (var espelho in espelhos)
