@@ -29,10 +29,7 @@ namespace Automation.WebScraper
     {
       var data_atual = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
       if(data_atual == data) return;
-      var datepicker = this.driver.FindElements(By.ClassName("toolbar-date-range-picker-calendar"));
-      if(!datepicker.Any()) this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Click();
-      var calendarios = this.driver.FindElements(By.ClassName("ui-datepicker-group"));
-      IWebElement calendario = (calendarios[0].FindElement(By.XPath(".//div/div")).Text.ToLower() == data.ToString("MMMM yyyy")) ? calendarios[0] : calendarios[1];
+      IWebElement calendario = TrocarData(data.ToString("MMMM yyyy").ToLower());
       foreach (var sem in calendario.FindElements(By.XPath(".//table/tbody/tr")))
       {
         foreach (var dia in sem.FindElements(By.XPath(".//td")))
@@ -45,6 +42,19 @@ namespace Automation.WebScraper
           }
         }
       }
+    }
+    public IWebElement TrocarData(String dataonly)
+    {
+      var datepicker = this.driver.FindElements(By.ClassName("toolbar-date-range-picker-calendar"));
+      if(!datepicker.Any()) this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Click();
+      var calendarios = this.driver.FindElements(By.ClassName("ui-datepicker-group"));
+      foreach (var elemento in calendarios)
+        if(elemento.FindElement(By.XPath(".//div/div")).Text.ToLower() == dataonly) return elemento;
+      this.driver.FindElement(By.ClassName("ui-datepicker-prev")).Click();
+      calendarios = this.driver.FindElements(By.ClassName("ui-datepicker-group"));
+      foreach (var elemento in calendarios)
+        if(elemento.FindElement(By.XPath(".//div/div")).Text.ToLower() == dataonly) return elemento;
+      throw new IndexOutOfRangeException("O mês solicitado não foi encontrado!");
     }
   }
 }
