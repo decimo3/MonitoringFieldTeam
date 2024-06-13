@@ -30,7 +30,8 @@ namespace Automation.WebScraper
         var prefixo_do_recurso = espelho.recurso.Substring(0, espelho.recurso.Length - 3);
         var numero_do_recurso = Int32.Parse(espelho.recurso.Substring(espelho.recurso.Length - 3));
         minutos_esperados_para_a_janela = EncontrarChave(this.cfg.HORARIOS, prefixo_do_recurso, numero_do_recurso);
-        if(minutos_esperados_para_a_janela != 0 && espelho.queue_start_start > 0 && espelho.queue_end_start < 0)
+        if(minutos_esperados_para_a_janela == 0) continue;
+        if(espelho.queue_start_start > 0 && espelho.queue_end_start < 0)
         {
         if(espelho.shift_dur < minutos_esperados_para_a_janela)
         {
