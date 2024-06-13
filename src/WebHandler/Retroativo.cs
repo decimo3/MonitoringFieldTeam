@@ -38,6 +38,7 @@ namespace Automation.WebScraper
           if(dia_num == data.Day)
           {
             dia.Click();
+            this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
             return;
           }
         }
