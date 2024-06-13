@@ -15,7 +15,8 @@ namespace Automation.WebScraper
       foreach (var pendente in pendentes)
       {
         if(pendente.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return;
-        var ultimo_servico = pendente.servicos.OrderBy(s => s.start).First();
+        var ultimo_servico = pendente.servicos.OrderBy(s => s.start).FirstOrDefault();
+        if(ultimo_servico == null) continue;
         var hora_encerramento_ultima_nota = TimeSpan.FromMinutes(ultimo_servico.start + ultimo_servico.dur);
         var hora_limite_para_encerramento = hora_encerramento_ultima_nota.Add(new TimeSpan(hours: 2, minutes: 0, seconds: 0));
         if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return;
@@ -24,6 +25,7 @@ namespace Automation.WebScraper
       var relatorios = new List<Relatorio_DTO>();
       foreach (var espelho in espelhos)
       {
+        if(espelho.queue_start_start < 0) continue;
         var relatorio = new Relatorio();
         relatorio.recurso = espelho.recurso;
         relatorio.data_referencia = this.datalabel;
