@@ -25,6 +25,8 @@ public partial class Manager : IDisposable
     this.options.AddArgument($@"--user-data-dir={cfg.DATAFOLDER}");
     this.options.AddArgument($@"--app={cfg.CONFIGURACAO["WEBSITE"]}");
     this.options.BinaryLocation = cfg.CONFIGURACAO["GCHROME"];
+    this.options.AddUserProfilePreference("profile.default_content_settings.popups", 0);
+    this.options.AddUserProfilePreference("download.default_directory", cfg.TEMPFOLDER);
     this.driver = new ChromeDriver(this.service, options);
     this.driver.Manage().Window.Maximize();
     this.cfg = cfg;

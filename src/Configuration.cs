@@ -4,6 +4,8 @@ public class Configuration
 {
   public readonly String DATAFOLDER;
   public readonly String DOWNFOLDER;
+  public readonly String TEMPFOLDER;
+  public readonly String LOCKFILE = "ofs.lock";
   public readonly Int32 TOLERANCIA = 3;
   public readonly List<String> PISCINAS;
   public readonly Boolean ENVIRONMENT = false;
@@ -25,6 +27,8 @@ public class Configuration
     if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
     this.DOWNFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\odl";
     if(!System.IO.Directory.Exists(this.DOWNFOLDER)) System.IO.Directory.CreateDirectory(this.DOWNFOLDER);
+    this.TEMPFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\tmp";
+    if(!System.IO.Directory.Exists(this.TEMPFOLDER)) System.IO.Directory.CreateDirectory(this.TEMPFOLDER);
 
     if(System.Environment.GetCommandLineArgs().Contains("slower"))
       foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] *= 2;
