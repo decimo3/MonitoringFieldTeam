@@ -49,5 +49,29 @@ namespace Automation.WebScraper
         Console.Write($"{prefixo} {new String(' ', s)}{i}% [{new String('#', i)}{new String(' ', 100 - i)}] {new String(' ', j)}{atual}/{new String(' ', k)}{maximo}\n");
       }
     }
+    public void VerificarPagina()
+    {
+      if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"]) System.Environment.Exit(1);
+      var times = 0;
+      while(true)
+      {
+        var gantt = this.driver.FindElements(By.ClassName("toaGantt"));
+        if(!gantt.Any())
+          this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+        else
+          break;
+        System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
+        if(times > 10)
+        {
+          Refresh();
+          times = 0;
+        }
+        else
+        {
+          times++;
+          continue;
+        }
+      }
+    }
   }
 }
