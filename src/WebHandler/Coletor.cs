@@ -28,6 +28,11 @@ public partial class Manager
     Console.WriteLine($"{DateTime.Now} - Coletando atividades...");
     for(var i = 1; true; i++)
     {
+      if(Solicitacoes())
+      {
+        Console.WriteLine($"{DateTime.Now} - Solicitação respondida!");
+        throw new InvalidOperationException("A coleta foi interrompida por uma solicitação. Reiniciando...");
+      }
       var gantt_path = this.cfg.CAMINHOS["ESPELHOS_"].Replace("_", i.ToString());
       var gantt_query = this.driver.FindElements(By.XPath(gantt_path));
       if(!gantt_query.Any()) break;
