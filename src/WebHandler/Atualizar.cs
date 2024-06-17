@@ -5,7 +5,6 @@ public partial class Manager
   public void Atualizar(String piscina)
   {
     // Verifica se não foi direcionado a página de logout
-    if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"]) System.Environment.Exit(1);
     var sub_baldes = piscina.Split('>');
     var baldes = this.driver.FindElements(By.ClassName("edt-item"));
     var i = 0;
@@ -47,6 +46,7 @@ public partial class Manager
     this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
     // Abrir menu de seleção de preferências
     this.driver.FindElements(By.ClassName("toolbar-item")).Where(e => e.Text == "Exibir").First().Click();
+    System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     // Selecionar para exibir de forma herarquica
     var checkbox_hierarquico = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CHECK_TREE"]));
     if(!checkbox_hierarquico.Selected) checkbox_hierarquico.Click();
