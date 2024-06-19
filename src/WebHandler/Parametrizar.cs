@@ -32,6 +32,8 @@ namespace Automation.WebScraper
       var filename_done = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
       var filename_send = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.send.csv";
       var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
+      this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
+      if(this.datalabel < DateOnly.FromDateTime(DateTime.Now)) Refresh();
       return tem_finalizacao;
     }
     public void SimpleProgressBar(Int32 atual, Int32 maximo, String prefixo)
