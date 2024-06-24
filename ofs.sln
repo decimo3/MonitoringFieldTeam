@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "monitoring-fieldteam", "./src/monitoring-fieldteam.csproj", "{64337628-52C4-41BB-AEF7-D90CB2F2B645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ofs", "./src/ofs.csproj", "{64337628-52C4-41BB-AEF7-D90CB2F2B645}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
