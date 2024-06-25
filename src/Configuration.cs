@@ -37,7 +37,7 @@ public class Configuration
     
     this.CONFIGURACAO = ArquivoConfiguracao("ofs.conf");
     this.PISCINAS = this.CONFIGURACAO["RECURSO"].Split(",").ToList();
-    this.CAMINHOS = ArquivoConfiguracao("path.conf");
+    this.CAMINHOS = ArquivoConfiguracao("ofs.path");
     foreach(var horario in this.CONFIGURACAO["HORARIO"].Split(",").ToList())
     {
       var horario_string = horario.Split('|');
