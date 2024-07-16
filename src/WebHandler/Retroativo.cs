@@ -39,6 +39,7 @@ namespace Automation.WebScraper
           {
             dia.Click();
             this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
+            System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
             return;
           }
         }
