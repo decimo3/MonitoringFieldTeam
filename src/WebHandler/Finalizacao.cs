@@ -11,6 +11,7 @@ namespace Automation.WebScraper
     }
     public void Finalizacao()
     {
+      if(this.espelhos.Count == 0) return;
       var pendentes = this.espelhos.Where(e => e.queue_end_left < 0).ToList();
       foreach (var pendente in pendentes)
       {
@@ -101,7 +102,7 @@ namespace Automation.WebScraper
         relatorios.Add(relatorio_dto);
       }
       var filename = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
-      var csv = TableMaker<Relatorio_DTO>.Serialize(relatorios);
+      var csv = relatorios.Any() ? TableMaker<Relatorio_DTO>.Serialize(relatorios) : String.Empty;
       System.IO.File.WriteAllText(filename, csv);
       System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
     }
