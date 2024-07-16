@@ -6,12 +6,14 @@
     <RootNamespace>monitoring_fieldteam</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
     <None Include="ofs.conf" CopyToOutputDirectory="PreserveNewest" />
     <None Include="ofs.path" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="appicon.ico" CopyToOutputDirectory="PreserveNewest" />
     <None Include="chromedriver.exe" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
