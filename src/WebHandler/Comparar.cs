@@ -154,9 +154,9 @@ namespace Automation.WebScraper
     public void Concatenar(String recurso, String aviso, Int32? tempo = null)
     {
       this.relatorios.Append(recurso);
-      this.relatorios.Append($" {aviso}!");
+      this.relatorios.Append($" {aviso}\\!");
       if(tempo != null)
-        this.relatorios.Append($" ~{tempo}min");
+        this.relatorios.Append($" \\~{tempo}min");
       this.relatorios.Append('\n');
     }
     public Int32 EncontrarChave(Dictionary<String, Int32> dicionario, String prefixo, Int32 numero)
