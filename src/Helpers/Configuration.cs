@@ -12,6 +12,7 @@ public class Configuration
   public readonly Dictionary<String, String> CONFIGURACAO = new();
   public readonly Dictionary<String, String> CAMINHOS = new();
   public readonly Dictionary<String, Int32> HORARIOS = new();
+  public readonly Dictionary<String, Int64> BOT_CHANNELS = new();
   public readonly Dictionary<String, Int32> ESPERAS = new()
   {
     {"TOTAL", 60_000},
@@ -37,6 +38,13 @@ public class Configuration
     
     this.CONFIGURACAO = ArquivoConfiguracao("ofs.conf");
     this.PISCINAS = this.CONFIGURACAO["RECURSO"].Split(",").ToList();
+    foreach(var channel in this.CONFIGURACAO["BOT_CHANNEL"].Split(",").ToList())
+    {
+      var channel_args = channel.Split('|');
+      if(channel_args.Length != 2) continue;
+      this.BOT_CHANNELS.Add(channel_args.First(), Int64.Parse(channel_args.Last()));
+    }
+
     this.CAMINHOS = ArquivoConfiguracao("ofs.path");
     foreach(var horario in this.CONFIGURACAO["HORARIO"].Split(",").ToList())
     {
