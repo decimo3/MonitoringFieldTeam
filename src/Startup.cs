@@ -1,9 +1,10 @@
-﻿namespace Automation;
+namespace Automation;
 public class Startup
 {
   public static void Main(string[] args)
   {
     var cfg = new Configuration();
+    Updater.Update(cfg);
     using var WebHandler = new WebScraper.Manager(cfg);
     WebHandler.Autenticar();
     WebHandler.VerificarPagina();
