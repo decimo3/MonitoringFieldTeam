@@ -22,7 +22,11 @@ public class Configuration
   };
   public Configuration()
   {
-    this.ENVIRONMENT = System.Environment.GetCommandLineArgs().Contains("debug");
+    if(System.Environment.GetCommandLineArgs().Contains("debug"))
+    {
+      DotEnv.Load();
+      this.ENVIRONMENT = true;
+    }
 
     this.DATAFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\www";
     if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
