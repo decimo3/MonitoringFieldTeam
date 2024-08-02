@@ -1,5 +1,6 @@
 using System.Text;
 using Automation.Persistence;
+using Automation.Helpers;
 using OpenQA.Selenium.Chrome;
 namespace Automation.WebScraper;
 public partial class Manager : IDisposable
@@ -19,9 +20,10 @@ public partial class Manager : IDisposable
   public DateOnly datalabel { get; set; }
   public Manager(Configuration cfg)
   {
+    var chromedriverpath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "chromedriver-win64/chromedriver.exe");
     this.service = cfg.ENVIRONMENT ?
       ChromeDriverService.CreateDefaultService() :
-      ChromeDriverService.CreateDefaultService(System.IO.Directory.GetCurrentDirectory());
+      ChromeDriverService.CreateDefaultService(chromedriverpath);
     this.options.AddArgument($@"--user-data-dir={cfg.DATAFOLDER}");
     this.options.AddArgument($@"--app={cfg.CONFIGURACAO["WEBSITE"]}");
     this.options.BinaryLocation = cfg.CONFIGURACAO["GCHROME"];
