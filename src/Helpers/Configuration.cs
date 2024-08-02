@@ -1,5 +1,5 @@
-using OpenQA.Selenium.Chrome;
-namespace Automation;
+using dotenv.net;
+namespace Automation.Helpers;
 public class Configuration
 {
   public readonly String DATAFOLDER;

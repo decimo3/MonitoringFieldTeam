@@ -1,5 +1,4 @@
-using Automation.Persistence;
-namespace Automation;
+namespace Automation.Helpers;
 public static class TableMaker<T>
 {
   public static readonly char separador = ';';
