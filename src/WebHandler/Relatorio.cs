@@ -15,14 +15,11 @@ namespace Automation.WebScraper
       }
       if(relatorios.Length > 0)
       {
+        if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
         this.relatorios.Insert(0, $"_Balde de recursos: *{this.balde_nome}*_\n\n");
         this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
         this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
-        var texto = this.relatorios.ToString();
-        var filename = this.cfg.ENVIRONMENT ? $"{this.cfg.DOWNFOLDER}\\{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.txt" : "relatorio_ofs.txt";
-        System.IO.File.WriteAllText(filename, texto);
-        System.Console.WriteLine($"{DateTime.Now} - Resultado das análises:");
-        System.Console.WriteLine(texto);
+        Helpers.Telegram.SendMessage(channel, this.relatorios.ToString().Replace("-", "\\-"));
       }
       else
       {
