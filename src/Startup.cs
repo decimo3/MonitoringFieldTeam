@@ -4,6 +4,10 @@ public class Startup
 {
   public static void Main(string[] args)
   {
+    while (true)
+    {
+    try
+    {
     var cfg = new Configuration();
     Updater.Update(cfg);
     using var WebHandler = new WebScraper.Manager(cfg);
@@ -57,6 +61,19 @@ public class Startup
         Console.WriteLine(erro.StackTrace);
         WebHandler.Refresh();
       }
+    }
+    }
+    catch (System.Exception erro)
+    {
+      Console.WriteLine($"{DateTime.Now} - Houve um problema crítico!");
+      Console.WriteLine($"{DateTime.Now} - {erro.Message}");
+      Console.WriteLine($"{DateTime.Now} - {erro.StackTrace}");
+      Console.WriteLine($"{DateTime.Now} - Tentando reiniciar o sistema...");
+      var executable = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ofs.exe");
+      var arguments = System.Environment.GetCommandLineArgs();
+      System.Diagnostics.Process.Start(executable, String.Join(' ', arguments.Skip(1).ToArray()));
+      System.Environment.Exit(0);
+    }
     }
   }
 }
