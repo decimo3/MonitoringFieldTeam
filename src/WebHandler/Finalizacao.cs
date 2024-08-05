@@ -101,10 +101,17 @@ namespace Automation.WebScraper
         var relatorio_dto = new Relatorio_DTO(relatorio);
         relatorios.Add(relatorio_dto);
       }
-      var filename = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
-      var csv = relatorios.Any() ? TableMaker<Relatorio_DTO>.Serialize(relatorios) : String.Empty;
-      System.IO.File.WriteAllText(filename, csv);
-      System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
+      var filename = $"{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
+      var filepath = System.IO.Path.Combine(this.cfg.DOWNFOLDER, filename);
+      var csv = relatorios.Any() ? Helpers.TableMaker<Relatorio_DTO>.Serialize(relatorios) : String.Empty;
+      System.IO.File.WriteAllText(filepath, csv);
+      if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
+      foreach (var line in csv.Split('\n')) System.Console.WriteLine($"{DateTime.Now} - {line}");
+      using(var arquivo = new FileStream(filepath, FileMode.Open))
+      {
+        Helpers.Telegram.sendDocument(channel, arquivo, filename);
+      }
+      System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado e transmitido!");
     }
   }
 }
