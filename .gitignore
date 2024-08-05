@@ -4,7 +4,7 @@ www
 tmp
 odl
 ofs.conf
-chromedriver.exe
+chromedriver-win64
 *.txt
 *.csv
 *.json

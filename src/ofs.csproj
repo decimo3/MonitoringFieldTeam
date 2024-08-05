@@ -14,7 +14,7 @@
     <None Include="ofs.conf" CopyToOutputDirectory="PreserveNewest" />
     <None Include="ofs.path" CopyToOutputDirectory="PreserveNewest" />
     <None Include="appicon.ico" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="chromedriver.exe" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="chromedriver-win64\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
