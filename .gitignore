@@ -9,3 +9,4 @@ chromedriver-win64
 *.csv
 *.json
 *.html
+*.env
