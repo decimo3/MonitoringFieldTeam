@@ -22,6 +22,7 @@ namespace Automation.WebScraper
           Coletor();
           Finalizacao();
           Atualizar(piscina, false);
+          Refresh();
         }
       }
       TrocarData(dia_now);

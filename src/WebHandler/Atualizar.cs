@@ -38,6 +38,9 @@ public partial class Manager
               else
               {
                 // TODO - Solucionar ElementNotInteractableException()
+                // The page cover elements after the date is changed
+                // Discover how to uncover elements to interact
+                // "Solucionado" atualizando a página a cada troca de data
                 throw new NotImplementedException();
               }
             }
