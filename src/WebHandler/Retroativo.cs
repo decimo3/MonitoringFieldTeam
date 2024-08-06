@@ -17,10 +17,11 @@ namespace Automation.WebScraper
           var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
           if(tem_finalizacao) continue;
           TrocarData(dia_pri);
-          Atualizar(piscina);
+          Atualizar(piscina, true);
           Parametrizar();
           Coletor();
           Finalizacao();
+          Atualizar(piscina, false);
         }
       }
       TrocarData(dia_now);

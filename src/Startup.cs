@@ -28,7 +28,7 @@ public class Startup
         {
         WebHandler.VerificarPagina();
         Console.WriteLine($"{DateTime.Now} - Atualizando a página...");
-        WebHandler.Atualizar(cfg.PISCINAS[WebHandler.contador_de_baldes]);
+        WebHandler.Atualizar(cfg.PISCINAS[WebHandler.contador_de_baldes], true);
         Console.WriteLine($"{DateTime.Now} - Atualizando os parâmetros...");
         WebHandler.Parametrizar();
         if(WebHandler.Solicitacoes())
@@ -52,6 +52,7 @@ public class Startup
         }
         }
         }
+        WebHandler.Atualizar(cfg.PISCINAS[WebHandler.contador_de_baldes], false);
         WebHandler.ProximoBalde();
       }
       catch (System.Exception erro)
