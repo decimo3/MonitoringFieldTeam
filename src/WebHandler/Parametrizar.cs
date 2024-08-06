@@ -26,14 +26,12 @@ namespace Automation.WebScraper
       this.contador_de_baldes = (this.contador_de_baldes + 1) % this.cfg.PISCINAS.Count;
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
     }
-    public bool TemFinalizacao()
+    public bool TemFinalizacao(DateOnly data, String piscina)
     {
-      this.balde_nome = this.cfg.PISCINAS[this.contador_de_baldes].Split('>').Last();
-      var filename_done = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
-      var filename_send = $"{this.cfg.DOWNFOLDER}\\{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.send.csv";
+      var balde = piscina.Split('>').Last();
+      var filename_done = $"{this.cfg.DOWNFOLDER}\\{data.ToString("yyyyMMdd")}_{balde}.done.csv";
+      var filename_send = $"{this.cfg.DOWNFOLDER}\\{data.ToString("yyyyMMdd")}_{balde}.send.csv";
       var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
-      this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
-      if(this.datalabel < DateOnly.FromDateTime(DateTime.Now)) Refresh();
       return tem_finalizacao;
     }
     public void SimpleProgressBar(Int32 atual, Int32 maximo, String prefixo)
