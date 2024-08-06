@@ -4,9 +4,11 @@ www
 tmp
 odl
 ofs.conf
+chrome-win64
 chromedriver-win64
 *.txt
 *.csv
 *.json
 *.html
 *.env
+*.xlsx
