@@ -11,11 +11,7 @@ namespace Automation.WebScraper
         if(dia_pri.DayOfWeek == DayOfWeek.Sunday) continue;
         foreach (var piscina in cfg.PISCINAS)
         {
-          this.balde_nome = piscina.Split('>').Last();
-          var filename_done = $"{this.cfg.DOWNFOLDER}\\{dia_pri.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
-          var filename_send = $"{this.cfg.DOWNFOLDER}\\{dia_pri.ToString("yyyyMMdd")}_{this.balde_nome}.send.csv";
-          var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
-          if(tem_finalizacao) continue;
+          if(this.TemFinalizacao(dia_pri, piscina)) continue;
           TrocarData(dia_pri);
           Atualizar(piscina, true);
           Parametrizar();
