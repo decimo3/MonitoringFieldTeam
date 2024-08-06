@@ -18,17 +18,18 @@ public class Startup
     {
       try
       {
+        var piscina_atual = cfg.PISCINAS[WebHandler.contador_de_baldes];
         Console.WriteLine($"{DateTime.Now} - Verificando solicitações...");
         if(WebHandler.Solicitacoes())
         {
           Console.WriteLine($"{DateTime.Now} - Solicitação respondida!");
           continue;
         }
-        if(!WebHandler.TemFinalizacao())
+        if(!WebHandler.TemFinalizacao(WebHandler.datalabel, piscina_atual))
         {
         WebHandler.VerificarPagina();
         Console.WriteLine($"{DateTime.Now} - Atualizando a página...");
-        WebHandler.Atualizar(cfg.PISCINAS[WebHandler.contador_de_baldes], true);
+        WebHandler.Atualizar(piscina_atual, true);
         Console.WriteLine($"{DateTime.Now} - Atualizando os parâmetros...");
         WebHandler.Parametrizar();
         if(WebHandler.Solicitacoes())
@@ -52,7 +53,7 @@ public class Startup
         }
         }
         }
-        WebHandler.Atualizar(cfg.PISCINAS[WebHandler.contador_de_baldes], false);
+        WebHandler.Atualizar(piscina_atual, false);
         WebHandler.ProximoBalde();
       }
       catch (System.Exception erro)
