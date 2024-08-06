@@ -2,45 +2,73 @@ using OpenQA.Selenium;
 namespace Automation.WebScraper;
 public partial class Manager
 {
-  public void Atualizar(String piscina)
+  public void Atualizar(String piscina, Boolean direcao)
   {
-    // Verifica se não foi direcionado a página de logout
-    var sub_baldes = piscina.Split('>');
-    var baldes = this.driver.FindElements(By.ClassName("edt-item"));
-    var i = 0;
-    var j = 0;
-    while(true)
+    var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().ToArray();
+    for (var i = 0; i < sub_baldes.Length; i++)
     {
-      if(i == baldes.Count)
+      var baldes = this.driver.FindElements(By.ClassName("edt-item"));
+      for (var j = 0; j < baldes.Count; j++)
       {
-        ProximoBalde();
-        throw new InvalidOperationException($"O balde {sub_baldes[j]} não foi encontrado!");
-      }
-      var texto = baldes[i].GetAttribute("innerText");
-      if(String.IsNullOrEmpty(texto)) continue;
-      if(texto.Contains(sub_baldes[j]))
-      {
-        if(j > 0 && texto.Contains(sub_baldes[j - 1]))
+        if(j == baldes.Count - 1)
         {
-          i++;
-          continue;
+          ProximoBalde();
+          throw new InvalidOperationException($"O balde {sub_baldes[j]} não foi encontrado!");
         }
-        if(j == (sub_baldes.Count() - 1))
+        var texto = baldes[j].GetAttribute("innerText");
+        if(String.IsNullOrEmpty(texto)) continue;
+        if(texto.Contains(sub_baldes[i]))
         {
-          baldes[i].Click();
+          if(direcao)
+          {
+            if(i > 0)
+            {
+              if(texto.Contains(sub_baldes[i - 1]))
+              {
+                continue;
+              }
+            }
+            if(i == (sub_baldes.Length - 1))
+            {
+              if(baldes[j].Displayed)
+              {
+                baldes[j].Click();
+                break;
+              }
+              else
+              {
+                // TODO - Solucionar ElementNotInteractableException()
+                throw new NotImplementedException();
+              }
+            }
+          }
+          else
+          {
+            if(i < sub_baldes.Length - 1)
+            {
+              if(texto.Contains(sub_baldes[i + 1]))
+              {
+                continue;
+              }
+            }
+            if(i == (sub_baldes.Length))
+            {
+              if(baldes[j].Displayed)
+              {
+                baldes[j].Click();
+                break;
+              }
+            }
+          }
+          var tree_arrow = baldes[j].FindElements(By.XPath("./div/button")).First();
+          var arrow_class = direcao ? "ptplus" : "ptminus";
+          if(tree_arrow.GetAttribute("class").Contains(arrow_class)) tree_arrow.Click();
+          System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
           break;
         }
-        var tree_arrow = baldes[i].FindElements(By.XPath("./div/button")).First();
-        if(tree_arrow.GetAttribute("class").Contains("ptplus")) tree_arrow.Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-        baldes = this.driver.FindElements(By.ClassName("edt-item"));
-        i = 0;
-        j++;
-        continue;
       }
-      i++;
     }
-
+    if(!direcao) return;
     System.Threading.Thread.Sleep(this.cfg.ESPERAS["MEDIA"]);
     // Selecionar a visualização do gráfico de Gantt
     this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
