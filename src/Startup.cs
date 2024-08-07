@@ -8,6 +8,7 @@ public class Startup
     {
     try
     {
+    Verificador.Verificar();
     var cfg = new Configuration();
     Updater.Update(cfg);
     using var WebHandler = new WebScraper.Manager(cfg);
