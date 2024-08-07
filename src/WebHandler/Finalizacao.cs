@@ -9,19 +9,42 @@ namespace Automation.WebScraper
     {
       return (Double)tempo/60/24;
     }
-    public void Finalizacao()
+    private Boolean HasInfo2FinalReport()
     {
-      if(this.espelhos.Count == 0) return;
+      if(this.espelhos.Count == 0) return false;
       var pendentes = this.espelhos.Where(e => e.queue_end_left < 0).ToList();
       foreach (var pendente in pendentes)
       {
-        if(pendente.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return;
+        if(pendente.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return false;
         var ultimo_servico = pendente.servicos.OrderBy(s => s.start).FirstOrDefault();
         if(ultimo_servico == null) continue;
         var hora_encerramento_ultima_nota = TimeSpan.FromMinutes(ultimo_servico.start + ultimo_servico.dur);
         var hora_limite_para_encerramento = hora_encerramento_ultima_nota.Add(new TimeSpan(hours: 2, minutes: 0, seconds: 0));
-        if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return;
+        if(hora_encerramento_ultima_nota > hora_limite_para_encerramento) return false;
         pendente.queue_end_start = (pendente.queue_start_start < pendente.shift_start) ? pendente.queue_start_start + 1440 : pendente.shift_start + 1440;
+      }
+      return true;
+    }
+    private void CreateVoidReport()
+    {
+      var filename = $"{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.void.csv";
+      var filepath = System.IO.Path.Combine(this.cfg.DOWNFOLDER, filename);
+      System.IO.File.Create(filepath).Close();
+      System.Console.WriteLine($"{DateTime.Now} - Relatório vazio {filename} exportado!");
+    }
+    public void Finalizacao(Boolean check_pending = true)
+    {
+      if(check_pending)
+      {
+        if(!HasInfo2FinalReport()) return;
+      }
+      else
+      {
+        if(!HasInfo2FinalReport())
+        {
+          CreateVoidReport();
+          return;
+        }
       }
       var relatorios = new List<Relatorio_DTO>();
       foreach (var espelho in espelhos)
@@ -101,12 +124,17 @@ namespace Automation.WebScraper
         var relatorio_dto = new Relatorio_DTO(relatorio);
         relatorios.Add(relatorio_dto);
       }
+      if(!relatorios.Any())
+      {
+        CreateVoidReport();
+        return;
+      }
       var filename = $"{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
       var filepath = System.IO.Path.Combine(this.cfg.DOWNFOLDER, filename);
-      var csv = relatorios.Any() ? Helpers.TableMaker<Relatorio_DTO>.Serialize(relatorios) : String.Empty;
+      var csv = Helpers.TableMaker<Relatorio_DTO>.Serialize(relatorios);
       System.IO.File.WriteAllText(filepath, csv);
-      if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
       foreach (var line in csv.Split('\n')) System.Console.WriteLine($"{DateTime.Now} - {line}");
+      if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
       using(var arquivo = new FileStream(filepath, FileMode.Open))
       {
         Helpers.Telegram.sendDocument(channel, arquivo, filename);
