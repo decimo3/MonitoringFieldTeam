@@ -31,7 +31,8 @@ namespace Automation.WebScraper
       var balde = piscina.Split('>').Last();
       var filename_done = $"{this.cfg.DOWNFOLDER}\\{data.ToString("yyyyMMdd")}_{balde}.done.csv";
       var filename_send = $"{this.cfg.DOWNFOLDER}\\{data.ToString("yyyyMMdd")}_{balde}.send.csv";
-      var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send);
+      var filename_void = $"{this.cfg.DOWNFOLDER}\\{data.ToString("yyyyMMdd")}_{balde}.void.csv";
+      var tem_finalizacao = System.IO.File.Exists(filename_done) || System.IO.File.Exists(filename_send) || System.IO.File.Exists(filename_void);
       return tem_finalizacao;
     }
     public void SimpleProgressBar(Int32 atual, Int32 maximo, String prefixo)
