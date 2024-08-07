@@ -5,24 +5,12 @@ public static class Updater
 
   private static Int32 GetVersionAplicationOutput(String aplication, String arguments)
   {
-    using(var process = new System.Diagnostics.Process())
-    {
-      process.StartInfo.FileName = aplication;
-      process.StartInfo.Arguments = arguments;
-      process.StartInfo.UseShellExecute = false;
-      process.StartInfo.RedirectStandardOutput = true;
-      process.StartInfo.RedirectStandardError = true;
-      process.StartInfo.CreateNoWindow = true;
-      process.Start();
-      var stdoutput = process.StandardOutput.ReadToEnd();
-      var erroutput = process.StandardError.ReadToEnd();
-      process.WaitForExit();
-      if(process.ExitCode != 0) throw new InvalidOperationException($"Erro ao executar o processo {process.ExitCode}: {erroutput}");
       var regex = new System.Text.RegularExpressions.Regex(@"\d+");
-      var match = regex.Match(stdoutput);
-      if(!match.Success) throw new InvalidOperationException("Não foi encontrada a versão da aplicação nas propriedades do arquivo!");
+      var result = Helpers.Executor.Executar(aplication, arguments);
+      var match = regex.Match(result);
+      if(!match.Success)
+        throw new InvalidOperationException("Não foi encontrada a versão da aplicação nas propriedades do arquivo!");
       return Int32.Parse(match.Value);
-    }
   }
 
   private static String CheckNewerChromeDriverVersion()
@@ -38,7 +26,6 @@ public static class Updater
       {
         return stream.ReadToEnd();
       }
-      
     }
   }
 
@@ -97,7 +84,6 @@ public static class Updater
       Console.Write($"{DateTime.Now} - Descompactando atualização...");
       UnzipChromeDriverFile();
       Console.Write(" Atualização concluída!\n");
-      
     }
     catch (System.Exception erro)
     {
