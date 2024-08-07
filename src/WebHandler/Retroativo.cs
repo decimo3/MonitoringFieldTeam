@@ -16,7 +16,7 @@ namespace Automation.WebScraper
           Atualizar(piscina, true);
           Parametrizar();
           Coletor();
-          Finalizacao();
+          Finalizacao(false);
           Atualizar(piscina, false);
           Refresh();
         }
