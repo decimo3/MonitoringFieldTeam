@@ -4,6 +4,7 @@ public partial class Manager
 {
   public void Atualizar(String piscina, Boolean direcao)
   {
+    this.balde_nome = piscina.Split('>').Last();
     var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().ToArray();
     for (var i = 0; i < sub_baldes.Length; i++)
     {
