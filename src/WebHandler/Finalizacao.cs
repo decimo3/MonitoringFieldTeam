@@ -40,6 +40,7 @@ namespace Automation.WebScraper
       }
       else
       {
+        ExportarPropriedadesEspelhos();
         if(!HasInfo2FinalReport())
         {
           CreateVoidReport();
@@ -126,6 +127,7 @@ namespace Automation.WebScraper
       }
       if(!relatorios.Any())
       {
+        ExportarPropriedadesEspelhos();
         CreateVoidReport();
         return;
       }
