@@ -5,14 +5,6 @@ namespace Automation.WebScraper
   {
     public void Relatorio()
     {
-      if(this.cfg.ENVIRONMENT)
-      {
-        var conf = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
-        var json = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.espelhos, conf);
-        var filename = $"{this.cfg.DOWNFOLDER}\\{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.json";
-        System.IO.File.WriteAllText(filename, json);
-        System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
-      }
       if(relatorios.Length > 0)
       {
         this.relatorios = this.relatorios.Replace("-", "");
