@@ -6,7 +6,7 @@ namespace Automation.WebScraper
     public void Retroativo()
     {
       var dia_now = DateOnly.FromDateTime(DateTime.Now);
-      for (var dia_pri = dia_now.AddDays(-15); dia_pri < dia_now; dia_pri=dia_pri.AddDays(1))
+      for (var dia_pri = dia_now.AddDays(-dia_now.Day); dia_pri < dia_now; dia_pri=dia_pri.AddDays(1))
       {
         if(dia_pri.DayOfWeek == DayOfWeek.Sunday) continue;
         foreach (var piscina in cfg.PISCINAS)
