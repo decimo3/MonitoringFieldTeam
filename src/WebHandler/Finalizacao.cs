@@ -7,7 +7,7 @@ namespace Automation.WebScraper
   {
     public Double GetTimeOnly(Int32 tempo)
     {
-      return (Double)tempo/60/24;
+      return tempo > 0 ? (Double)tempo/60/24 : 0;
     }
     private Boolean HasInfo2FinalReport()
     {
