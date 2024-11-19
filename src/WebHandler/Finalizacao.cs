@@ -41,11 +41,6 @@ namespace Automation.WebScraper
       else
       {
         ExportarPropriedadesEspelhos();
-        if(!HasInfo2FinalReport())
-        {
-          CreateVoidReport();
-          return;
-        }
       }
       var relatorios = new List<Relatorio_DTO>();
       foreach (var espelho in espelhos)
