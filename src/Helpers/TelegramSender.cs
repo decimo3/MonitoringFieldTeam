@@ -1,14 +1,12 @@
 namespace Automation.Helpers;
 public static class Telegram
 {
-  public static void SendMessage(Int64 channel, String mensagem)
+  public static void SendMessage(String token, Int64 channel, String mensagem)
   {
     var temp = String.Empty;
     try
     {
       if(String.IsNullOrEmpty(mensagem)) return;
-      var token = System.Environment.GetEnvironmentVariable("BOT_TOKEN") ??
-        throw new InvalidOperationException("Environment variable BOT_TOKEN is not set!");
       var baseurl = new Uri($"https://api.telegram.org/bot{token}/sendMessage");
       using(var client = new HttpClient())
       {
