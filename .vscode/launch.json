@@ -10,14 +10,13 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/bin/Debug/net7.0/ofs.dll",
+      "program": "${workspaceFolder}/src/bin/Debug/net7.0/win-x64/ofs.dll",
       "args": ["debug", "faster"],
       "cwd": "${workspaceFolder}/src",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",
       "enableStepFiltering": false,
-      "stopAtEntry": false,
-      "postDebugTask": "kill_chromedriver"
+      "stopAtEntry": false
     },
     {
       "name": ".NET Core Attach",
