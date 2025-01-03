@@ -1,4 +1,3 @@
-using dotenv.net;
 namespace Automation.Helpers;
 public class Configuration
 {
@@ -24,7 +23,6 @@ public class Configuration
   {
     if(System.Environment.GetCommandLineArgs().Contains("debug"))
     {
-      DotEnv.Load();
       this.ENVIRONMENT = true;
     }
 
