@@ -14,7 +14,7 @@ namespace Automation.WebScraper
         var relatorio_string = this.relatorios.ToString();
         System.Console.WriteLine(relatorio_string);
         if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
-        Helpers.Telegram.SendMessage(channel, relatorio_string.Replace("-", "\\-"));
+        Helpers.Telegram.SendMessage(cfg.CONFIGURACAO["BOT_TOKEN"], channel, relatorio_string.Replace("-", "\\-"));
       }
       else
       {
