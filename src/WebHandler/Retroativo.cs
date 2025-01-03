@@ -3,10 +3,11 @@ namespace Automation.WebScraper
 {
   public partial class Manager
   {
+    private const Int32 DIAS_RETROATIVOS = -30;
     public void Retroativo()
     {
       var dia_now = DateOnly.FromDateTime(DateTime.Now);
-      for (var dia_pri = dia_now.AddDays(-dia_now.Day); dia_pri < dia_now; dia_pri=dia_pri.AddDays(1))
+      for (var dia_pri = dia_now.AddDays(DIAS_RETROATIVOS); dia_pri < dia_now; dia_pri=dia_pri.AddDays(1))
       {
         if(dia_pri.DayOfWeek == DayOfWeek.Sunday) continue;
         foreach (var piscina in cfg.PISCINAS)
