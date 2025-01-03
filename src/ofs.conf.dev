@@ -3,3 +3,6 @@ WEBSITE=site_que_deseja_automatizar
 USUARIO=email_do_usuario_aqui
 PALAVRA=senha_do_usuario_aqui
 RECURSO=balde_para_monitorar
+HORARIO=lista_de_abreviações_de_recursos_com_horario_em_minutos_separados_por_pipe_(|)
+BOT_TOKEN=token_do_bot_do_telegram_aqui
+BOT_CHANNEL=lista_de_baldes_de_recursos_com_o_identificador_do_canal_do_Telegram_separados_por_pipe_(|)
