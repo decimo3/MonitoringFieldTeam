@@ -27,7 +27,7 @@ namespace Automation.Persistence
       var abreviado = recurso.Trim();
       // Change long-dash for simple dash;
       abreviado = abreviado.Replace('–', '-');
-      // Remove double spaces by singles
+      // Replace double spaces by singles
       abreviado = abreviado.Replace("  ", " ");
       // Abbreviates words that determine the type of activity
       abreviado = abreviado.Replace(" - Corte", "C");
@@ -35,6 +35,12 @@ namespace Automation.Persistence
       abreviado = abreviado.Replace(" - Vistoriador ", "V");
       // Remove the word 'team' to shorten the resource name
       abreviado = abreviado.Replace(" - Equipe ", "");
+      // remove any excess word before space character
+      var indice = abreviado.IndexOf(' ');
+      if(indice > 0)
+      {
+        abreviado = abreviado[..indice];
+      }
       this.recurso = abreviado;
       this.par_pid = par_pid;
       this.style_top = style_top;
