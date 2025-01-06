@@ -26,11 +26,11 @@ public class Configuration
       this.ENVIRONMENT = true;
     }
 
-    this.DATAFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\www";
+    this.DATAFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "www");
     if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
-    this.DOWNFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\odl";
+    this.DOWNFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "odl");
     if(!System.IO.Directory.Exists(this.DOWNFOLDER)) System.IO.Directory.CreateDirectory(this.DOWNFOLDER);
-    this.TEMPFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\tmp";
+    this.TEMPFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "tmp");
     if(!System.IO.Directory.Exists(this.TEMPFOLDER)) System.IO.Directory.CreateDirectory(this.TEMPFOLDER);
 
     if(System.Environment.GetCommandLineArgs().Contains("slower"))
