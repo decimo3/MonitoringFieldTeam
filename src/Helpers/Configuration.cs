@@ -26,19 +26,37 @@ public class Configuration
       this.ENVIRONMENT = true;
     }
 
-    this.DATAFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\www";
+    this.DATAFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "www");
     if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
-    this.DOWNFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\odl";
+    this.DOWNFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "odl");
     if(!System.IO.Directory.Exists(this.DOWNFOLDER)) System.IO.Directory.CreateDirectory(this.DOWNFOLDER);
-    this.TEMPFOLDER = $"{System.IO.Directory.GetCurrentDirectory()}\\tmp";
+    this.TEMPFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "tmp");
     if(!System.IO.Directory.Exists(this.TEMPFOLDER)) System.IO.Directory.CreateDirectory(this.TEMPFOLDER);
 
     if(System.Environment.GetCommandLineArgs().Contains("slower"))
       foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] *= 2;
     if(System.Environment.GetCommandLineArgs().Contains("faster"))
       foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] /= 2;
-    
-    this.CONFIGURACAO = ArquivoConfiguracao("ofs.conf");
+
+    this.CONFIGURACAO = ArquivoConfiguracao(
+      System.IO.Path.Combine(System.AppContext.BaseDirectory, "ofs.conf"));
+
+    if(this.CONFIGURACAO.TryGetValue("ODLPATH", out String? odl_path))
+    {
+      if(!String.IsNullOrWhiteSpace(odl_path) && System.IO.Directory.Exists(odl_path))
+      {
+        this.DOWNFOLDER = odl_path;
+      }
+    }
+
+    if(this.CONFIGURACAO.TryGetValue("TMPPATH", out String? tmp_path))
+    {
+      if(!String.IsNullOrWhiteSpace(tmp_path) && System.IO.Directory.Exists(tmp_path))
+      {
+        this.TEMPFOLDER = tmp_path;
+      }
+    }
+
     this.PISCINAS = this.CONFIGURACAO["RECURSO"].Split(",").ToList();
     foreach(var channel in this.CONFIGURACAO["BOT_CHANNEL"].Split(",").ToList())
     {

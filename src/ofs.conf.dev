@@ -1,4 +1,6 @@
 GCHROME=caminho_para_binario_do_google_chrome
+ODLPATH=caminho_para_pasta_de_downloads
+TMPPATH=caminho_para_pasta_de_temporarios
 WEBSITE=site_que_deseja_automatizar
 USUARIO=email_do_usuario_aqui
 PALAVRA=senha_do_usuario_aqui

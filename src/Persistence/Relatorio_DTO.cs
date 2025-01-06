@@ -56,6 +56,7 @@ namespace Automation.Persistence
     }
     public TimeOnly Double2TimeOnly(Double tempo)
     {
+      if(tempo < 0) return new TimeOnly();
       var tempo_em_minutos = tempo * 24 * 60;
       var dias_de_diferenca = (int)Math.Floor(tempo_em_minutos / 1440);
       if(dias_de_diferenca > 0) tempo_em_minutos = tempo_em_minutos - (dias_de_diferenca * 1440);
