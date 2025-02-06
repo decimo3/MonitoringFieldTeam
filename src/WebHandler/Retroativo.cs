@@ -3,9 +3,14 @@ namespace Automation.WebScraper
 {
   public partial class Manager
   {
-    private const Int32 DIAS_RETROATIVOS = -30;
+    private Int32 DIAS_RETROATIVOS = -30;
     public void Retroativo()
     {
+      if (cfg.CONFIGURACAO.TryGetValue("RETRODAY", out String start_day))
+      {
+        var startdate = DateTime.ParseExact(start_day, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        DIAS_RETROATIVOS = -(DateTime.Now - startdate).Days;
+      }
       var dia_now = DateOnly.FromDateTime(DateTime.Now);
       for (var dia_pri = dia_now.AddDays(DIAS_RETROATIVOS); dia_pri < dia_now; dia_pri=dia_pri.AddDays(1))
       {
