@@ -4,12 +4,19 @@ namespace Automation.Persistence
   {
     public DateOnly data_referencia { get; set; }
     public String recurso { get; set; } = String.Empty;
+    public TimeOnly login_calendario { get; set; }
+    public TimeOnly logout_calendario { get; set; }
     public TimeOnly login_horario { get; set; }
     public TimeOnly logout_horario { get; set; }
+    public TimeOnly login_considerado { get; set; }
+    public TimeOnly logout_considerado { get; set; }
     public TimeOnly checklist_tempo { get; set; }
+    public TimeOnly checklist_considerado { get; set; }
     public TimeOnly intervalo_tempo { get; set; }
+    public TimeOnly intervalo_considerado { get; set; }
     public TimeOnly tempo_indisponivel { get; set; }
     public TimeOnly jornada_tempo { get; set; }
+    public TimeOnly jornada_considerado { get; set; }
     public TimeOnly tempo_executando { get; set; }
     public TimeOnly tempo_deslocando { get; set; }
     public TimeOnly tempo_rejeitando { get; set; }
@@ -33,10 +40,17 @@ namespace Automation.Persistence
       this.recurso = relatorio.recurso;
       this.login_horario = Double2TimeOnly(relatorio.login_horario);
       this.logout_horario = Double2TimeOnly(relatorio.logout_horario);
+      this.login_calendario = Double2TimeOnly(relatorio.login_calendario);
+      this.logout_calendario = Double2TimeOnly(relatorio.logout_calendario);
+      this.login_considerado = Double2TimeOnly(relatorio.login_considerado);
+      this.logout_considerado = Double2TimeOnly(relatorio.logout_considerado);
       this.checklist_tempo = Double2TimeOnly(relatorio.checklist_tempo);
+      this.checklist_considerado = Double2TimeOnly(relatorio.checklist_considerado);
       this.intervalo_tempo = Double2TimeOnly(relatorio.intervalo_tempo);
+      this.intervalo_considerado = Double2TimeOnly(relatorio.intervalo_considerado);
       this.tempo_indisponivel = Double2TimeOnly(relatorio.tempo_indisponivel);
       this.jornada_tempo = Double2TimeOnly(relatorio.jornada_tempo);
+      this.jornada_considerado = Double2TimeOnly(relatorio.jornada_considerado);
       this.tempo_deslocando = Double2TimeOnly(relatorio.tempo_deslocando);
       this.tempo_executando = Double2TimeOnly(relatorio.tempo_executando);
       this.tempo_rejeitando = Double2TimeOnly(relatorio.tempo_rejeitando);
