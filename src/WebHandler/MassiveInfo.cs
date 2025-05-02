@@ -76,7 +76,6 @@ namespace Automation.WebScraper
           ListObjectsToCSV(materiais));
       System.IO.File.Delete(filepath);
       Console.WriteLine($"{DateTime.Now} - O relatório de material foi exportado!");
-      System.Environment.Exit(0);
     }
   }
 }
