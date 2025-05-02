@@ -15,6 +15,7 @@ public class Startup
     WebHandler.Autenticar();
     WebHandler.VerificarPagina();
     WebHandler.Retroativo();
+    WebHandler.MassiveInfo();
     while(true)
     {
       try

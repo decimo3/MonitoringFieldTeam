@@ -1,123 +1,236 @@
-using System.Text;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using Automation.Persistence;
+using System.Collections.ObjectModel;
 
 namespace Automation.WebScraper
 {
   public partial class Manager
   {
-    public String GetServico(String arg)
+    private void BackToBlack()
     {
-      var builder = new StringBuilder();
-      this.driver.FindElement(By.ClassName("search-bar-input")).Click();
+      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+    }
+    private ReadOnlyCollection<IWebElement> GetElements(By by, int timeoutInSeconds = 5)
+    {
+      var endTime = DateTime.Now.AddSeconds(timeoutInSeconds);
+      while (DateTime.Now < endTime)
+      {
+        try
+        {
+          var elements = this.driver.FindElements(by);
+          if (elements.Count == 0)
+            continue;
+          var element = elements.First();
+          if (element.Displayed && element.Enabled)
+            return elements;
+        }
+        catch (NoSuchElementException)
+        {
+          // Element not yet in DOM, keep trying
+        }
+        catch (StaleElementReferenceException)
+        {
+          // DOM updated, try again
+        }
+        catch (WebDriverException)
+        {
+          // Catch all transient WebDriver errors, continue retrying
+        }
+        Thread.Sleep(200); // Avoid busy waiting
+      }
+
+      throw new TimeoutException($"Element not interactable after {timeoutInSeconds} seconds: {by}");
+    }
+    private IWebElement GetElement(By by)
+    {
+      var elements = GetElements(by);
+      if (elements.Count > 1)
+        throw new Exception($"Mais de um elemento encontrado: {by}");
+      return elements[0];
+    }
+    private List<List<string>> GetTableActivity(IWebElement tableElement)
+    {
+      var resultTable = new List<List<string>>();
+      var linhas = tableElement.FindElements(By.XPath(".//tr"));
+      if (linhas.Count == 0)
+        return resultTable;
+      foreach (var linha in linhas)
+      {
+        var valores = new List<string>();
+        if (String.IsNullOrEmpty(linha.Text)) continue;
+        var celulas = linha.FindElements(By.XPath(".//td"));
+        foreach (var celula in celulas)
+        {
+            valores.Add(celula.Text.Replace(';',' '));
+        }
+        resultTable.Add(valores);
+      }
+      return resultTable;
+    }
+    private static List<MaterialInfo> GetListMaterialByListString(List<List<string>> listString, string nota, string origem)
+    {
+      var materiais = new List<MaterialInfo>();
+      foreach (var values in listString)
+      {
+        var material = new MaterialInfo();
+        material.Nota = nota;
+        material.Tipo = values[0];
+        material.Codigo = values[1];
+        material.Serie = values[2];
+        material.Descricao = values[3];
+        material.Quantidade = values[4];
+        material.Origem = origem;
+        materiais.Add(material);
+      }
+      return materiais;
+    }
+    public void SearchAndEnterActivity(String workorder)
+    {
+      // Click on search bar to focus cursor on
+      GetElements(By.ClassName("search-bar-input")).First().Click();
+      // Fill search bar with workorder number char by char
       var actions = new Actions(this.driver);
-      foreach (var letra in arg)
+      foreach (var c in workorder)
       {
-        actions.KeyDown(letra.ToString()).Perform();
-        actions.KeyUp(letra.ToString()).Perform();
+        actions.KeyDown(c.ToString()).Perform();
+        actions.KeyUp(c.ToString()).Perform();
       }
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      if(!this.driver.FindElements(By.ClassName("found-item-activity")).Any())
+      // Await amount of time and check if there is a response
+      if(!GetElements(By.ClassName("found-item-activity")).Any())
       {
-        builder.Append("A nota de servico `");
-        builder.Append(arg);
-        builder.Append("` não foi encontrada!");
-        return builder.ToString();
+        throw new Exception($"A nota de serviço não foi encontrada!");
       }
-      // Clicar na primeira ordem de serviço
-      this.driver.FindElement(By.ClassName("found-item-activity")).Click();
+      // Click on the first workorder on list
+      GetElements(By.ClassName("found-item-activity")).First().Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      var estado = GetActivityInformation(this.cfg.CAMINHOS["ACTIVITY_ESTADO"]);
-      if(estado != "concluído" && estado != "não concluído")
+    }
+    public String GetActivityGeneralInfo()
+    {
+      var builder = new System.Text.StringBuilder();
+      var estado = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"])).Text;
+      if (estado != "concluído" && estado != "não concluído")
       {
-        builder.Append("A nota de servico `");
-        builder.Append(arg);
-        builder.Append("` não está finalizada!");
+        builder.Append("A nota de servico não está finalizada!");
         return builder.ToString();
       }
       builder.Append($"Recurso: {this.driver.FindElement(By.ClassName("page-header-description")).Text}\n");
-      builder.Append($"Atividade: {GetActivityInformation(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"])}\n");
-      builder.Append($"Serviço: {GetActivityInformation(this.cfg.CAMINHOS["ACTIVITY_SERVICO"])}\n");
+      builder.Append($"Atividade: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"])).Text}\n");
+      builder.Append($"Serviço: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SERVICO"])).Text}\n");
       builder.Append($"Estado: {estado}\n");
-      if(estado == "não concluído")
-        builder.Append($"Código: {GetActivityInformation(this.cfg.CAMINHOS["ACTIVITY_REJEICAO"])}\n");
-      builder.Append($"Observação: {GetActivityInformation(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"])}\n");
-      {
-        this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ARQUIVOS"])).Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-        foreach(var download in this.driver.FindElements(By.ClassName("download-button")))
-          download.Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-        this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      }
-      if(estado == "não concluído") return builder.ToString();
-      {
-        this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_FINALIZA"])).Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-        var frame = this.driver.FindElement(By.ClassName("content-iframe"));
-        this.driver.SwitchTo().Frame(frame);
-        var cabecalhos = new string[] {"Código", "Quantidade"};
-        var tabela = this.driver.FindElement(By.Id("itens-selected"));
-        builder.Append(GetActivityInformation(tabela, By.XPath(".//tbody/tr"), "Código", cabecalhos));
-        this.driver.SwitchTo().DefaultContent();
-        this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      }
-      {
-        this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_MATERIAL"])).Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-        var cabecalhos = new string[] {"Tipo", "Código", "Nº série", "Descrição", "Quantidade"};
-        var tabelas = this.driver.FindElements(By.TagName("tbody"));
-        for(var i = 0; i < tabelas.Count; i++)
-        {
-          var tipo_tabela = tabelas[i].GetDomAttribute("data-ofsc-inventory-pool");
-          switch(tipo_tabela)
-          {
-            case "customer":
-              builder.Append(GetActivityInformation(tabelas[i], By.XPath(".//tr"), "Material existente", cabecalhos));
-            break;
-            case "install":
-              builder.Append(GetActivityInformation(tabelas[i], By.XPath(".//tr"), "Material instalado", cabecalhos));
-            break;
-            case "deinstall":
-              builder.Append(GetActivityInformation(tabelas[i], By.XPath(".//tr"), "Material retirado", cabecalhos));
-            break;
-            default:
-              builder.Append($"A tabela encontrada {tipo_tabela} não foi programada!");
-            break;
-          }
-        }
-        this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      }
-      this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      if (estado == "não concluído")
+        builder.Append($"Código: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_REJEICAO"])).Text}\n");
+      builder.Append($"Observação: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"])).Text.Replace('\n', ' ')}\n");
       return builder.ToString();
     }
-    private String GetActivityInformation(String xpath)
+    public void GetActivityUploads()
     {
-      return this.driver.FindElement(By.XPath(xpath)).Text.Replace('\n', ' ');
+      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ARQUIVOS"])).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      foreach (var download in GetElements(By.ClassName("download-button")))
+        download.Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
-    private String GetActivityInformation(IWebElement tabela, By linhas_by, String prefixo, String[] cabecalhos)
+    public string GetActivityClosings()
     {
-      var builder = new StringBuilder();
-      var linhas = tabela.FindElements(linhas_by);
-      if(linhas.Count == 0)
-        builder.Append($"{prefixo}: SEM INFORMAÇÃO!\n");
-      else if(linhas.Count == 1)
-        builder.Append($"{prefixo}: {linhas.First().Text}\n");
-      else
+      var builder = new System.Text.StringBuilder();
+      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_FINALIZA"])).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      var frame = GetElement(By.ClassName("content-iframe"));
+      this.driver.SwitchTo().Frame(frame);
+      var cabecalhos = new string[] { "Código", "Quantidade" };
+      var tabela = GetElement(By.TagName("tbody")); // By.Id("itens-selected")
+      var tabelaResult = GetTableActivity(tabela);
+      foreach (var result in tabelaResult)
       {
-        builder.Append($"Lista de {prefixo.ToLower()}s:\n");
-        for(var i = 0; i < linhas.Count; i++)
+        builder.Append("Código: ");
+        builder.Append(result[0]);
+        builder.Append('\n');
+        builder.Append("Quantidade: ");
+        builder.Append(result[1]);
+        builder.Append('\n');
+      }
+      this.driver.SwitchTo().DefaultContent();
+      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      return builder.ToString();
+    }
+    public List<MaterialInfo> GetActivityMaterials(string nota)
+    {
+      var result = new List<MaterialInfo>();
+      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_MATERIAL"])).Click();
+      var tabelas = GetElements(By.TagName("tbody"));
+      foreach (var tabela in tabelas)
+      {
+        var origem = tabela.GetDomAttribute("data-ofsc-inventory-pool");
+        var conteudoTabela = GetTableActivity(tabela);
+        var materialTabela = GetListMaterialByListString(conteudoTabela, nota, origem);
+        result.AddRange(materialTabela);
+      }
+      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      return result;
+    }
+    public String GetServico(String arg)
+    {
+      var builder = new System.Text.StringBuilder();
+      try
+      {
+        SearchAndEnterActivity(arg);
+      }
+      catch (Exception e)
+      {
+        builder.Append(e.Message);
+        return builder.ToString();
+      }
+      var estado = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"])).Text;
+      if (estado != "concluído" && estado != "não concluído")
+      {
+        builder.Append("A nota de servico não está finalizada!");
+        return builder.ToString();
+      }
+      try
+      {
+        builder.Append(GetActivityGeneralInfo());
+      }
+      catch (Exception e)
+      {
+        builder.Append(e.Message);
+        return builder.ToString();
+      }
+      try
+      {
+        GetActivityUploads();
+      }
+      catch (Exception e)
+      {
+        builder.Append(e.Message);
+        return builder.ToString();
+      }
+      try
+      {
+        builder.Append(GetActivityClosings());
+        BackToBlack();
+      }
+      catch (Exception e)
+      {
+        builder.Append(e.Message);
+        return builder.ToString();
+      }
+      try
+      {
+        var materiais = GetActivityMaterials(arg);
+        foreach (var material in materiais)
         {
-          if(String.IsNullOrEmpty(linhas[i].Text)) continue;
-          var celulas = linhas[i].FindElements(By.XPath(".//td"));
-          for(var j = 0; j < celulas.Count; j++)
-          {
-            builder.Append($"{cabecalhos[j]}: {celulas[j].Text}\n");
-          }
+          builder.Append(material.ToString());
+          builder.Append('\n');
         }
+      }
+      catch (Exception e)
+      {
+        builder.Append(e.Message);
+        return builder.ToString();
       }
       return builder.ToString();
     }
