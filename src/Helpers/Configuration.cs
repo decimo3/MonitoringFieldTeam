@@ -4,7 +4,7 @@ public class Configuration
   public readonly String DATAFOLDER;
   public readonly String DOWNFOLDER;
   public readonly String TEMPFOLDER;
-  public readonly String LOCKFILE = "ofs.lock";
+  public readonly String LOCKFILE;
   public readonly Int32 TOLERANCIA = 3;
   public readonly List<String> PISCINAS;
   public readonly Boolean ENVIRONMENT = false;
@@ -25,7 +25,7 @@ public class Configuration
     {
       this.ENVIRONMENT = true;
     }
-
+    this.LOCKFILE = System.IO.Path.Combine(System.AppContext.BaseDirectory, "ofs.lock");
     this.DATAFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "www");
     if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
     this.DOWNFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "odl");
