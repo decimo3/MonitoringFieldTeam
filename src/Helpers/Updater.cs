@@ -72,7 +72,7 @@ public static class Updater
       var driver_version = GetVersionAplicationOutput("chromedriver-win64/chromedriver.exe", "--version");
       Console.WriteLine($"{DateTime.Now} - Driver major version: {driver_version}.");
       if(driver_version >= chrome_version) return;
-      Console.WriteLine("Buscando as novas versões do chromedriver...");
+      Console.WriteLine($"{DateTime.Now} - Buscando as novas versões do chromedriver...");
       var newer_version = CheckNewerChromeDriverVersion();
       Console.WriteLine($"{DateTime.Now} - Versão do chromedriver no canal STABLE: {newer_version}");
       Console.Write($"{DateTime.Now} - Baixando a nova versão do chromedriver...");
