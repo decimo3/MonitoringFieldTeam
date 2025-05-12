@@ -76,6 +76,14 @@ namespace Automation.WebScraper
           ListObjectsToCSV(materiais));
       System.IO.File.Delete(filepath);
       Console.WriteLine($"{DateTime.Now} - O relatório de material foi exportado!");
+      // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
+      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+      {
+        FileName = System.IO.Path.Combine(
+            System.AppContext.BaseDirectory,
+            "ofs.csv"),
+        UseShellExecute = true // importante para usar o programa padrão
+      });
     }
   }
 }
