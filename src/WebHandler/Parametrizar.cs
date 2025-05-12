@@ -52,26 +52,25 @@ namespace Automation.WebScraper
     }
     public void VerificarPagina()
     {
-      if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"]) System.Environment.Exit(1);
-      var times = 0;
+      if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"])
+      {
+        System.Environment.Exit(1);
+      }
       while(true)
       {
         var gantt = this.driver.FindElements(By.ClassName("toaGantt"));
-        if(!gantt.Any())
-          this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-        else
+        if(gantt.Any())
+        {
           break;
-        System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
-        if(times > 10)
-        {
-          Refresh();
-          times = 0;
         }
-        else
-        {
-          times++;
-          continue;
-        }
+        // this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+        this.driver.ExecuteCdpCommand("Network.enable", new Dictionary<string, object>());
+        this.driver.ExecuteCdpCommand("Network.clearBrowserCookies", new Dictionary<string, object>());
+        this.driver.ExecuteCdpCommand("Network.clearBrowserCache", new Dictionary<string, object>());
+        this.driver.ExecuteScript("window.localStorage.clear();");
+        this.driver.ExecuteScript("window.sessionStorage.clear();");
+        this.Refresh();
+        this.Autenticar();
       }
     }
   }
