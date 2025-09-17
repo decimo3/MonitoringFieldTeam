@@ -80,6 +80,7 @@ public class Configuration
     foreach (var line in file)
     {
       if(String.IsNullOrEmpty(line)) continue;
+      if(line.StartsWith('#')) continue;
       var args = line.Split(delimiter);
       if(args.Length != 2) continue;
       parametros.Add(args[0], args[1]);
