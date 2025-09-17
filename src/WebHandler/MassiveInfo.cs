@@ -1,16 +1,17 @@
+using System.Collections;
 using Automation.Persistence;
 
 namespace Automation.WebScraper
 {
   public partial class Manager
   {
-    private static string ListObjectsToCSV<T>(List<T> list)
+    private static string ListObjectsToCSV(IList list)
     {
-      if (list.Count == 0)
-      {
+      if (list == null)
         throw new ArgumentException($"A lista está vazia!");
-      }
-      var type = typeof(T);
+      if (list.Count == 0)
+        throw new ArgumentException($"A lista está vazia!");
+      var type = list[0]!.GetType();
       var properties = type.GetProperties();
       var table = new System.Text.StringBuilder();
       var values = new List<string>();
@@ -25,14 +26,7 @@ namespace Automation.WebScraper
         foreach (var property in properties)
         {
           var value = property.GetValue(item);
-          if (value == null)
-          {
-            values.Add("null");
-          }
-          else
-          {
-            values.Add(value.ToString());
-          }
+          values.Add(value?.ToString() ?? string.Empty);
         }
         table.AppendLine(string.Join(";", values));
         values.Clear();
