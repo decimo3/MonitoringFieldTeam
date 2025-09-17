@@ -49,27 +49,43 @@ namespace Automation.WebScraper
       {
         throw new ArgumentException($"Há caracteres inválidos na lista de notas!");
       }
-      var materiais = new List<MaterialInfo>();
+      var informacoes = new Dictionary<string, IList>
+      {
+        // ["INF"] = new List<GeneralInfo>(),
+        // ["COD"] = new List<FinalizaInfo>(),
+        ["MAT"] = new List<MaterialInfo>(),
+        // ["APR"] = new List<AnaliseInfo>(),
+        // ["JPG"] = new List<FotografiaInfo>(),
+        // ["TOI"] = new List<OcorrenciaInfo>(),
+        // ["EVD"] = new List<EvidenciaInfo>()
+      };
       foreach (var line in lines)
       {
         try
         {
           SearchAndEnterActivity(line);
-          materiais.AddRange(GetActivityMaterials(line));
-
+          if (cfg.EXTRACAO_KEY.Contains("MAT"))
+            informacoes["MAT"].Add(GetActivityMaterials(line));
         }
         catch (Exception ex)
         {
           Console.WriteLine($"{DateTime.Now} - Ocorreu um erro ao processar a nota {line}.\n{ex.Message}");
         }
       }
-      System.IO.File.WriteAllText(
-          System.IO.Path.Combine(
-              System.AppContext.BaseDirectory,
-              "ofs.csv"),
-          ListObjectsToCSV(materiais));
+      foreach (var key in informacoes.Keys)
+      {
+        var lista = informacoes[key];
+        if (lista == null || lista.Count == 0)
+          continue;
+        Type tipo = lista[0]!.GetType();
+        System.IO.File.WriteAllText(
+            System.IO.Path.Combine(
+                cfg.DOWNFOLDER,
+                key.ToLower() + ".csv"),
+            ListObjectsToCSV(lista));
+      }
       System.IO.File.Delete(filepath);
-      Console.WriteLine($"{DateTime.Now} - O relatório de material foi exportado!");
+      Console.WriteLine($"{DateTime.Now} - Os relatórios massivos foram exportados!");
       // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
       System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
       {
