@@ -1,11 +1,44 @@
+# Caminho do executável do navegador Google Chrome
 GCHROME=caminho_para_binario_do_google_chrome
+# OPCIONAL Caminho para Objetos do DownLoad (ODL)
+# relatórios e arquivos serão salvos nesse diretório
 ODLPATH=caminho_para_pasta_de_downloads
+# Caminho para arquivos temporários do navegador
 TMPPATH=caminho_para_pasta_de_temporarios
+# Caminho para o sistema do OFS a ser monitorado
 WEBSITE=site_que_deseja_automatizar
+# Nome de usuário a ser usado na autenticação
 USUARIO=email_do_usuario_aqui
+# Senha do usuário usado na autenticação
 PALAVRA=senha_do_usuario_aqui
-RECURSO=balde_para_monitorar
+# Nome do piscina/grupo/balde/recurso a ser monitorado
+# podendo ser vários em lista separada por vírgula
+RECURSO=lista_de_baldes_para_monitorar
+# Abreviação dos recursos a serem monitorados
+# O abreviação deve ser seguido de uma barra vertical
+# com o tempo de janela desejada em minutos, podendo
+# definir um intervalo de números a ser considerado.
+# Exemplo 1: CCOIC|540,CCOIC|540 isso quer dizer:
+# abreviaçãos CCOIC e CCOIC com 540 minutos de janela
+# Exemplo 2: OMBEC[11.20]|585 isso quer dizer:
+# abreviaçãos OMBEC entre 11 e 20 com 585 minutos de janela
 HORARIO=lista_de_abreviações_de_recursos_com_horario_em_minutos_separados_por_pipe_(|)
+# Token do bot do Telegram utilizado para envio de mensagens
 BOT_TOKEN=token_do_bot_do_telegram_aqui
+# Lista de canais do Telegram para envio de notificações
+# Formato: NOME DO CANAL|-ID_DO_CANAL, separados por vírgula
 BOT_CHANNEL=lista_de_baldes_de_recursos_com_o_identificador_do_canal_do_Telegram_separados_por_pipe_(|)
+# Data limite para considerar registros retroativos
+# o formato é o padrão internacional (AAAA-MM-DD)
+# definir a data no futuro, fará com que o programa
+# não realize o relatório de resumo de rotas.
 RETRODAY=ano-mes-dia_do_inicio_da_verificação_(padrao_30_dias)
+# Lista de informações a serem extraídas da finalização do OFS
+# Valores podem ser: COD,MAT,APR,JPG,TOI,EVD
+# * COD - para códigos de finalização
+# * MAT - para material movimentado
+# * APR - para informações da APR
+# * JPG - para evidências normais
+# * TOI - para informações do inspeção
+# * EVD - para evidências de inspeção
+EXTRACAO=MAT
