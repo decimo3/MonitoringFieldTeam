@@ -106,8 +106,9 @@ namespace Automation.WebScraper
           Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"])).Text.Replace('\n', ' '),
         };
     }
-    public void GetActivityUploads()
+    public void GetActivityUploads(string nota)
     {
+      if (!IsFinished()) return;
       GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ARQUIVOS"])).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
       foreach (var download in GetElements(By.ClassName("download-button")))
