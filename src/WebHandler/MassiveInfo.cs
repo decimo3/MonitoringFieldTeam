@@ -51,12 +51,12 @@ namespace Automation.WebScraper
       }
       var informacoes = new Dictionary<string, IList>
       {
-        // ["INF"] = new List<GeneralInfo>(),
-        // ["COD"] = new List<FinalizaInfo>(),
+        ["INF"] = new List<GeneralInfo>(),
+        ["COD"] = new List<FinalizaInfo>(),
         ["MAT"] = new List<MaterialInfo>(),
         // ["APR"] = new List<AnaliseInfo>(),
         // ["JPG"] = new List<FotografiaInfo>(),
-        // ["TOI"] = new List<OcorrenciaInfo>(),
+        ["TOI"] = new List<OcorrenciaInfo>(),
         // ["EVD"] = new List<EvidenciaInfo>()
       };
       foreach (var line in lines)
@@ -64,8 +64,14 @@ namespace Automation.WebScraper
         try
         {
           SearchAndEnterActivity(line);
+          if (cfg.EXTRACAO_KEY.Contains("INF"))
+            informacoes["INF"].Add(GetActivityGeneralInfo(line));
+          if (cfg.EXTRACAO_KEY.Contains("COD"))
+            informacoes["COD"].AddRange(GetActivityClosings(line));
           if (cfg.EXTRACAO_KEY.Contains("MAT"))
-            informacoes["MAT"].Add(GetActivityMaterials(line));
+            informacoes["MAT"].AddRange(GetActivityMaterials(line));
+          if (cfg.EXTRACAO_KEY.Contains("TOI"))
+            informacoes["TOI"].Add(GetActivityOcorrencias(line));
         }
         catch (Exception ex)
         {
