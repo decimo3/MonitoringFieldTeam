@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Automation.Persistence
 {
     public class MaterialInfo
@@ -11,13 +13,15 @@ namespace Automation.Persistence
         public string Origem { get; set; }
         public override string ToString()
         {
-            return $"Nota: {Nota}\n" +
-                   $"Tipo: {Tipo}\n" +
-                   $"Codigo: {Codigo}\n" +
-                   $"Serie: {Serie}\n" +
-                   $"Descricao: {Descricao}\n" +
-                   $"Quantidade: {Quantidade}\n" +
-                   $"Origem: {Origem}";
-        }
-    }
+        var builder = new StringBuilder();
+        if (Nota is not null) builder.Append($"Nota: {Nota}\n");
+        if (Tipo is not null) builder.Append($"Tipo: {Tipo}\n");
+        if (Codigo is not null) builder.Append($"Codigo: {Codigo}\n");
+        if (Serie is not null) builder.Append($"Serie: {Serie}\n");
+        if (Descricao is not null) builder.Append($"Descrição: {Descricao}\n");
+        if (Quantidade is not null) builder.Append($"Quantidade: {Quantidade}\n");
+        if (Origem is not null) builder.Append($"Origem: {Origem}\n");
+        return builder.ToString();
+      }
+  }
 }
