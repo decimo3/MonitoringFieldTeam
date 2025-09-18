@@ -247,7 +247,7 @@ namespace Automation.WebScraper
       }
       try
       {
-        builder.Append(GetActivityGeneralInfo());
+        builder.Append(GetActivityGeneralInfo(arg));
       }
       catch (Exception e)
       {
@@ -256,7 +256,7 @@ namespace Automation.WebScraper
       }
       try
       {
-        GetActivityUploads();
+        GetActivityUploads(arg);
       }
       catch (Exception e)
       {
@@ -265,8 +265,7 @@ namespace Automation.WebScraper
       }
       try
       {
-        builder.Append(GetActivityClosings());
-        BackToBlack();
+        builder.Append(GetActivityClosings(arg));
       }
       catch (Exception e)
       {
