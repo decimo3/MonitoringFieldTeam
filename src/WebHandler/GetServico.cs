@@ -167,6 +167,7 @@ namespace Automation.WebScraper
     }
     public List<MaterialInfo> GetActivityMaterials(string nota)
     {
+      if (!IsFinished()) return new List<MaterialInfo>();
       var result = new List<MaterialInfo>();
       GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_MATERIAL"])).Click();
       var tabelas = GetElements(By.TagName("tbody"));
@@ -174,10 +175,20 @@ namespace Automation.WebScraper
       {
         var origem = tabela.GetDomAttribute("data-ofsc-inventory-pool");
         var conteudoTabela = GetTableActivity(tabela);
-        var materialTabela = GetListMaterialByListString(conteudoTabela, nota, origem);
-        result.AddRange(materialTabela);
+        result.AddRange(conteudoTabela.Select(linha =>
+          new MaterialInfo
+          {
+            Nota = nota,
+            Tipo = linha[0],
+            Codigo = linha[1],
+            Serie = linha[2],
+            Descricao = linha[3],
+            Quantidade = linha[4],
+            Origem = origem
+          }
+        ));
       }
-      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      BackToBlack();
       return result;
     }
     public String GetServico(String arg)
@@ -228,12 +239,7 @@ namespace Automation.WebScraper
       }
       try
       {
-        var materiais = GetActivityMaterials(arg);
-        foreach (var material in materiais)
-        {
-          builder.Append(material.ToString());
-          builder.Append('\n');
-        }
+        builder.Append(GetActivityMaterials(arg));
       }
       catch (Exception e)
       {
