@@ -133,29 +133,37 @@ namespace Automation.WebScraper
       GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
-    public string GetActivityClosings()
+    public List<FinalizaInfo> GetActivityClosings(string nota)
     {
-      var builder = new System.Text.StringBuilder();
+      if (!IsFinished()) return new List<FinalizaInfo>();
+      var rejeicao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_REJEICAO"]));
+      if (rejeicao is not null)
+      {
+        return new List<FinalizaInfo>
+        {
+          new() {
+            NotaServico = nota,
+            Codigo = rejeicao.Text,
+            Quantidade = 1.ToString()
+          }
+        };
+      }
       GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_FINALIZA"])).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
       var frame = GetElement(By.ClassName("content-iframe"));
       this.driver.SwitchTo().Frame(frame);
-      var cabecalhos = new string[] { "Código", "Quantidade" };
       var tabela = GetElement(By.TagName("tbody")); // By.Id("itens-selected")
       var tabelaResult = GetTableActivity(tabela);
-      foreach (var result in tabelaResult)
-      {
-        builder.Append("Código: ");
-        builder.Append(result[0]);
-        builder.Append('\n');
-        builder.Append("Quantidade: ");
-        builder.Append(result[1]);
-        builder.Append('\n');
-      }
       this.driver.SwitchTo().DefaultContent();
-      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      return builder.ToString();
+      BackToBlack();
+      return tabelaResult.Select(linha =>
+        new FinalizaInfo
+        {
+          NotaServico = nota,
+          Codigo = linha[0],
+          Quantidade = linha[1]
+        }
+      ).ToList();
     }
     public List<MaterialInfo> GetActivityMaterials(string nota)
     {
