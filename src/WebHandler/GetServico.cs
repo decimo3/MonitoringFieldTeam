@@ -110,23 +110,18 @@ namespace Automation.WebScraper
       GetElements(By.ClassName("found-item-activity")).First().Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
-    public String GetActivityGeneralInfo()
+    public GeneralInfo? GetActivityGeneralInfo(string nota)
     {
-      var builder = new System.Text.StringBuilder();
-      var estado = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"])).Text;
-      if (estado != "concluído" && estado != "não concluído")
-      {
-        builder.Append("A nota de servico não está finalizada!");
-        return builder.ToString();
-      }
-      builder.Append($"Recurso: {this.driver.FindElement(By.ClassName("page-header-description")).Text}\n");
-      builder.Append($"Atividade: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"])).Text}\n");
-      builder.Append($"Serviço: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SERVICO"])).Text}\n");
-      builder.Append($"Estado: {estado}\n");
-      if (estado == "não concluído")
-        builder.Append($"Código: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_REJEICAO"])).Text}\n");
-      builder.Append($"Observação: {GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"])).Text.Replace('\n', ' ')}\n");
-      return builder.ToString();
+      if (!IsFinished()) return null;
+      return new GeneralInfo()
+        {
+          Data = GetElement(By.ClassName("page-header-description")).Text.Split(',')[1],
+          Recurso = GetElement(By.ClassName("page-header-description")).Text.Split(',')[0],
+          Atividade = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"])).Text,
+          Servico = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SERVICO"])).Text,
+          Estado = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"])).Text,
+          Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"])).Text.Replace('\n', ' '),
+        };
     }
     public void GetActivityUploads()
     {
