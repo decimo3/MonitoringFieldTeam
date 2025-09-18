@@ -34,7 +34,8 @@ BOT_CHANNEL=lista_de_baldes_de_recursos_com_o_identificador_do_canal_do_Telegram
 # não realize o relatório de resumo de rotas.
 RETRODAY=ano-mes-dia_do_inicio_da_verificação_(padrao_30_dias)
 # Lista de informações a serem extraídas da finalização do OFS
-# Valores podem ser: COD,MAT,APR,JPG,TOI,EVD
+# Valores podem ser: INF,COD,MAT,APR,JPG,TOI,EVD
+# * INF - para informações gerais da nota
 # * COD - para códigos de finalização
 # * MAT - para material movimentado
 # * APR - para informações da APR
