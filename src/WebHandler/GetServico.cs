@@ -10,6 +10,7 @@ namespace Automation.WebScraper
     private void BackToBlack()
     {
       GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
     private ReadOnlyCollection<IWebElement> GetElements(By by, int timeoutInSeconds = 5)
     {
