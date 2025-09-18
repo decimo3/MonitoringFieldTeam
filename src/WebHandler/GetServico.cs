@@ -73,23 +73,6 @@ namespace Automation.WebScraper
       }
       return resultTable;
     }
-    private static List<MaterialInfo> GetListMaterialByListString(List<List<string>> listString, string nota, string origem)
-    {
-      var materiais = new List<MaterialInfo>();
-      foreach (var values in listString)
-      {
-        var material = new MaterialInfo();
-        material.Nota = nota;
-        material.Tipo = values[0];
-        material.Codigo = values[1];
-        material.Serie = values[2];
-        material.Descricao = values[3];
-        material.Quantidade = values[4];
-        material.Origem = origem;
-        materiais.Add(material);
-      }
-      return materiais;
-    }
     public void SearchAndEnterActivity(String workorder)
     {
       // Click on search bar to focus cursor on
