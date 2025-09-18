@@ -12,6 +12,10 @@ namespace Automation.WebScraper
       GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
+    private bool IsFinished()
+    {
+      return (GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"]))?.Text ?? string.Empty).Contains("concluído");
+    }
     private ReadOnlyCollection<IWebElement> GetElements(By by, int timeoutInSeconds = 5)
     {
       var endTime = DateTime.Now.AddSeconds(timeoutInSeconds);
