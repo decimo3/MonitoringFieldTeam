@@ -18,3 +18,47 @@ ACTIVITY_FINALIZA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/fo
 ACTIVITY_MATERIAL=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[3]/div/a
 ACTIVITY_ARQUIVOS=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[4]/div/a
 ACTIVITY_REJEICAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[7]/div/div[2]/div[1]/div[1]/div/div[2]
+ACTIVITY_INSPECAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[2]/div/a
+# Sessão IDENTIFICAÇÃO no formulário de INSPECAO
+IDENTIFICACAO_TIPOCAIXA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
+IDENTIFICACAO_MODELOCAIXA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[2]/div[1]/div/div[2]
+IDENTIFICACAO_NUMEROTOI=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
+IDENTIFICACAO_NOMETITULAR=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div[2]
+IDENTIFICACAO_TIPODOC=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[1]/div/div[2]/div[3]/div[1]/div/div[2]
+IDENTIFICACAO_NUMDOC=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[1]/div/div[2]/div[4]/div[1]/div/div[2]
+RESIDENCIA_CLASSE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[1]/div/div[2]/div[5]/div[1]/div/div[2]
+# Sessão DETALHES no formulário de INSPECAO
+MOTIVO_INSPECAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[1]/div[1]/div/div[2]
+INSTALACAO_SUSPENSA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div[2]
+INSTALACAO_NORMALIZADA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[3]/div[1]/div/div[2]
+CONSUMIDOR_ACOMPANHOU=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[4]/div[1]/div/div[2]
+CONSUMIDOR_AUTORIZOU=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[5]/div[1]/div/div[2]
+CONSUMIDOR_SOLICITOU=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[6]/div[1]/div/div[2]
+CONSUMIDOR_IDENTIFICADO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[7]/div[1]/div/div[2]
+CONSUMIDOR_ASSINOU=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[8]/div[1]/div/div[2]
+CONSUMIDOR_RECEBEU=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[8]/div[1]/div/div[2]
+VIA_AMARELA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[13]/div[1]/div/div[2]
+EVIDENCIAS_QUANTIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[14]/div[1]/div/div[2]
+EVIDENCIAS_EXISTEM=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[15]/div[1]/div/div[2]
+DESCRICAO_IRREGULARIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[18]/div[1]/div
+# Sessão LIGAÇÃO no formulário de INSPECAO
+GRUPO_TARIFARICO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[1]/div[1]/div/div[2]
+MEDICAO_TIPO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[2]/div[1]/div/div[2]
+ELEMENTOS_QNT=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[3]/div[1]/div/div[2]
+TIPO_FORNECIMENTO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[4]/div[1]/div/div[2]
+TENSAO_TIPO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[5]/div[1]/div/div[2]
+TENSAO_NIVEL=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[6]/div[1]/div/div[2]
+RAMAL_TIPO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[7]/div[1]/div/div[2]
+ENCAPSULADO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[4]/div/div[2]/div[8]/div[1]/div/div[2]
+# Sessão MEDIDOR no formulário de INSPECAO
+MEDIDOR_TIPO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[2]/div[1]/div/div[2]
+MEDIDOR_NUMERO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[3]/div[1]/div/div[2]
+MEDIDOR_MARCA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[4]/div[1]/div/div[2]
+MEDIDOR_ANO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[5]/div[1]/div/div[2]
+MEDIDOR_PATRIMONIO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[6]/div[1]/div/div[2]
+MEDIDOR_TENSAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[7]/div[1]/div/div[2]
+MEDIDOR_A_NOMINAL=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[9]/div[1]/div/div[2]
+MEDIDOR_A_MAXIMO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[7]/div[1]/div/div[2]
+MEDIDOR_CONSTANTE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[10]/div[1]/div/div[2]
+MEDIDOR_LOCALIZACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[11]/div[1]/div/div[2]
+MEDIDOR_OBSERVACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[10]/div/div/div[2]/div[1]/div
