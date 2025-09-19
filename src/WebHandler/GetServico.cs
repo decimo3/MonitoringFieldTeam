@@ -180,6 +180,8 @@ namespace Automation.WebScraper
     {
       if (!IsFinished()) return null;
       GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_INSPECAO"])).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      if (GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMEROTOI"])) is null) return null;
       return new OcorrenciaInfo
       {
         NotaServico = nota,
