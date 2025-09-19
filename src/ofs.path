@@ -1,6 +1,8 @@
-CHECK_TREE=/html/body/div[26]/div/div/div/div[1]/form/div/div[3]/oj-checkboxset/div[1]/span/span/input
-CHECK_ROUTE=/html/body/div[26]/div/div/div/div[1]/form/div/div[6]/oj-checkboxset/div[1]/span/span/input
-CHECK_APPLY=/html/body/div[26]/div/div/div/div[2]/controls:app-button/button
+# Painel de exibição GANNT com informações da ROTA
+CHECK_TREE=/html/body/div[27]/div/div/div/div[1]/form/div/div[3]/oj-checkboxset/div[1]/span/span/input
+CHECK_ROUTE=/html/body/div[27]/div/div/div/div[1]/form/div/div[6]/oj-checkboxset/div[1]/span/span/input
+CHECK_APPLY=/html/body/div[27]/div/div/div/div[2]/controls:app-button/button
+ZOOM_FIT=/html/body/div[27]/div/div/div/div[1]/form/div/div[7]/span[2]
 CONTAINER=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]
 BALDES=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[2]/div/div[2]/div[3]/div[_]
 RECURSOS_=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]/td[1]/div/div/div[_]
@@ -8,7 +10,6 @@ ESPELHOS_=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div
 REGISTROS=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]/td[2]/div/div[1]/div[_]/div[_]
 TIMELABEL=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[1]/td[2]/div/div/div[_]
 TIMELINES=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]/td[2]/div/div[1]/div[_]
-ZOOM_FIT=/html/body/div[26]/div/div/div/div[1]/form/div/div[7]/span[2]
 ACTIVITY_RECURSO=/html/body/div[14]/div[1]/main/controls:page-header/header/div[2]/div[1]/div[1]/div[2]/div/div[1]
 ACTIVITY_ATIVIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
 ACTIVITY_SERVICO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[3]/div[1]/div/div[2]
