@@ -83,7 +83,6 @@ namespace Automation.WebScraper
         var lista = informacoes[key];
         if (lista == null || lista.Count == 0)
           continue;
-        Type tipo = lista[0]!.GetType();
         System.IO.File.WriteAllText(
             System.IO.Path.Combine(
                 cfg.DOWNFOLDER,
