@@ -96,15 +96,17 @@ namespace Automation.WebScraper
     public GeneralInfo? GetActivityGeneralInfo(string nota)
     {
       if (!IsFinished()) return null;
-      return new GeneralInfo()
-        {
-          Data = GetElement(By.ClassName("page-header-description")).Text.Split(',')[1],
-          Recurso = GetElement(By.ClassName("page-header-description")).Text.Split(',')[0],
-          Atividade = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"])).Text,
-          Servico = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SERVICO"])).Text,
-          Estado = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"])).Text,
-          Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"])).Text.Replace('\n', ' '),
-        };
+      var result = new GeneralInfo();
+      result.Data = GetElement(By.ClassName("page-header-description"))?.Text.Split(',').Last();
+      result.Recurso = GetElement(By.ClassName("page-header-description"))?.Text.Split(',').First();
+      result.Atividade = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"]))?.Text;
+      result.NotaServico = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SERVICO"]))?.Text;
+      result.Situacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SITUACAO"]))?.Text;
+      result.Damage = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_DAMAGE"]))?.Text;
+      result.Vencimento = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_VENCIMENTO"]))?.Text;
+      result.Descricao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_DESCRICAO"]))?.Text;
+      result.Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"]))?.Text.Replace('\n', ' ');
+      return result;
     }
     public void GetActivityUploads(string nota)
     {
