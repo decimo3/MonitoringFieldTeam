@@ -47,9 +47,11 @@ namespace Automation.WebScraper
       }
       return null;
     }
-    private IWebElement GetElement(By by)
+    private IWebElement? GetElement(By by)
     {
       var elements = GetElements(by);
+      if (elements is null)
+        return null;
       if (elements.Count > 1)
         throw new Exception($"Mais de um elemento encontrado: {by}");
       return elements[0];
