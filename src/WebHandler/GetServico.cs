@@ -16,9 +16,10 @@ namespace Automation.WebScraper
     {
       return (GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SITUACAO"]))?.Text ?? string.Empty).Contains("concluído");
     }
-    private ReadOnlyCollection<IWebElement> GetElements(By by, int timeoutInSeconds = 5)
+    private ReadOnlyCollection<IWebElement>? GetElements(By by, int miliseconds = 0)
     {
-      var endTime = DateTime.Now.AddSeconds(timeoutInSeconds);
+      miliseconds = miliseconds != 0 ? miliseconds : this.cfg.ESPERAS["CURTA"];
+      var endTime = DateTime.Now.AddMilliseconds(miliseconds);
       while (DateTime.Now < endTime)
       {
         try
@@ -44,8 +45,7 @@ namespace Automation.WebScraper
         }
         Thread.Sleep(200); // Avoid busy waiting
       }
-
-      throw new TimeoutException($"Element not interactable after {timeoutInSeconds} seconds: {by}");
+      return null;
     }
     private IWebElement GetElement(By by)
     {
