@@ -16,9 +16,9 @@ public class Configuration
   public readonly Dictionary<String, Int32> ESPERAS = new()
   {
     {"TOTAL", 60_000},
-    {"LONGA", 10_000},
-    {"MEDIA", 6_000},
-    {"CURTA", 3_000},
+    {"LONGA", 30_000},
+    {"MEDIA", 10_000},
+    {"CURTA", 5_000},
   };
   public Configuration()
   {
