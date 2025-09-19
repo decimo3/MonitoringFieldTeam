@@ -67,7 +67,7 @@ namespace Automation.WebScraper
         var celulas = linha.FindElements(By.XPath(".//td"));
         foreach (var celula in celulas)
         {
-            valores.Add(celula.Text.Replace(';',' '));
+            valores.Add(celula.Text?.Replace(';',' '));
         }
         resultTable.Add(valores);
       }
