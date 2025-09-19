@@ -10,14 +10,26 @@ ESPELHOS_=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div
 REGISTROS=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]/td[2]/div/div[1]/div[_]/div[_]
 TIMELABEL=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[1]/td[2]/div/div/div[_]
 TIMELINES=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]/td[2]/div/div[1]/div[_]
+# Sessão DETALHES no formulário da ATIVIDADE
 ACTIVITY_RECURSO=/html/body/div[14]/div[1]/main/controls:page-header/header/div[2]/div[1]/div[1]/div[2]/div/div[1]
-ACTIVITY_ATIVIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
-ACTIVITY_SERVICO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[3]/div[1]/div/div[2]
-ACTIVITY_ESTADO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[2]/div[1]/div/div[2]
-ACTIVITY_OBSERVA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[7]/div/div[2]/div[12]/div[1]/div
+ACTIVITY_ATIVIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[3]/div[1]/div/div[2]
+ACTIVITY_SITUACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[4]/div[1]/div/div[2]
+ACTIVITY_SERVICO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[5]/div[1]/div/div[2]
+ACTIVITY_DAMAGE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[7]/div[1]/div/div[2]
+ACTIVITY_VENCIMENTO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[9]/div[1]/div/div[2]
+ACTIVITY_DESCRICAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[15]/div[1]/div/div[2]
+# Sessão ENDEREÇO no formulário da ATIVIDADE
+ACTIVITY_ENDERECO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[22]/div/div[2]/div[1]/div[1]/div/div[2]
+ACTIVITY_CIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[22]/div/div[2]/div[2]/div[1]/div/div[2]
+ACTIVITY_ESTADO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[22]/div/div[2]/div[3]/div[1]/div/div[2]
+ACTIVITY_CODIGO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[22]/div/div[2]/div[4]/div[1]/div/div[2]
+# Sessão FORMULÁRIOS no formulário da ATIVIDADE
+ACTIVITY_ANALISE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[3]/div/div[2]/div[1]/div/a
+ACTIVITY_OBSERVA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[8]/div/div[2]/div[12]/div[1]/div
 ACTIVITY_FINALIZA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[1]/div/a
 ACTIVITY_MATERIAL=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[3]/div/a
 ACTIVITY_ARQUIVOS=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[4]/div/a
+ACTIIVITY_EVIDENCIAS=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[6]/div/a
 ACTIVITY_REJEICAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[7]/div/div[2]/div[1]/div[1]/div/div[2]
 ACTIVITY_INSPECAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[8]/div/div/div[2]/div/a
 # Sessão IDENTIFICAÇÃO no formulário de INSPECAO
