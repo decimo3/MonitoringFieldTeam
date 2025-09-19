@@ -184,53 +184,53 @@ namespace Automation.WebScraper
       GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_INSPECAO"])).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
       if (GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMEROTOI"])) is null) return null;
-      return new OcorrenciaInfo
-      {
-        NotaServico = nota,
-        // Sessão IDENTIFICAÇÃO no formulário de INSPECAO
-        CaixaTipo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_TIPOCAIXA"])).Text,
-        CaixaModelo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_MODELOCAIXA"])).Text,
-        NumeroToi = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMEROTOI"])).Text,
-        NomeTitular = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NOMETITULAR"])).Text,
-        DocumentoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_TIPODOC"])).Text,
-        DocumentoNum = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMDOC"])).Text,
-        ResidenciaClasse = GetElement(By.XPath(this.cfg.CAMINHOS["RESIDENCIA_CLASSE"])).Text,
-        // Sessão DETALHES no formulário de INSPECAO
-        MotivoInspecao = GetElement(By.XPath(this.cfg.CAMINHOS["MOTIVO_INSPECAO"])).Text,
-        InstalacaoSuspensa = GetElement(By.XPath(this.cfg.CAMINHOS["INSTALACAO_SUSPENSA"])).Text,
-        InstalacaoNormalizada = GetElement(By.XPath(this.cfg.CAMINHOS["INSTALACAO_NORMALIZADA"])).Text,
-        ConsumidorAcompanhou = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_ACOMPANHOU"])).Text,
-        ClienteAutorizouLevantamento = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_AUTORIZOU"])).Text,
-        ClienteSolicitouPericia = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_SOLICITOU"])).Text,
-        ClienteQualAssinou = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_IDENTIFICADO"])).Text,
-        ClienteRecusouAssinar = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_ASSINOU"])).Text,
-        ClienteRecusouReceber = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_RECEBEU"])).Text,
-        FisicoEntregueTOI = GetElement(By.XPath(this.cfg.CAMINHOS["VIA_AMARELA"])).Text,
-        QuantidadeEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_QUANTIDADE"])).Text,
-        ExistenciaEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_EXISTEM"])).Text,
-        DescricaoIrregularidade = GetElement(By.XPath(this.cfg.CAMINHOS["DESCRICAO_IRREGULARIDADE"])).Text,
-        // Sessão LIGAÇÃO no formulário de INSPECAO
-        GrupoTarifarico = GetElement(By.XPath(this.cfg.CAMINHOS["GRUPO_TARIFARICO"])).Text,
-        LigacaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDICAO_TIPO"])).Text,
-        QuantidadeElementos = GetElement(By.XPath(this.cfg.CAMINHOS["ELEMENTOS_QNT"])).Text,
-        FornecimentoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["TIPO_FORNECIMENTO"])).Text,
-        TensaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["TENSAO_TIPO"])).Text,
-        TensaoNivel = GetElement(By.XPath(this.cfg.CAMINHOS["TENSAO_NIVEL"])).Text,
-        RamalTipo = GetElement(By.XPath(this.cfg.CAMINHOS["RAMAL_TIPO"])).Text,
-        SistemaEncapsulado = GetElement(By.XPath(this.cfg.CAMINHOS["ENCAPSULADO"])).Text,
-        // Sessão MEDIDOR no formulário de INSPECAO
-        MedidorTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_TIPO"])).Text,
-        MedidorNumero = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_NUMERO"])).Text,
-        MedidorMarca = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_MARCA"])).Text,
-        MedidorAno = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_ANO"])).Text,
-        MedidorPatrimonio = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_PATRIMONIO"])).Text,
-        MedidorTensao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_TENSAO"])).Text,
-        MedidorANominal = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_NOMINAL"])).Text,
-        MedidorAMaximo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_MAXIMO"])).Text,
-        MedidorConstante = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_CONSTANTE"])).Text,
-        MedidorLocalizacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_LOCALIZACAO"])).Text,
-        MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"])).Text,
+      var result = new OcorrenciaInfo();
+      result.NotaServico = nota;
+      // Sessão IDENTIFICAÇÃO no formulário de INSPECAO
+      result.CaixaTipo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_TIPOCAIXA"]))?.Text;
+      result.CaixaModelo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_MODELOCAIXA"]))?.Text;
+      result.NumeroToi = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMEROTOI"]))?.Text;
+      result.NomeTitular = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NOMETITULAR"]))?.Text;
+      result.DocumentoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_TIPODOC"]))?.Text;
+      result.DocumentoNum = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMDOC"]))?.Text;
+      result.ResidenciaClasse = GetElement(By.XPath(this.cfg.CAMINHOS["RESIDENCIA_CLASSE"]))?.Text;
+      // Sessão DETALHES no formulário de INSPECAO
+      result.MotivoInspecao = GetElement(By.XPath(this.cfg.CAMINHOS["MOTIVO_INSPECAO"]))?.Text;
+      result.InstalacaoSuspensa = GetElement(By.XPath(this.cfg.CAMINHOS["INSTALACAO_SUSPENSA"]))?.Text;
+      result.InstalacaoNormalizada = GetElement(By.XPath(this.cfg.CAMINHOS["INSTALACAO_NORMALIZADA"]))?.Text;
+      result.ConsumidorAcompanhou = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_ACOMPANHOU"]))?.Text;
+      result.ClienteAutorizouLevantamento = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_AUTORIZOU"]))?.Text;
+      result.ClienteSolicitouPericia = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_SOLICITOU"]))?.Text;
+      result.ClienteQualAssinou = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_IDENTIFICADO"]))?.Text;
+      result.ClienteRecusouAssinar = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_ASSINOU"]))?.Text;
+      result.ClienteRecusouReceber = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_RECEBEU"]))?.Text;
+      result.FisicoEntregueTOI = GetElement(By.XPath(this.cfg.CAMINHOS["VIA_AMARELA"]))?.Text;
+      result.QuantidadeEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_QUANTIDADE"]))?.Text;
+      result.ExistenciaEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_EXISTEM"]))?.Text;
+      result.DescricaoIrregularidade = GetElement(By.XPath(this.cfg.CAMINHOS["DESCRICAO_IRREGULARIDADE"]))?.Text.Replace('\n', ' ');
+      // Sessão LIGAÇÃO no formulário de INSPECAO
+      result.GrupoTarifarico = GetElement(By.XPath(this.cfg.CAMINHOS["GRUPO_TARIFARICO"]))?.Text;
+      result.LigacaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDICAO_TIPO"]))?.Text;
+      result.QuantidadeElementos = GetElement(By.XPath(this.cfg.CAMINHOS["ELEMENTOS_QNT"]))?.Text;
+      result.FornecimentoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["TIPO_FORNECIMENTO"]))?.Text;
+      result.TensaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["TENSAO_TIPO"]))?.Text;
+      result.TensaoNivel = GetElement(By.XPath(this.cfg.CAMINHOS["TENSAO_NIVEL"]))?.Text;
+      result.RamalTipo = GetElement(By.XPath(this.cfg.CAMINHOS["RAMAL_TIPO"]))?.Text;
+      result.SistemaEncapsulado = GetElement(By.XPath(this.cfg.CAMINHOS["ENCAPSULADO"]))?.Text;
+      // Sessão MEDIDOR no formulário de INSPECAO
+      result.MedidorTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_TIPO"]))?.Text;
+      result.MedidorNumero = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_NUMERO"]))?.Text;
+      result.MedidorMarca = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_MARCA"]))?.Text;
+      result.MedidorAno = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_ANO"]))?.Text;
+      result.MedidorPatrimonio = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_PATRIMONIO"]))?.Text;
+      result.MedidorTensao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_TENSAO"]))?.Text;
+      result.MedidorANominal = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_NOMINAL"]))?.Text;
+      result.MedidorAMaximo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_MAXIMO"]))?.Text;
+      result.MedidorConstante = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_CONSTANTE"]))?.Text;
+      result.MedidorLocalizacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_LOCALIZACAO"]))?.Text;
+      result.MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"]))?.Text.Replace('\n', ' ');
       BackToBlack();
+      return result;
     }
     public String GetServico(String arg)
     {
