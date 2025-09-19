@@ -113,9 +113,7 @@ namespace Automation.WebScraper
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
       foreach (var download in GetElements(By.ClassName("download-button")))
         download.Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      BackToBlack();
     }
     public List<FinalizaInfo> GetActivityClosings(string nota)
     {
@@ -154,6 +152,7 @@ namespace Automation.WebScraper
       if (!IsFinished()) return new List<MaterialInfo>();
       var result = new List<MaterialInfo>();
       GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_MATERIAL"])).Click();
+      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
       var tabelas = GetElements(By.TagName("tbody"));
       foreach (var tabela in tabelas)
       {
@@ -225,7 +224,7 @@ namespace Automation.WebScraper
         MedidorConstante = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_CONSTANTE"])).Text,
         MedidorLocalizacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_LOCALIZACAO"])).Text,
         MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"])).Text,
-      };
+      BackToBlack();
     }
     public String GetServico(String arg)
     {
@@ -239,8 +238,7 @@ namespace Automation.WebScraper
         builder.Append(e.Message);
         return builder.ToString();
       }
-      var estado = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"])).Text;
-      if (estado != "concluído" && estado != "não concluído")
+      if (IsFinished())
       {
         builder.Append("A nota de servico não está finalizada!");
         return builder.ToString();
