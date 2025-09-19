@@ -14,7 +14,7 @@ namespace Automation.WebScraper
     }
     private bool IsFinished()
     {
-      return (GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ESTADO"]))?.Text ?? string.Empty).Contains("concluído");
+      return (GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SITUACAO"]))?.Text ?? string.Empty).Contains("concluído");
     }
     private ReadOnlyCollection<IWebElement> GetElements(By by, int timeoutInSeconds = 5)
     {
