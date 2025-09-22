@@ -114,7 +114,7 @@ namespace Automation.WebScraper
       result.Damage = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_DAMAGE"]))?.Text;
       result.Vencimento = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_VENCIMENTO"]))?.Text;
       result.Descricao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_DESCRICAO"]))?.Text;
-      result.Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"]))?.Text.Replace('\n', ' ');
+      result.Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"]))?.Text.RemoveLineEndings();
       return result;
     }
     public void GetActivityUploads(string nota)
@@ -214,7 +214,7 @@ namespace Automation.WebScraper
       result.FisicoEntregueTOI = GetElement(By.XPath(this.cfg.CAMINHOS["VIA_AMARELA"]))?.Text;
       result.QuantidadeEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_QUANTIDADE"]))?.Text;
       result.ExistenciaEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_EXISTEM"]))?.Text;
-      result.DescricaoIrregularidade = GetElement(By.XPath(this.cfg.CAMINHOS["DESCRICAO_IRREGULARIDADE"]))?.Text.Replace('\n', ' ');
+      result.DescricaoIrregularidade = GetElement(By.XPath(this.cfg.CAMINHOS["DESCRICAO_IRREGULARIDADE"]))?.Text.RemoveLineEndings();
       // Sessão LIGAÇÃO no formulário de INSPECAO
       result.GrupoTarifarico = GetElement(By.XPath(this.cfg.CAMINHOS["GRUPO_TARIFARICO"]))?.Text;
       result.LigacaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDICAO_TIPO"]))?.Text;
@@ -235,7 +235,7 @@ namespace Automation.WebScraper
       result.MedidorAMaximo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_MAXIMO"]))?.Text;
       result.MedidorConstante = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_CONSTANTE"]))?.Text;
       result.MedidorLocalizacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_LOCALIZACAO"]))?.Text;
-      result.MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"]))?.Text.Replace('\n', ' ');
+      result.MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"]))?.Text.RemoveLineEndings();
       BackToBlack();
       return result;
     }
