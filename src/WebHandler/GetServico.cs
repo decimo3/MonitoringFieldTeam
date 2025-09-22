@@ -52,9 +52,7 @@ namespace Automation.WebScraper
       var elements = GetElements(by);
       if (elements is null)
         return null;
-      if (elements.Count > 1)
-        throw new Exception($"Mais de um elemento encontrado: {by}");
-      return elements[0];
+      return elements.FirstOrDefault();
     }
     private List<List<string>> GetTableActivity(IWebElement tableElement)
     {
