@@ -1,3 +1,4 @@
+using System.Text;
 using System.Collections;
 using Automation.Persistence;
 
@@ -78,6 +79,7 @@ namespace Automation.WebScraper
           Console.WriteLine($"{DateTime.Now} - Ocorreu um erro ao processar a nota {line}.\n{ex.Message}");
         }
       }
+      Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
       foreach (var key in informacoes.Keys)
       {
         var lista = informacoes[key];
@@ -85,7 +87,7 @@ namespace Automation.WebScraper
           continue;
         var csv_name = key.ToLower() + ".csv";
         var csv_path = System.IO.Path.Combine(cfg.DOWNFOLDER, csv_name);
-        System.IO.File.WriteAllText(csv_path, ListObjectsToCSV(lista));
+        System.IO.File.WriteAllText(csv_path, ListObjectsToCSV(lista), Encoding.GetEncoding(1252));
         // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
         {
