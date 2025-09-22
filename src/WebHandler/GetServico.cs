@@ -176,8 +176,8 @@ namespace Automation.WebScraper
             Tipo = linha[0],
             Codigo = linha[1],
             Serie = linha[2],
-            Descricao = linha[3],
-            Quantidade = linha[4],
+            Descricao = linha.Count == 5 ? linha[3] : origem == "customer" ? linha[3] : linha[4],
+            Quantidade = linha.Count == 5 ? linha[4] : linha[5],
             Origem = origem
           }
         ));
