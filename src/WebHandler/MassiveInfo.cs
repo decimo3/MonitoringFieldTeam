@@ -1,16 +1,18 @@
+using System.Text;
+using System.Collections;
 using Automation.Persistence;
 
 namespace Automation.WebScraper
 {
   public partial class Manager
   {
-    private static string ListObjectsToCSV<T>(List<T> list)
+    private static string ListObjectsToCSV(IList list)
     {
-      if (list.Count == 0)
-      {
+      if (list == null)
         throw new ArgumentException($"A lista está vazia!");
-      }
-      var type = typeof(T);
+      if (list.Count == 0)
+        throw new ArgumentException($"A lista está vazia!");
+      var type = list[0]!.GetType();
       var properties = type.GetProperties();
       var table = new System.Text.StringBuilder();
       var values = new List<string>();
@@ -25,14 +27,7 @@ namespace Automation.WebScraper
         foreach (var property in properties)
         {
           var value = property.GetValue(item);
-          if (value == null)
-          {
-            values.Add("null");
-          }
-          else
-          {
-            values.Add(value.ToString());
-          }
+          values.Add(value?.ToString() ?? string.Empty);
         }
         table.AppendLine(string.Join(";", values));
         values.Clear();
@@ -55,35 +50,53 @@ namespace Automation.WebScraper
       {
         throw new ArgumentException($"Há caracteres inválidos na lista de notas!");
       }
-      var materiais = new List<MaterialInfo>();
+      var informacoes = new Dictionary<string, IList>
+      {
+        ["INF"] = new List<GeneralInfo>(),
+        ["COD"] = new List<FinalizaInfo>(),
+        ["MAT"] = new List<MaterialInfo>(),
+        // ["APR"] = new List<AnaliseInfo>(),
+        // ["JPG"] = new List<FotografiaInfo>(),
+        ["TOI"] = new List<OcorrenciaInfo>(),
+        // ["EVD"] = new List<EvidenciaInfo>()
+      };
       foreach (var line in lines)
       {
         try
         {
           SearchAndEnterActivity(line);
-          materiais.AddRange(GetActivityMaterials(line));
-
+          if (cfg.EXTRACAO_KEY.Contains("INF"))
+            informacoes["INF"].Add(GetActivityGeneralInfo(line));
+          if (cfg.EXTRACAO_KEY.Contains("COD"))
+            informacoes["COD"].AddRange(GetActivityClosings(line));
+          if (cfg.EXTRACAO_KEY.Contains("MAT"))
+            informacoes["MAT"].AddRange(GetActivityMaterials(line));
+          if (cfg.EXTRACAO_KEY.Contains("TOI"))
+            informacoes["TOI"].Add(GetActivityOcorrencias(line));
         }
         catch (Exception ex)
         {
           Console.WriteLine($"{DateTime.Now} - Ocorreu um erro ao processar a nota {line}.\n{ex.Message}");
         }
       }
-      System.IO.File.WriteAllText(
-          System.IO.Path.Combine(
-              System.AppContext.BaseDirectory,
-              "ofs.csv"),
-          ListObjectsToCSV(materiais));
-      System.IO.File.Delete(filepath);
-      Console.WriteLine($"{DateTime.Now} - O relatório de material foi exportado!");
-      // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
-      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+      Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+      foreach (var key in informacoes.Keys)
       {
-        FileName = System.IO.Path.Combine(
-            System.AppContext.BaseDirectory,
-            "ofs.csv"),
-        UseShellExecute = true // importante para usar o programa padrão
-      });
+        var lista = informacoes[key];
+        if (lista == null || lista.Count == 0)
+          continue;
+        var csv_name = key.ToLower() + ".csv";
+        var csv_path = System.IO.Path.Combine(cfg.DOWNFOLDER, csv_name);
+        System.IO.File.WriteAllText(csv_path, ListObjectsToCSV(lista), Encoding.GetEncoding(1252));
+        // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+          FileName = csv_path,
+          UseShellExecute = true // importante para usar o programa padrão
+        });
+      }
+      System.IO.File.Delete(filepath);
+      Console.WriteLine($"{DateTime.Now} - Os relatórios massivos foram exportados!");
     }
   }
 }

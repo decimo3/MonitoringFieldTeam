@@ -7,6 +7,7 @@ public class Configuration
   public readonly String LOCKFILE;
   public readonly Int32 TOLERANCIA = 3;
   public readonly List<String> PISCINAS;
+  public readonly List<String> EXTRACAO_KEY;
   public readonly Boolean ENVIRONMENT = false;
   public readonly Dictionary<String, String> CONFIGURACAO = new();
   public readonly Dictionary<String, String> CAMINHOS = new();
@@ -15,9 +16,9 @@ public class Configuration
   public readonly Dictionary<String, Int32> ESPERAS = new()
   {
     {"TOTAL", 60_000},
-    {"LONGA", 10_000},
-    {"MEDIA", 6_000},
-    {"CURTA", 3_000},
+    {"LONGA", 30_000},
+    {"MEDIA", 10_000},
+    {"CURTA", 5_000},
   };
   public Configuration()
   {
@@ -72,6 +73,7 @@ public class Configuration
       if(horario_string.Length != 2) continue;
       this.HORARIOS.Add(horario_string.First(), Int32.Parse(horario_string.Last()));
     }
+    this.EXTRACAO_KEY = this.CONFIGURACAO["EXTRACAO"].Split(',').ToList();
   }
   private Dictionary<String,String> ArquivoConfiguracao(String filename, char delimiter = '=')
   {
@@ -80,6 +82,7 @@ public class Configuration
     foreach (var line in file)
     {
       if(String.IsNullOrEmpty(line)) continue;
+      if(line.StartsWith('#')) continue;
       var args = line.Split(delimiter);
       if(args.Length != 2) continue;
       parametros.Add(args[0], args[1]);
