@@ -76,7 +76,16 @@ namespace Automation.WebScraper
     public void SearchAndEnterActivity(String workorder)
     {
       // Click on search bar to focus cursor on
-      GetElements(By.ClassName("search-bar-input")).First().Click();
+      try
+      {
+        GetElement(By.ClassName("search-bar-input")).Click();
+      }
+      catch (ElementClickInterceptedException)
+      {
+        GetElement(By.ClassName("search-bar-input-clear")).Click();
+        GetElement(By.ClassName("logo-image")).Click();
+        GetElement(By.ClassName("search-bar-input")).Click();
+      }
       // Fill search bar with workorder number char by char
       var actions = new Actions(this.driver);
       foreach (var c in workorder)
@@ -85,12 +94,12 @@ namespace Automation.WebScraper
         actions.KeyUp(c.ToString()).Perform();
       }
       // Await amount of time and check if there is a response
-      if(!GetElements(By.ClassName("found-item-activity")).Any())
+      if(GetElements(By.ClassName("found-item-activity")) is null)
       {
         throw new Exception($"A nota de serviço não foi encontrada!");
       }
       // Click on the first workorder on list
-      GetElements(By.ClassName("found-item-activity")).First().Click();
+      GetElement(By.ClassName("found-item-activity")).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
     public GeneralInfo? GetActivityGeneralInfo(string nota)
