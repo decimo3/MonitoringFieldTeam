@@ -83,22 +83,18 @@ namespace Automation.WebScraper
         var lista = informacoes[key];
         if (lista == null || lista.Count == 0)
           continue;
-        System.IO.File.WriteAllText(
-            System.IO.Path.Combine(
-                cfg.DOWNFOLDER,
-                key.ToLower() + ".csv"),
-            ListObjectsToCSV(lista));
+        var csv_name = key.ToLower() + ".csv";
+        var csv_path = System.IO.Path.Combine(cfg.DOWNFOLDER, csv_name);
+        System.IO.File.WriteAllText(csv_path, ListObjectsToCSV(lista));
+        // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+          FileName = csv_path,
+          UseShellExecute = true // importante para usar o programa padrão
+        });
       }
       System.IO.File.Delete(filepath);
       Console.WriteLine($"{DateTime.Now} - Os relatórios massivos foram exportados!");
-      // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
-      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-      {
-        FileName = System.IO.Path.Combine(
-            System.AppContext.BaseDirectory,
-            "ofs.csv"),
-        UseShellExecute = true // importante para usar o programa padrão
-      });
     }
   }
 }
