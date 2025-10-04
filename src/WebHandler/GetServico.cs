@@ -9,7 +9,7 @@ namespace Automation.WebScraper
   {
     private void BackToBlack()
     {
-      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      GetElement(By.ClassName("oj-ux-ico-nav-left")).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
     private bool IsFinished()
