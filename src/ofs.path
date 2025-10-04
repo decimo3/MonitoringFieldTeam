@@ -75,3 +75,21 @@ MEDIDOR_A_MAXIMO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/for
 MEDIDOR_CONSTANTE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[10]/div[1]/div/div[2]
 MEDIDOR_LOCALIZACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[5]/div/div[2]/div[11]/div[1]/div/div[2]
 MEDIDOR_OBSERVACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[10]/div/div/div[2]/div[1]/div
+# Sessão DECLARANTE no formulário de INSPECAO
+DECLARANTE_NOMECOMPLETO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[1]/div[1]/div/div[2]
+DECLARANTE_GRAUAFINIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[2]/div[1]/div/div[2]
+DECLARANTE_NUMDOCUMENTO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[3]/div[1]/div/div[2]
+DECLARANTE_TEMPOOCUPACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[4]/div[1]/div/div[2]
+DECLARANTE_TEMPOUNIDADE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[5]/div[1]/div/div[2]
+DECLARANTE_TIPOOCUPACAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[6]/div[1]/div/div[2]
+DECLARANTE_QNTRESIDENTES=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[3]/div/div[2]/div[7]/div[1]/div/div[2]
+DECLARANTE_EMAIL=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[10]/div[1]/div/div[2]
+DECLARANTE_CELULAR=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[5]/div/div[2]/div[2]/div/div[2]/div[10]/div[1]/div/div[2]
+# Sessão SELAGEM no formulário de INSPECAO
+SELAGEM_TAMPOS=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
+SELAGEM_BORNES=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div[2]
+SELAGEM_PARAFUSO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[3]/div[1]/div/div[2]
+SELAGEM_TRAVA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[4]/div[1]/div/div[2]
+SELAGEM_TAMPA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[5]/div[1]/div/div[2]
+SELAGEM_BASE=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[6]/div[1]/div/div[2]
+SELAGEM_GERAL=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[4]/div/div[2]/div[1]/div/div[2]/div[1]/div/div[2]/div[7]/div[1]/div/div[2]
