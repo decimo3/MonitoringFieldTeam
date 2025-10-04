@@ -9,7 +9,7 @@ namespace Automation.WebScraper
   {
     private void BackToBlack()
     {
-      GetElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
+      GetElement(By.ClassName("oj-ux-ico-nav-left")).Click();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
     }
     private bool IsFinished()
@@ -236,6 +236,24 @@ namespace Automation.WebScraper
       result.MedidorConstante = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_CONSTANTE"]))?.Text;
       result.MedidorLocalizacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_LOCALIZACAO"]))?.Text;
       result.MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"]))?.Text.RemoveLineEndings();
+      // Sessão DECLARANTE no formulário de INSPECAO
+      result.DeclaranteNomeCompleto = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_NOMECOMPLETO"]))?.Text;
+      result.DeclaranteGrauAfiinidade = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_GRAUAFINIDADE"]))?.Text;
+      result.DeclaranteDocumento = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_NUMDOCUMENTO"]))?.Text;
+      result.DeclaranteTempoOcupacao = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_TEMPOOCUPACAO"]))?.Text;
+      result.DeclaranteTempoUnidade = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_TEMPOUNIDADE"]))?.Text;
+      result.DeclaranteTipoOcupacao = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_TIPOOCUPACAO"]))?.Text;
+      result.DeclaranteQntResidentes = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_QNTRESIDENTES"]))?.Text;
+      result.DeclaranteEmail = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_EMAIL"]))?.Text;
+      result.DeclaranteCelular = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_CELULAR"]))?.Text;
+      // Sessão SELAGEM no formulário de INSPECAO
+      result.SelagemTampos = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_TAMPOS"]))?.Text;
+      result.SelagemBornes = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_BORNES"]))?.Text;
+      result.SelagemParafuso = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_PARAFUSO"]))?.Text;
+      result.SelagemTrava = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_TRAVA"]))?.Text;
+      result.SelagemTampa = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_TAMPA"]))?.Text;
+      result.SelagemBase = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_BASE"]))?.Text;
+      result.SelagemGeral = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_GERAL"]))?.Text;
       BackToBlack();
       return result;
     }
