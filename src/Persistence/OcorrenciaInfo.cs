@@ -46,5 +46,23 @@ namespace Automation.Persistence
     public string MedidorConstante { get; set; }
     public string MedidorLocalizacao { get; set; }
     public string MedidorObservacao { get; set; }
+    // Sessão DECLARANTE no formulário de INSPECAO
+    public string? DeclaranteNomeCompleto { get; set; }
+    public string? DeclaranteGrauAfiinidade { get; set; }
+    public string? DeclaranteDocumento { get; set; }
+    public string? DeclaranteTempoOcupacao { get; set; }
+    public string? DeclaranteTempoUnidade { get; set; }
+    public string? DeclaranteTipoOcupacao { get; set; }
+    public string? DeclaranteQntResidentes { get; set; }
+    public string? DeclaranteEmail { get; set; }
+    public string? DeclaranteCelular { get; set; }
+    // Sessão SELAGEM no formulário de INSPECAO
+    public string? SelagemTampos { get; set; }
+    public string? SelagemBornes { get; set; }
+    public string? SelagemParafuso { get; set; }
+    public string? SelagemTrava { get; set; }
+    public string? SelagemTampa { get; set; }
+    public string? SelagemBase { get; set; }
+    public string? SelagemGeral { get; set; }
   }
 }
