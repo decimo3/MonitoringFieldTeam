@@ -81,11 +81,13 @@ public class Configuration
     var file = System.IO.File.ReadAllLines(filename);
     foreach (var line in file)
     {
-      if(String.IsNullOrEmpty(line)) continue;
-      if(line.StartsWith('#')) continue;
-      var args = line.Split(delimiter);
-      if(args.Length != 2) continue;
-      parametros.Add(args[0], args[1]);
+      if (String.IsNullOrEmpty(line)) continue;
+      if (line.TrimStart().StartsWith('#')) continue;
+      var args = line.Split(delimiter, 2);
+      if (args.Length < 2) continue;
+      var key = args[0].Trim();
+      var val = args[1].Trim();
+      parametros[key] = val;
     }
     return parametros;
   }
