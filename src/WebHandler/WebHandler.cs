@@ -114,6 +114,16 @@ public sealed class WebHandler : IDisposable
     }
     return element;
   }
+  public void ReloadWebPage()
+  {
+    // Erase cached data to a clean run
+    this.driver.ExecuteCdpCommand("Network.enable", new Dictionary<string, object>());
+    this.driver.ExecuteCdpCommand("Network.clearBrowserCookies", new Dictionary<string, object>());
+    this.driver.ExecuteCdpCommand("Network.clearBrowserCache", new Dictionary<string, object>());
+    this.driver.ExecuteScript("window.localStorage.clear()");
+    this.driver.ExecuteScript("window.sessionStorage.clear()");
+    this.driver.Navigate().GoToUrl(this.url);
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
