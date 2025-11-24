@@ -124,6 +124,21 @@ public sealed class WebHandler : IDisposable
     this.driver.ExecuteScript("window.sessionStorage.clear()");
     this.driver.Navigate().GoToUrl(this.url);
   }
+  public IList<IWebElement> GetNestedElements
+  (
+    IWebElement parentElement,
+    string pathname
+  )
+  {
+    if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
+      throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
+    var elements = parentElement.FindElements(By.XPath('.' + pathvalue));
+    if (elements.Any() && elements[0].Displayed && elements[0].Enabled)
+    {
+      return elements;
+    }
+    return new List<IWebElement>();
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
