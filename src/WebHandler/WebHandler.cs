@@ -139,6 +139,27 @@ public sealed class WebHandler : IDisposable
     }
     return new List<IWebElement>();
   }
+  public List<List<string>> GetTableData(IWebElement tableElement)
+  {
+    var resultTable = new List<List<string>>();
+    var linhas = GetNestedElements(tableElement, "GLOBAL_TABLEROW");
+    if (!linhas.Any()) return resultTable;
+    foreach (var linha in linhas)
+    {
+      var valores = new List<string>();
+      if (String.IsNullOrEmpty(linha.Text)) continue;
+      var celulas = GetNestedElements(linha, "GLOBAL_TABLECEL");
+      foreach (var celula in celulas)
+      {
+        if (celula is null)
+          valores.Add(string.Empty);
+        else
+          valores.Add(celula.Text.Replace(';',' '));
+      }
+      resultTable.Add(valores);
+    }
+    return resultTable;
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
