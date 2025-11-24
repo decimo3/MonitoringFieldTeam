@@ -17,6 +17,7 @@ public class ElementNotFoundException : Exception
 public enum WAITSEC : int { Agora = 0, Curto = 3, Medio = 7, Longo = 15, Total = 30 };
 public sealed class WebHandler : IDisposable
 {
+  private readonly string url = "";
   private readonly ChromeDriver driver;
   private readonly ChromeDriverService service;
   private readonly ChromeOptions options = new();
@@ -30,6 +31,7 @@ public sealed class WebHandler : IDisposable
   private const int MILISECONDS_TIMECHECK_INTERVAL = 200;
   public WebHandler(Configuration cfg)
   {
+    this.url = cfg.CONFIGURACAO["WEBSITE"];
     var chromedriverpath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
       "chromedriver-win64",
