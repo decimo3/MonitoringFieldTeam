@@ -65,21 +65,29 @@ public static class Updater
   {
     try
     {
+      var driverpath = System.IO.Path.Combine(
+        System.AppContext.BaseDirectory, "chromedriver-win64", "chromedriver.exe");
       Console.WriteLine($"{DateTime.Now} - Verificando as versões do browser e do driver...");
       var argumento = $"-c \"(Get-Item '{cfg.CONFIGURACAO["GCHROME"]}').VersionInfo.ProductVersion.ToString()\"";
       var chrome_version = GetVersionAplicationOutput("powershell", argumento);
       Console.WriteLine($"{DateTime.Now} - Chrome major version: {chrome_version}.");
-      var driver_version = GetVersionAplicationOutput("chromedriver-win64/chromedriver.exe", "--version");
-      Console.WriteLine($"{DateTime.Now} - Driver major version: {driver_version}.");
-      if(driver_version >= chrome_version) return;
+      if (System.IO.File.Exists(driverpath))
+      {
+        var driver_version = GetVersionAplicationOutput(driverpath, "--version");
+        Console.WriteLine($"{DateTime.Now} - Driver major version: {driver_version}.");
+        if(driver_version >= chrome_version) return;
+      }
       Console.WriteLine($"{DateTime.Now} - Buscando as novas versões do chromedriver...");
       var newer_version = CheckNewerChromeDriverVersion();
       Console.WriteLine($"{DateTime.Now} - Versão do chromedriver no canal STABLE: {newer_version}");
       Console.Write($"{DateTime.Now} - Baixando a nova versão do chromedriver...");
       DownloadNewerChromeDriver(newer_version);
       Console.Write(" Download concluído!\n");
-      Console.Write($"{DateTime.Now} - Removendo a versão antiga do chromedriver...");
-      DeleteOlderDriverFile();
+      if (System.IO.File.Exists(driverpath))
+      {
+        Console.Write($"{DateTime.Now} - Removendo a versão antiga do chromedriver...");
+        DeleteOlderDriverFile();
+      }
       Console.Write(" Remoção concluída!\n");
       Console.Write($"{DateTime.Now} - Descompactando atualização...");
       UnzipChromeDriverFile();
