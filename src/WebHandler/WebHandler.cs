@@ -2,6 +2,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Automation.Helpers;
 namespace MonitoringFieldTeam.WebHandler;
+
 public class MissingValueException : Exception
 {
   public MissingValueException() { }
@@ -154,7 +155,7 @@ public sealed class WebHandler : IDisposable
         if (celula is null)
           valores.Add(string.Empty);
         else
-          valores.Add(celula.Text.Replace(';',' '));
+          valores.Add(celula.Text.Replace(';', ' '));
       }
       resultTable.Add(valores);
     }
@@ -192,7 +193,7 @@ public sealed class WebHandler : IDisposable
   }
   public void Dispose()
   {
-      Dispose(true);
-      GC.SuppressFinalize(this);
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 }
