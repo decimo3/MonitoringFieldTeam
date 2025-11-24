@@ -1,46 +1,40 @@
-using OpenQA.Selenium;
-namespace Automation.WebScraper;
-public partial class Manager
+using MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.WebHandler;
+namespace MonitoringFieldTeam.WebScraper;
+
+public static class Autenticador
 {
-  public void Autenticar()
+  public static void Autenticar(WebHandler.WebHandler handler, Configuration cfg)
   {
-    System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
-    if (this.driver.FindElements(By.Id("SignOutStatusMessage")).Any())
+    if (handler.GetElements("AUTENTICAR_OFSAUTH", WAITSEC.Medio).Any())
     {
-      this.driver.Navigate().GoToUrl(this.cfg.CONFIGURACAO["WEBSITE"]);
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      handler.GetElement("AUTENTICAR_OFSUSER", WAITSEC.Agora).SendKeys(cfg.CONFIGURACAO["USUARIO"]);
+      handler.GetElement("AUTENTICAR_OFSPASS", WAITSEC.Agora).SendKeys(cfg.CONFIGURACAO["PALAVRA"]);
+      handler.GetElement("AUTENTICAR_OFSLOGIN", WAITSEC.Agora).Click();
     }
-    if (this.driver.FindElements(By.Id("welcome-message")).Any())
+    if (handler.GetElements("AUTENTICAR_WFMAUTH", WAITSEC.Medio).Any())
     {
-      this.driver.FindElement(By.Id("username")).SendKeys(this.cfg.CONFIGURACAO["USUARIO"]);
-      this.driver.FindElement(By.Id("password")).SendKeys(this.cfg.CONFIGURACAO["PALAVRA"]);
-      this.driver.FindElement(By.Id("sign-in")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      handler.GetElement("AUTENTICAR_WFMUSER", WAITSEC.Curto).SendKeys(cfg.CONFIGURACAO["USUARIO"]);
+      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
+      if (handler.GetElements("AUTENTICAR_WFMERROR1", WAITSEC.Curto).Any())
+        throw new InvalidOperationException("O usuário informado está incorreto!");
+      handler.GetElement("AUTENTICAR_WFMPASS", WAITSEC.Curto).SendKeys(cfg.CONFIGURACAO["PALAVRA"]);
+      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
+      if (handler.GetElements("AUTENTICAR_WFMERROR2", WAITSEC.Curto).Any())
+        throw new InvalidOperationException("A senha informada está incorreta!");
     }
-    if (this.driver.FindElements(By.Name("loginfmt")).Any())
+    if (handler.GetElements("AUTENTICAR_WFMLIST", WAITSEC.Medio).Any())
     {
-      this.driver.FindElements(By.Name("loginfmt")).Single().SendKeys(this.cfg.CONFIGURACAO["USUARIO"]);
-      this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      this.driver.FindElements(By.Name("passwd")).Single().SendKeys(this.cfg.CONFIGURACAO["PALAVRA"]);
-      this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      handler.GetElement("AUTENTICAR_WFMLIST", WAITSEC.Agora).Click();
+      handler.GetElement("AUTENTICAR_WFMPASS", WAITSEC.Curto).SendKeys(cfg.CONFIGURACAO["PALAVRA"]);
+      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
+      if (handler.GetElements("AUTENTICAR_WFMERROR2", WAITSEC.Curto).Any())
+        throw new InvalidOperationException("A senha informada está incorreta!");
     }
-    var xpath_account = "//*[@id='tilesHolder']/div[1]/div/div[1]/div/div[1]/img";
-    if (this.driver.FindElements(By.XPath(xpath_account)).Any())
+    if (handler.GetElements("AUTENTICAR_WFMCHECK", WAITSEC.Medio).Any())
     {
-      this.driver.FindElement(By.XPath(xpath_account)).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      this.driver.FindElements(By.Name("passwd")).Single().SendKeys(this.cfg.CONFIGURACAO["PALAVRA"]);
-      this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      handler.GetElement("AUTENTICAR_WFMCHECK", WAITSEC.Agora).Click();
+      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
     }
-    if (this.driver.FindElements(By.Name("DontShowAgain")).Any())
-    {
-      this.driver.FindElements(By.Name("DontShowAgain")).Single().Click();
-      this.driver.FindElement(By.Id("idSIButton9")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-    }
-    System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
   }
 }
