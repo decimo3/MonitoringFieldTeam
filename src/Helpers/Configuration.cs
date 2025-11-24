@@ -75,7 +75,7 @@ public class Configuration
     }
     this.EXTRACAO_KEY = this.CONFIGURACAO["EXTRACAO"].Split(',').ToList();
   }
-  private Dictionary<String,String> ArquivoConfiguracao(String filename, char delimiter = '=')
+  public static Dictionary<String, String> ArquivoConfiguracao(String filename, char delimiter = '=')
   {
     var parametros = new Dictionary<string,string>();
     var file = System.IO.File.ReadAllLines(filename);
