@@ -193,6 +193,19 @@ public sealed class WebHandler : IDisposable
     }
     return resposta;
   }
+  public bool HasClassElement
+  (
+    IWebElement element,
+    string pathname
+  )
+  {
+    if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
+      throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
+    if (!pathvalue.StartsWith('.'))
+      throw new ArgumentException($"O valor passado não é um nome de classe!");
+    var classes = element.GetAttribute("class").Split(" ");
+    return classes.Contains(pathvalue[1..]);
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
