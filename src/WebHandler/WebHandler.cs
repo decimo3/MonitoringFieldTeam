@@ -16,6 +16,18 @@ public class ElementNotFoundException : Exception
   public ElementNotFoundException(string message) : base(message) { }
   public ElementNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 }
+public class ElementNotEnabledException : Exception
+{
+  public ElementNotEnabledException() { }
+  public ElementNotEnabledException(string message) : base(message) { }
+  public ElementNotEnabledException(string message, Exception innerException) : base(message, innerException) { }
+}
+public class ElementNotDisplayedException : Exception
+{
+  public ElementNotDisplayedException() { }
+  public ElementNotDisplayedException(string message) : base(message) { }
+  public ElementNotDisplayedException(string message, Exception innerException) : base(message, innerException) { }
+}
 public enum WAITSEC : int { Agora = 0, Curto = 3, Medio = 7, Longo = 15, Total = 30 };
 public sealed class WebHandler : IDisposable
 {
@@ -135,17 +147,18 @@ public sealed class WebHandler : IDisposable
     if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
       throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
     var elements = parentElement.FindElements(By.XPath('.' + pathvalue));
-    if (elements.Any() && elements[0].Displayed && elements[0].Enabled)
-    {
-      return elements;
-    }
-    return new List<IWebElement>();
+    if (!elements.Any()) throw new ElementNotFoundException();
+    var first = elements[0];
+    if (!first.Enabled) throw new ElementNotEnabledException();
+    if (first.GetAttribute("type") == "checkbox") return elements;
+    if (first.Displayed) return elements;
+    throw new ElementNotDisplayedException();
   }
   public List<List<string>> GetTableData(IWebElement tableElement)
   {
     var resultTable = new List<List<string>>();
     var linhas = GetNestedElements(tableElement, "GLOBAL_TABLEROW");
-    if (!linhas.Any()) return resultTable;
+    if (!linhas.Any()) throw new ElementNotFoundException();
     foreach (var linha in linhas)
     {
       var valores = new List<string>();
