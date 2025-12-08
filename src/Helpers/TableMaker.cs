@@ -1,4 +1,6 @@
-namespace Automation.Helpers;
+using System.Collections;
+namespace MonitoringFieldTeam.Helpers;
+
 public static class TableMaker<T>
 {
   public static readonly char separador = ';';

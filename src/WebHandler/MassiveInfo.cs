@@ -1,8 +1,10 @@
 using System.Text;
 using System.Collections;
-using Automation.Persistence;
+using Serilog;
+using MonitoringFieldTeam.Persistence;
+using MonitoringFieldTeam.Helpers;
 
-namespace Automation.WebScraper
+namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {

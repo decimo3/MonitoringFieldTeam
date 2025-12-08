@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Automation.Persistence
+namespace MonitoringFieldTeam.Persistence
 {
   public class GeneralInfo
   {

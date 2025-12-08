@@ -1,7 +1,8 @@
 using System.Text.RegularExpressions;
-using Automation.Persistence;
+using MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.Persistence;
 
-namespace Automation.WebScraper
+namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {

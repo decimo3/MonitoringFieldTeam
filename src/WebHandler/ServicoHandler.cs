@@ -1,9 +1,7 @@
-using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
-using Automation.Persistence;
-using System.Collections.ObjectModel;
+using Serilog;
+using MonitoringFieldTeam.Persistence;
 
-namespace Automation.WebScraper
+namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {

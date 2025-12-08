@@ -1,5 +1,9 @@
-using Automation.Helpers;
-namespace Automation;
+using Serilog;
+using MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.WebHandler;
+using MonitoringFieldTeam.WebScraper;
+namespace MonitoringFieldTeam;
+
 public class Startup
 {
   public static void Main(string[] args)

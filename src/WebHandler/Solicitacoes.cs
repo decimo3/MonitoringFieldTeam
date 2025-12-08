@@ -1,5 +1,6 @@
-using OpenQA.Selenium;
-namespace Automation.WebScraper
+using Serilog;
+using MonitoringFieldTeam.Helpers;
+namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {

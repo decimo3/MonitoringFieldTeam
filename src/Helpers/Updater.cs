@@ -1,4 +1,5 @@
-namespace Automation.Helpers;
+using Serilog;
+namespace MonitoringFieldTeam.Helpers;
 public static class Updater
 {
   private static readonly String DRIVER_ZIPFILE = "chromedriver-win64.zip";

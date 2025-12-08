@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using Automation.Helpers;
+using MonitoringFieldTeam.Helpers;
+using OpenQA.Selenium.Interactions;
 namespace MonitoringFieldTeam.WebHandler;
 
 public class MissingValueException : Exception

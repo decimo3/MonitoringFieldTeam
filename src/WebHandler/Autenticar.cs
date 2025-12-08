@@ -1,3 +1,4 @@
+using Serilog;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.WebHandler;
 namespace MonitoringFieldTeam.WebScraper;

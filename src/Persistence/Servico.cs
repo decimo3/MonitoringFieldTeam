@@ -1,4 +1,4 @@
-namespace Automation.Persistence
+namespace MonitoringFieldTeam.Persistence
 {
   public class Servico
   {

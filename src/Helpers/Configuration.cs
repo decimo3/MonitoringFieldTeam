@@ -1,4 +1,5 @@
-namespace Automation.Helpers;
+namespace MonitoringFieldTeam.Helpers;
+
 public class Configuration
 {
   public readonly String DATAFOLDER;

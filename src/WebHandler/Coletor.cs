@@ -1,7 +1,7 @@
-using Automation.Persistence;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Interactions;
-namespace Automation.WebScraper;
+using Serilog;
+using MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.Persistence;
+namespace MonitoringFieldTeam.WebScraper;
 public partial class Manager
 {
   public bool Coletor()

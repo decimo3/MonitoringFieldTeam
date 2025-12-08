@@ -1,5 +1,5 @@
-using OpenQA.Selenium;
-namespace Automation.WebScraper;
+using Serilog;
+namespace MonitoringFieldTeam.WebScraper;
 public partial class Manager
 {
   public void Atualizar(String piscina, Boolean direcao)

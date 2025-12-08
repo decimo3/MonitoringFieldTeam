@@ -1,5 +1,6 @@
-using Automation.Persistence;
-namespace Automation.WebScraper
+using System.Text.Json;
+using MonitoringFieldTeam.Persistence;
+namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {

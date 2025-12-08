@@ -1,7 +1,7 @@
-using Automation.Persistence;
-using OpenQA.Selenium.DevTools.V119.Network;
-
-namespace Automation.WebScraper
+using Serilog;
+using MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.Persistence;
+namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {

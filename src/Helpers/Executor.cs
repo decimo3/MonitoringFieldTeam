@@ -1,4 +1,6 @@
-namespace Automation.Helpers;
+using Serilog;
+namespace MonitoringFieldTeam.Helpers;
+
 public static class Executor
 {
   public static String Executar(String aplication, String arguments)

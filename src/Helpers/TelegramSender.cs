@@ -1,4 +1,5 @@
-namespace Automation.Helpers;
+using Serilog;
+namespace MonitoringFieldTeam.Helpers;
 public static class Telegram
 {
   public static void SendMessage(String token, Int64 channel, String mensagem)
