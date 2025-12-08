@@ -249,6 +249,34 @@ public sealed class WebHandler : IDisposable
       throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
     return element.GetAttribute(pathvalue);
   }
+  public bool IsElementCovered(IWebElement element)
+  {
+    var js = @"
+        var el = arguments[0];
+        if (!el) return true;
+        var rect = el.getBoundingClientRect();
+        var points = [
+          [rect.left + rect.width/2, rect.top + rect.height/2],
+          [rect.left + 1, rect.top + 1],
+          [rect.right - 1, rect.top + 1],
+          [rect.left + 1, rect.bottom - 1],
+          [rect.right - 1, rect.bottom - 1]
+        ];
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var h = window.innerHeight || document.documentElement.clientHeight;
+        for (var i = 0; i < points.length; i++) {
+          var x = points[i][0], y = points[i][1];
+          if (x < 0 || y < 0 || x > w || y > h) continue;
+          var top = document.elementFromPoint(x, y);
+          if (!top) continue;
+          var node = top;
+          while (node) { if (node === el) return false; node = node.parentNode; }
+        }
+        return true;
+    ";
+    var jsExecutor = (IJavaScriptExecutor)driver;
+    return (bool)jsExecutor.ExecuteScript(js, element);
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
