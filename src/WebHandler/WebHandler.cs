@@ -206,6 +206,19 @@ public sealed class WebHandler : IDisposable
     var classes = element.GetAttribute("class").Split(" ");
     return classes.Contains(pathvalue[1..]);
   }
+  public void GetScreenshot(string filename)
+  {
+    var largura_script = "return document.body.parentNode.scrollWidth";
+    var tamanho_script = "return document.body.parentNode.scrollHeight";
+    var largura_retorno = (Int64)driver.ExecuteScript(largura_script);
+    var tamanho_retorno = (Int64)driver.ExecuteScript(tamanho_script);
+    var largura_necessario = Int32.Parse(largura_retorno.ToString());
+    var tamanho_necessario = Int32.Parse(tamanho_retorno.ToString());
+    var tamanho_janela = new System.Drawing.Size(largura_necessario, tamanho_necessario);
+    driver.Manage().Window.Size = tamanho_janela;
+    driver.GetScreenshot().SaveAsFile(filename);
+    driver.Manage().Window.Maximize();
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
