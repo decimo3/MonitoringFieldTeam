@@ -9,81 +9,60 @@ public class ValueNotFoundException : Exception
     System.Runtime.Serialization.SerializationInfo info,
     System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 }
-public class Configuration
+public static class Configuration
 {
-  public readonly String DATAFOLDER;
-  public readonly String DOWNFOLDER;
-  public readonly String TEMPFOLDER;
-  public readonly String LOCKFILE;
-  public readonly Int32 TOLERANCIA = 3;
-  public readonly List<String> PISCINAS;
-  public readonly List<String> EXTRACAO_KEY;
-  public readonly Boolean ENVIRONMENT = false;
-  public readonly Dictionary<String, String> CONFIGURACAO = new();
-  public readonly Dictionary<String, String> CAMINHOS = new();
-  public readonly Dictionary<String, Int32> HORARIOS = new();
-  public readonly Dictionary<String, Int64> BOT_CHANNELS = new();
-  public readonly Dictionary<String, Int32> ESPERAS = new()
+  private static Dictionary<string, object> VALUES = new(StringComparer.InvariantCultureIgnoreCase);
+  public static void LoadConf(string confpath)
   {
-    {"TOTAL", 60_000},
-    {"LONGA", 30_000},
-    {"MEDIA", 10_000},
-    {"CURTA", 5_000},
-  };
-  public Configuration()
+    var configurations = ArquivoConfiguracao(confpath);
+
+    foreach (var configuration in configurations)
+      VALUES[configuration.Key] = ParseValue(configuration.Value);
+  }
+  private static object GetObject(string key)
   {
-    if(System.Environment.GetCommandLineArgs().Contains("debug"))
+    if (!VALUES.TryGetValue(key, out var obj) || obj is null)
+      throw new KeyNotFoundException($"Não foi possível obter o valor pela chave {key}");
+    return obj;
+  }
+  public static string GetString(string key)
+  {
+    if (GetObject(key) is not string config)
+      throw new ValueNotFoundException($"Não foi possível obter o valor pela chave {key}");
+    return config;
+  }
+  public static string[] GetArray(string key)
+  {
+    if (GetObject(key) is not string[] config)
+      throw new ValueNotFoundException($"Não foi possível obter o valor pela chave {key}");
+    return config;
+  }
+  public static (string Key, long Value)[] GetPairs(string key)
+  {
+    if (GetObject(key) is not (string Key, long Value)[] config)
+      throw new ValueNotFoundException($"Não foi possível obter o valor pela chave {key}");
+    return config;
+  }
+  private static object ParseValue(string value)
+  {
+    // Simple: no comma → return string
+    if (!value.Contains(',')) return value;
+    var parts = value.Split(',');
+    // Sub-array case: "a|1,b|2,c|3"
+    if (parts.Length > 0 && parts[0].Contains('|'))
     {
-      this.ENVIRONMENT = true;
-    }
-    this.LOCKFILE = System.IO.Path.Combine(System.AppContext.BaseDirectory, "ofs.lock");
-    this.DATAFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "www");
-    if(!System.IO.Directory.Exists(this.DATAFOLDER)) System.IO.Directory.CreateDirectory(this.DATAFOLDER);
-    this.DOWNFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "odl");
-    if(!System.IO.Directory.Exists(this.DOWNFOLDER)) System.IO.Directory.CreateDirectory(this.DOWNFOLDER);
-    this.TEMPFOLDER = System.IO.Path.Combine(System.AppContext.BaseDirectory, "tmp");
-    if(!System.IO.Directory.Exists(this.TEMPFOLDER)) System.IO.Directory.CreateDirectory(this.TEMPFOLDER);
-
-    if(System.Environment.GetCommandLineArgs().Contains("slower"))
-      foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] *= 2;
-    if(System.Environment.GetCommandLineArgs().Contains("faster"))
-      foreach(var key in this.ESPERAS.Keys.ToList()) this.ESPERAS[key] /= 2;
-
-    this.CONFIGURACAO = ArquivoConfiguracao(
-      System.IO.Path.Combine(System.AppContext.BaseDirectory, "ofs.conf"));
-
-    if(this.CONFIGURACAO.TryGetValue("ODLPATH", out String? odl_path))
-    {
-      if(!String.IsNullOrWhiteSpace(odl_path) && System.IO.Directory.Exists(odl_path))
+      var list = new List<(string, long)>();
+      foreach (var p in parts)
       {
-        this.DOWNFOLDER = odl_path;
+        var pair = p.Split('|');
+        if (pair.Length != 2)
+          throw new FormatException($"Invalid pair format in: '{p}'.");
+        list.Add((pair[0], long.Parse(pair[1])));
       }
+      return list.ToArray(); // (string,long)[]
     }
-
-    if(this.CONFIGURACAO.TryGetValue("TMPPATH", out String? tmp_path))
-    {
-      if(!String.IsNullOrWhiteSpace(tmp_path) && System.IO.Directory.Exists(tmp_path))
-      {
-        this.TEMPFOLDER = tmp_path;
-      }
-    }
-
-    this.PISCINAS = this.CONFIGURACAO["RECURSO"].Split(",").ToList();
-    foreach(var channel in this.CONFIGURACAO["BOT_CHANNEL"].Split(",").ToList())
-    {
-      var channel_args = channel.Split('|');
-      if(channel_args.Length != 2) continue;
-      this.BOT_CHANNELS.Add(channel_args.First(), Int64.Parse(channel_args.Last()));
-    }
-
-    this.CAMINHOS = ArquivoConfiguracao("ofs.path");
-    foreach(var horario in this.CONFIGURACAO["HORARIO"].Split(",").ToList())
-    {
-      var horario_string = horario.Split('|');
-      if(horario_string.Length != 2) continue;
-      this.HORARIOS.Add(horario_string.First(), Int32.Parse(horario_string.Last()));
-    }
-    this.EXTRACAO_KEY = this.CONFIGURACAO["EXTRACAO"].Split(',').ToList();
+    // Normal comma list: "a,b,c"
+    return parts; // string[]
   }
   public static Dictionary<String, String> ArquivoConfiguracao(String filename, char delimiter = '=')
   {
