@@ -43,21 +43,18 @@ public sealed class WebHandler : IDisposable
     {'.', By.ClassName}
   };
   private const int MILISECONDS_TIMECHECK_INTERVAL = 200;
-  public WebHandler(Configuration cfg)
+  public WebHandler()
   {
-    this.url = cfg.CONFIGURACAO["WEBSITE"];
+    this.url = Configuration.GetString("WEBSITE");
     var chromedriverpath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
-      "chromedriver-win64",
-      "chromedriver.exe");
-    this.service = cfg.ENVIRONMENT ?
-      ChromeDriverService.CreateDefaultService() :
-      ChromeDriverService.CreateDefaultService(chromedriverpath);
-    this.options.AddArgument($@"--user-data-dir={cfg.TEMPFOLDER}");
-    this.options.AddArgument($@"--app={cfg.CONFIGURACAO["WEBSITE"]}");
-    this.options.BinaryLocation = cfg.CONFIGURACAO["GCHROME"];
+      "chromedriver-win64", "chromedriver.exe");
+    this.service = ChromeDriverService.CreateDefaultService(chromedriverpath);
+    this.options.AddArgument($@"--user-data-dir={temppath}");
+    this.options.AddArgument($@"--app={url}");
+    this.options.BinaryLocation = Configuration.GetString("GCHROME");
     this.options.AddUserProfilePreference("profile.default_content_settings.popups", 0);
-    this.options.AddUserProfilePreference("download.default_directory", cfg.DATAFOLDER);
+    this.options.AddUserProfilePreference("download.default_directory", Configuration.GetString("DATAPATH"));
     this.driver = new ChromeDriver(this.service, options);
     this.driver.Manage().Window.Maximize();
     var pathfind_filepath = System.IO.Path.Combine(
