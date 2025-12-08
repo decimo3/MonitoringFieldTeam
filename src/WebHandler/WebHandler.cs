@@ -219,6 +219,15 @@ public sealed class WebHandler : IDisposable
     driver.GetScreenshot().SaveAsFile(filename);
     driver.Manage().Window.Maximize();
   }
+  public void SendKeyByKey(string texto)
+  {
+    var actions = new Actions(this.driver);
+    foreach (var c in texto)
+    {
+      actions.KeyDown(c.ToString()).Perform();
+      actions.KeyUp(c.ToString()).Perform();
+    }
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
