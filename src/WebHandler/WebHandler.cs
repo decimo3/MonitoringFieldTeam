@@ -239,6 +239,16 @@ public sealed class WebHandler : IDisposable
       throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
     this.driver.SwitchTo().Frame(GetElement(pathname));
   }
+  public string GetElementAttribute
+  (
+    IWebElement element,
+    string pathname
+  )
+  {
+    if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
+      throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
+    return element.GetAttribute(pathvalue);
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
