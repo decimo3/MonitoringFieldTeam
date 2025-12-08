@@ -228,6 +228,17 @@ public sealed class WebHandler : IDisposable
       actions.KeyUp(c.ToString()).Perform();
     }
   }
+  public void ExchangeContext(string? pathname = null)
+  {
+    if (pathname is null)
+    {
+      this.driver.SwitchTo().DefaultContent();
+      return;
+    }
+    if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
+      throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
+    this.driver.SwitchTo().Frame(GetElement(pathname));
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
