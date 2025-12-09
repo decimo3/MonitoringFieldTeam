@@ -46,6 +46,8 @@ public sealed class WebHandler : IDisposable
   public WebHandler()
   {
     this.url = Configuration.GetString("WEBSITE");
+    string temppath = System.IO.Path.Combine(
+      System.AppContext.BaseDirectory, "temp");
     var chromedriverpath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
       "chromedriver-win64", "chromedriver.exe");
@@ -72,9 +74,9 @@ public sealed class WebHandler : IDisposable
     if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
       throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
     if (replaceText1 is not null)
-      pathvalue = pathvalue.Replace('?', (char)(replaceText1 + '0'));
+      pathvalue = pathvalue.Replace("?", replaceText1.ToString());
     if (replaceText2 is not null)
-      pathvalue = pathvalue.Replace('¿', (char)(replaceText2 + '0'));
+      pathvalue = pathvalue.Replace("¿", replaceText2.ToString());
     var bytype = pathvalue[0];
     if (!BY.TryGetValue(bytype, out Func<string, By>? byfunc) || byfunc is null)
       throw new MissingValueException($"Não foi possível obter o meio a partir do caminho `{bytype}`!");
