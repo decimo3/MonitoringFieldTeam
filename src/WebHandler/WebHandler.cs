@@ -90,7 +90,7 @@ public sealed class WebHandler : IDisposable
       try
       {
         var elements = this.driver.FindElements(byfunc(byvalue));
-        if (elements.Any() && elements[0].Displayed && elements[0].Enabled)
+        if (elements.Any() && elements[0].Enabled) // && elements[0].Displayed
         {
           return elements;
         }
@@ -168,6 +168,7 @@ public sealed class WebHandler : IDisposable
     var first = elements[0];
     if (!first.Enabled) throw new ElementNotEnabledException();
     if (first.GetAttribute("type") == "checkbox") return elements;
+    return elements;
     if (first.Displayed) return elements;
     throw new ElementNotDisplayedException();
   }
