@@ -147,6 +147,9 @@ public sealed class WebHandler : IDisposable
     this.driver.ExecuteCdpCommand("Network.enable", new Dictionary<string, object>());
     this.driver.ExecuteCdpCommand("Network.clearBrowserCookies", new Dictionary<string, object>());
     this.driver.ExecuteCdpCommand("Network.clearBrowserCache", new Dictionary<string, object>());
+    // Ensure cookies removed at Selenium level
+    this.driver.Manage().Cookies.DeleteAllCookies();
+    // Clear storage and refresh the current window
     this.driver.ExecuteScript("window.localStorage.clear()");
     this.driver.ExecuteScript("window.sessionStorage.clear()");
     this.driver.Navigate().GoToUrl(this.url);
