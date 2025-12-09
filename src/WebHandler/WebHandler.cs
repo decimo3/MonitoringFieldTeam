@@ -81,6 +81,9 @@ public sealed class WebHandler : IDisposable
     if (!BY.TryGetValue(bytype, out Func<string, By>? byfunc) || byfunc is null)
       throw new MissingValueException($"Não foi possível obter o meio a partir do caminho `{bytype}`!");
     var byvalue = (byfunc == By.XPath) ? pathvalue : pathvalue[1..];
+    // Implicit await because javascript is changing elements
+    if (timeout == WAITSEC.Total)
+      Thread.Sleep(TimeSpan.FromSeconds((int)WAITSEC.Curto));
     var expiration = DateTime.Now + TimeSpan.FromSeconds((int)timeout);
     do
     {
