@@ -64,24 +64,15 @@ public class Startup
       }
       catch (System.Exception erro)
       {
-        Console.WriteLine($"{DateTime.Now} - Houve um problema na coleta...");
-        Console.WriteLine(erro.Message);
-        Console.WriteLine(erro.StackTrace);
-        WebHandler.Refresh();
+        Log.Error("Houve um problema crítico!");
+        Log.Error(erro.Message);
+        if (erro.StackTrace is not null)
+          Log.Debug(erro.StackTrace);
+#if !DEBUG
+        Log.Information("Tentando reiniciar o sistema...");
+        Executor.Reiniciar();
+#endif
       }
-    }
-    }
-    catch (System.Exception erro)
-    {
-      Console.WriteLine($"{DateTime.Now} - Houve um problema crítico!");
-      Console.WriteLine($"{DateTime.Now} - {erro.Message}");
-      Console.WriteLine($"{DateTime.Now} - {erro.StackTrace}");
-      Console.WriteLine($"{DateTime.Now} - Tentando reiniciar o sistema...");
-      var executable = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "ofs.exe");
-      var arguments = System.Environment.GetCommandLineArgs();
-      System.Diagnostics.Process.Start(executable, String.Join(' ', arguments.Skip(1).ToArray()));
-      System.Environment.Exit(0);
-    }
     }
   }
 }
