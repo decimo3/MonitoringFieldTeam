@@ -87,10 +87,21 @@ public sealed class WebHandler : IDisposable
     var expiration = DateTime.Now + TimeSpan.FromSeconds((int)timeout);
     do
     {
-      var elements = this.driver.FindElements(byfunc(byvalue));
-      if (elements.Any() && elements[0].Displayed && elements[0].Enabled)
+      try
       {
-        return elements;
+        var elements = this.driver.FindElements(byfunc(byvalue));
+        if (elements.Any() && elements[0].Displayed && elements[0].Enabled)
+        {
+          return elements;
+        }
+      }
+      catch (StaleElementReferenceException)
+      {
+        // Keep trying
+      }
+      catch (ElementNotInteractableException)
+      {
+        // Element not ready yet
       }
       System.Threading.Thread.Sleep(MILISECONDS_TIMECHECK_INTERVAL);
     } while (DateTime.Now < expiration);
