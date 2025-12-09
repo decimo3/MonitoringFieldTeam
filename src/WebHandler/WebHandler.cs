@@ -148,7 +148,11 @@ public sealed class WebHandler : IDisposable
   {
     if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
       throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
-    var elements = parentElement.FindElements(By.XPath('.' + pathvalue));
+    var bytype = pathvalue[0];
+    if (!BY.TryGetValue(bytype, out Func<string, By>? byfunc) || byfunc is null)
+      throw new MissingValueException($"Não foi possível obter o meio a partir do caminho `{bytype}`!");
+    var byvalue = (byfunc == By.XPath) ? '.' + pathvalue : pathvalue[1..];
+    var elements = parentElement.FindElements(byfunc(byvalue));
     if (!elements.Any()) throw new ElementNotFoundException();
     var first = elements[0];
     if (!first.Enabled) throw new ElementNotEnabledException();
