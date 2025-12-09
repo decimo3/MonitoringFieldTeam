@@ -28,7 +28,7 @@ public class ElementNotDisplayedException : Exception
   public ElementNotDisplayedException(string message) : base(message) { }
   public ElementNotDisplayedException(string message, Exception innerException) : base(message, innerException) { }
 }
-public enum WAITSEC : int { Agora = 0, Curto = 3, Medio = 7, Longo = 15, Total = 30 };
+public enum WAITSEC : int { Agora = 0, Curto = 5, Medio = 10, Longo = 15, Total = 30 };
 public sealed class WebHandler : IDisposable
 {
   private readonly string url = "";
