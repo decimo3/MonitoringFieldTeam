@@ -196,7 +196,7 @@ public sealed class WebHandler : IDisposable
     }
     return resultTable;
   }
-  public static Dictionary<String, Int32> GetElementStyle(IWebElement element)
+  public Dictionary<String, Int32> GetElementStyle(IWebElement element)
   {
     var texto_estilo = element.GetDomAttribute("style");
     var resposta = new Dictionary<String, Int32>();
