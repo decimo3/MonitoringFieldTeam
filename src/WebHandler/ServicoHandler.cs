@@ -18,8 +18,14 @@ namespace MonitoringFieldTeam.WebScraper
     }
     private void BackToBlack()
     {
-      GetElement(By.ClassName("oj-ux-ico-nav-left")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      var backbtn = handler.GetElement("GLOBAL_BACKBTN", WebHandler.WAITSEC.Agora);
+      if (!handler.IsElementCovered(backbtn))
+      {
+        backbtn.Click();
+        return;
+      }
+      Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
+      BackToBlack();
     }
     private bool IsFinished()
     {
