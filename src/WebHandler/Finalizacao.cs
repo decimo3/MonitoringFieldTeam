@@ -125,5 +125,13 @@ namespace MonitoringFieldTeam.WebScraper
       }
       return relatorios;
     }
+    public static bool TemFinalizacao(String downfolder, DateOnly data, String piscina)
+    {
+      var balde = piscina.Split('>').Last();
+      var filename_done = Path.Combine(downfolder, $"{data.ToString("yyyyMMdd")}_{balde}.done.csv");
+      var filename_send = Path.Combine(downfolder, $"{data.ToString("yyyyMMdd")}_{balde}.send.csv");
+      var filename_void = Path.Combine(downfolder, $"{data.ToString("yyyyMMdd")}_{balde}.void.csv");
+      return File.Exists(filename_done) || File.Exists(filename_send) || File.Exists(filename_void);
+    }
   }
 }
