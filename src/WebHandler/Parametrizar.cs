@@ -10,17 +10,19 @@ namespace MonitoringFieldTeam.WebScraper
       this.driver.Navigate().Refresh();
       System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
     }
-    public void Parametrizar()
+    public static int ObterHoraAtual(WebHandler.WebHandler handler)
     {
-      // DONE - Coletar a posição do horário atual `toaGantt-time-line`
-      var regua_hora_atual = this.driver.FindElement(By.ClassName("toaGantt-time-line"));
-      this.horario_atual = ColetarStyle(regua_hora_atual.GetDomAttribute("style"))["left"];
-      // TODO - Calcular a quantidade de minutos em um pixel de deslocamento
-      var regua_hora_hora = this.driver.FindElements(By.ClassName("toaGantt-hour-line"));
-      var pixel_1th_hora = ColetarStyle(regua_hora_hora[1].GetDomAttribute("style"))["left"];
-      var pixel_2th_hora = ColetarStyle(regua_hora_hora[0].GetDomAttribute("style"))["left"];
-      this.pixels_por_hora = pixel_1th_hora - pixel_2th_hora;
-      this.pixels_por_minuto = this.pixels_por_hora / 60;
+      var regua_hora_atual = handler.GetElement("PARAMETRO_HORAATUAL");
+      return handler.GetElementStyle(regua_hora_atual)["left"];
+    }
+    public static int ObterPixelsPorMinuto(WebHandler.WebHandler handler)
+    {
+      var regua_hora_hora = handler.GetElements("PARAMETRO_HORALINHA", WAITSEC.Medio);
+      if (!regua_hora_hora.Any())
+        throw new ElementNotFoundException("não foi encontrado nenhum elemento pelo caminho `PARAMETRO_HORALINHA`!");
+      var pixel_1th_hora = handler.GetElementStyle(regua_hora_hora[0])["left"];
+      var pixel_2th_hora = handler.GetElementStyle(regua_hora_hora[1])["left"];
+      return (pixel_2th_hora - pixel_1th_hora) / 60;
     }
     public void ProximoBalde()
     {
