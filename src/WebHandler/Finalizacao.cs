@@ -25,12 +25,15 @@ namespace MonitoringFieldTeam.WebScraper
       }
       return true;
     }
-    private void CreateVoidReport()
+    public static string CreateReport(List<Relatorio_DTO> relatorios, String bucketName, DateOnly dateLabel)
     {
-      var filename = $"{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.void.csv";
-      var filepath = System.IO.Path.Combine(this.cfg.DOWNFOLDER, filename);
-      System.IO.File.Create(filepath).Close();
-      System.Console.WriteLine($"{DateTime.Now} - Relatório vazio {filename} exportado!");
+      var tailpath = relatorios.Any() ? "done" : "void";
+      var filename = $"{dateLabel.ToString("yyyyMMdd")}_{bucketName}.{tailpath}.csv";
+      var filepath = System.IO.Path.Combine(Configuration.GetString("DATAPATH"), filename);
+      var csv = relatorios.Any() ? TableMaker.ListObjectsToCSV(relatorios) : string.Empty;
+      System.IO.File.WriteAllText(filepath, csv);
+      Log.Information("Relatório '{filename}' exportado!\n{csv}", filename, csv);
+      return filepath;
     }
     public void Finalizacao(Boolean check_pending = true)
     {
