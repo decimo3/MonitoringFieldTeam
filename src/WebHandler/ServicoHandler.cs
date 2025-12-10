@@ -27,9 +27,16 @@ namespace MonitoringFieldTeam.WebScraper
       Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
       BackToBlack();
     }
-    private bool IsFinished()
+    private void IsFinished()
     {
-      return (GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SITUACAO"]))?.Text ?? string.Empty).Contains("concluído");
+      var finished = handler.GetElement("ACTIVITY_SITUACAO", WebHandler.WAITSEC.Curto);
+      if (!handler.IsElementCovered(finished))
+      {
+        if (finished.Text.Contains("concluído")) return;
+        throw new InvalidOperationException($"A nota de serviço {servico} não está finalizada!");
+      }
+      Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
+      IsFinished();
     }
     private ReadOnlyCollection<IWebElement>? GetElements(By by, int miliseconds = 0)
     {
