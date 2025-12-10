@@ -8,34 +8,6 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public static class MassiveInfo
   {
-    private static string ListObjectsToCSV(IList list)
-    {
-      if (list == null)
-        throw new ArgumentException($"A lista está vazia!");
-      if (list.Count == 0)
-        throw new ArgumentException($"A lista está vazia!");
-      var type = list[0]!.GetType();
-      var properties = type.GetProperties();
-      var table = new System.Text.StringBuilder();
-      var values = new List<string>();
-      foreach (var property in properties)
-      {
-        values.Add(property.Name);
-      }
-      table.AppendLine(string.Join(";", values));
-      values.Clear();
-      foreach (var item in list)
-      {
-        foreach (var property in properties)
-        {
-          var value = property.GetValue(item);
-          values.Add(value?.ToString() ?? string.Empty);
-        }
-        table.AppendLine(string.Join(";", values));
-        values.Clear();
-      }
-      return table.ToString();
-    }
     public void MassiveInfo()
     {
       Console.WriteLine($"{DateTime.Now} - Verificando a lista de notas...");
