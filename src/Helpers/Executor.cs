@@ -5,6 +5,7 @@ public static class Executor
 {
   public static String Executar(String aplication, String arguments)
   {
+    Log.Debug("{executable} {arguments}", aplication, arguments);
     using(var process = new System.Diagnostics.Process())
     {
       process.StartInfo.FileName = aplication;
@@ -18,6 +19,7 @@ public static class Executor
       var erroutput = process.StandardError.ReadToEnd();
       process.WaitForExit();
       if(process.ExitCode != 0) throw new InvalidOperationException($"Erro ao executar o processo {process.ExitCode}: {erroutput}");
+      Log.Debug(stdoutput);
       return stdoutput;
     }
   }
