@@ -5,6 +5,17 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public class ServicoHandler
   {
+    private readonly WebHandler.WebHandler handler;
+    private readonly long servico;
+    public ServicoHandler
+    (
+      WebHandler.WebHandler handler,
+      long servico
+    )
+    {
+      this.handler = handler;
+      this.servico = servico;
+    }
     private void BackToBlack()
     {
       GetElement(By.ClassName("oj-ux-ico-nav-left")).Click();
