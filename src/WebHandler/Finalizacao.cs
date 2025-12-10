@@ -5,7 +5,7 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public static class Finalizador
   {
-    public Double GetTimeOnly(Int32 tempo)
+    private static Double GetTimeOnly(Int32 tempo)
     {
       return tempo > 0 ? (Double)tempo/60/24 : 0;
     }
