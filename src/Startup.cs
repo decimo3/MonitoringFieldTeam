@@ -34,47 +34,6 @@ public class Startup
     WebHandler.VerificarPagina();
     WebHandler.Retroativo();
     WebHandler.MassiveInfo();
-    while(true)
-    {
-      try
-      {
-        var piscina_atual = cfg.PISCINAS[WebHandler.contador_de_baldes];
-        Console.WriteLine($"{DateTime.Now} - Verificando solicitações...");
-        if(WebHandler.Solicitacoes())
-        {
-          Console.WriteLine($"{DateTime.Now} - Solicitação respondida!");
-          continue;
-        }
-        if(!WebHandler.TemFinalizacao(WebHandler.datalabel, piscina_atual))
-        {
-        WebHandler.VerificarPagina();
-        Console.WriteLine($"{DateTime.Now} - Atualizando a página...");
-        WebHandler.Atualizar(piscina_atual, true);
-        Console.WriteLine($"{DateTime.Now} - Atualizando os parâmetros...");
-        WebHandler.Parametrizar();
-        if(WebHandler.Solicitacoes())
-        {
-          Console.WriteLine($"{DateTime.Now} - Solicitação respondida!");
-          continue;
-        }
-        Console.WriteLine($"{DateTime.Now} - Coletando as informações...");
-        if(WebHandler.Coletor())
-        {
-        Console.WriteLine($"{DateTime.Now} - Comparando os resultados...");
-        WebHandler.Comparar();
-        Console.WriteLine($"{DateTime.Now} - Exportando as análises...");
-        WebHandler.Relatorio();
-        Console.WriteLine($"{DateTime.Now} - Realizando análise final...");
-        WebHandler.Finalizacao();
-        if(cfg.ENVIRONMENT)
-        {
-          Console.WriteLine($"{DateTime.Now} - Realizando a captura de tela...");
-          WebHandler.Fotografo();
-        }
-        }
-        }
-        WebHandler.Atualizar(piscina_atual, false);
-        WebHandler.ProximoBalde();
       }
       catch (System.Exception erro)
       {
