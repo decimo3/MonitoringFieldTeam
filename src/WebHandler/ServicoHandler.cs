@@ -222,53 +222,16 @@ namespace MonitoringFieldTeam.WebScraper
       BackToBlack();
       return result;
     }
-    public String GetServico(String arg)
+    public String GetServico()
     {
       var builder = new System.Text.StringBuilder();
       try
       {
-        SearchAndEnterActivity(arg);
-      }
-      catch (Exception e)
-      {
-        builder.Append(e.Message);
-        return builder.ToString();
-      }
-      if (IsFinished())
-      {
-        builder.Append("A nota de servico não está finalizada!");
-        return builder.ToString();
-      }
-      try
-      {
-        builder.Append(GetActivityGeneralInfo(arg));
-      }
-      catch (Exception e)
-      {
-        builder.Append(e.Message);
-        return builder.ToString();
-      }
-      try
-      {
-        GetActivityUploads(arg);
-      }
-      catch (Exception e)
-      {
-        builder.Append(e.Message);
-        return builder.ToString();
-      }
-      try
-      {
-        builder.Append(GetActivityClosings(arg));
-      }
-      catch (Exception e)
-      {
-        builder.Append(e.Message);
-        return builder.ToString();
-      }
-      try
-      {
-        builder.Append(GetActivityMaterials(arg));
+        SearchAndEnterActivity();
+        builder.Append(GetActivityGeneralInfo());
+        GetActivityUploads();
+        builder.Append(GetActivityClosings());
+        builder.Append(GetActivityMaterials());
       }
       catch (Exception e)
       {
