@@ -2,146 +2,141 @@ using Serilog;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.Persistence;
 namespace MonitoringFieldTeam.WebScraper;
-public partial class Manager
+
+public static class Coletor
 {
-  public bool Coletor()
+  public static List<Espelho> Coletar(WebHandler.WebHandler handler)
   {
-    Console.WriteLine($"{DateTime.Now} - Coletando espelhos...");
+    var espelhos = new List<Espelho>();
+    Log.Information("Coletando espelhos...");
+    handler.GetElement("GANNT_CANVAS", WebHandler.WAITSEC.Total);
     // Coleta de nome de recurso e par_pid
+    // var recursos = handler.GetElements("RECURSOS", WebHandler.WAITSEC.Agora);
     for(var i = 1; true; i++)
     {
-      var recursos_path = this.cfg.CAMINHOS["RECURSOS_"].Replace("_", i.ToString());
-      var recursos_query = this.driver.FindElements(By.XPath(recursos_path));
-      if(!recursos_query.Any()) break;
-      var recursos = recursos_query.Single();
-      var texto = recursos.GetAttribute("innerText");
-      var par_pid = Int32.Parse(recursos.GetAttribute("par_pid"));
-      var style_top = ColetarStyle(recursos.GetDomAttribute("style"))["top"];
-      this.espelhos.Add(new Espelho(texto, par_pid, style_top));
+      var recurso = handler.GetElements("RECURSO", WebHandler.WAITSEC.Agora, i).SingleOrDefault();
+      if (recurso is null) break;
+      var texto = recurso.Text;
+      var par_pid = handler.GetElementAttribute(recurso, "COLETOR_PARPID");
+      var style_top = handler.GetElementStyle(recurso)["top"];
+      espelhos.Add(new Espelho(texto, Int32.Parse(par_pid), style_top));
     }
-    if(!this.espelhos.Any())
+    if (!espelhos.Any())
     {
-      System.Console.WriteLine($"{DateTime.Now} - O balde {this.balde_nome} está vazio!");
-      return false;
+      Log.Error("O balde selecionado está vazio!");
+      return new List<Espelho>();
     }
     // Pecorre a lista de linhas do gráfico Gantt
-    Console.WriteLine($"{DateTime.Now} - Coletando atividades...");
-    for(var i = 1; true; i++)
+    Log.Information("Coletando atividades...");
+    var timelines = handler.GetElements("ESPELHOS", WebHandler.WAITSEC.Agora);
+    foreach (var timeline in timelines)
     {
-      if(Solicitacoes())
+      var style_top = handler.GetElementStyle(timeline)["top"];
+      var espelho = espelhos.Single(s => s.style_top == style_top);
+      if (handler.HasClassElement(timeline, "COLETOR_HORALINHA")) continue;
+      if (handler.HasClassElement(timeline, "COLETOR_TIMELINE"))
       {
-        Console.WriteLine($"{DateTime.Now} - Solicitação respondida!");
-        throw new InvalidOperationException("A coleta foi interrompida por uma solicitação. Reiniciando...");
-      }
-      var gantt_path = this.cfg.CAMINHOS["ESPELHOS_"].Replace("_", i.ToString());
-      var gantt_query = this.driver.FindElements(By.XPath(gantt_path));
-      if(!gantt_query.Any()) break;
-      var gantt = gantt_query.Single();
-      var style_top = ColetarStyle(gantt.GetDomAttribute("style"))["top"];
-      var espelho = this.espelhos.Where(s => s.style_top == style_top).Single();
-      var gantt_classes = gantt.GetAttribute("class").Split(" ");
-      if(gantt_classes.Contains("toaGantt-hour-line")) continue;
-      if(gantt_classes.Contains("toaGantt-tl"))
-      {
-        var par_pid = Int32.Parse(gantt.GetAttribute("par_pid"));
-        var servicos = gantt.FindElements(By.XPath(".//div"));
-        if(!servicos.Any()) break;
+        var par_pid = Int32.Parse(handler.GetElementAttribute(timeline, "COLETOR_PARPID"));
+        var atividades = handler.GetNestedElements(timeline, "GLOBAL_DIVCHILD");
         // Pecorre a lista de atividades filhos do elemento
         var j = 0;
-        foreach (var servico in servicos)
+        foreach (var atividade in atividades)
         {
-          SimpleProgressBar(j, servicos.Count, espelho.recurso);
-          var servico_classes = servico.GetAttribute("class").Split(" ");
-          // Verifica se é uma ordem de servico
-          if(servico_classes.Contains("toaGantt-tb"))
+          ProgressBar.SimpleProgressBar(j, atividades.Count, espelho.recurso);
+          // Verifica se é uma ordem de atividade
+          if (handler.HasClassElement(atividade, "COLETOR_SERVICO"))
           {
-            if(servico_classes.Contains("final"))
+            if (handler.HasClassElement(atividade, "COLETOR_FINALROUTE"))
             {
-              espelho.final_dur = Int32.Parse(servico.GetDomAttribute("dur"));
+              espelho.final_dur = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_DURATION"));
               j++;
               continue;
             }
-            var servico_obj = new Servico();
-            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
-            servico_obj.par_pid = Int32.Parse(servico.GetDomAttribute("par_pid"));
-            servico_obj.aid = Int32.Parse(servico.GetDomAttribute("aid").Split('|').Last());
-            servico_obj.par_date = DateOnly.Parse(servico.GetDomAttribute("par_date"));
-            servico_obj.ordered = Boolean.Parse(servico.GetDomAttribute("ordered"));
-            servico_obj.start = Int32.Parse(servico.GetDomAttribute("start"));
-            servico_obj.dur = Int32.Parse(servico.GetDomAttribute("dur"));
-            servico_obj.movable = Int32.Parse(servico.GetDomAttribute("movable"));
-            servico_obj.multiday = Int32.Parse(servico.GetDomAttribute("multiday"));
-            servico_obj.data_activity_eta = Int32.Parse(servico.GetDomAttribute("data-activity-eta"));
-            servico_obj.data_activity_status = Enum.Parse<Servico.Status>(servico.GetDomAttribute("data-activity-status"));
-            servico_obj.data_activity_type = servico.GetDomAttribute("data-activity-type");
-            servico_obj.data_activity_worktype = Int32.Parse(servico.GetDomAttribute("data-activity-worktype"));
-            servico_obj.data_activity_duration = Int32.Parse(servico.GetDomAttribute("data-activity-duration"));
-            servico_obj.style_left = estilos["left"];
-            servico_obj.style_width = estilos["width"];
-            var trajeto = servico.FindElement(By.XPath(".//div"));
-            servico_obj.travel_dur = Int32.Parse(trajeto.GetDomAttribute("dur"));
-            servico_obj.travel_style_width = ColetarStyle(servico.GetDomAttribute("style"))["width"];
-            servico_obj.innerText = servico.GetAttribute("innerText");
-            espelho.servicos.Add(servico_obj);
+            var servico = new Servico();
+            var estilos = handler.GetElementStyle(atividade);
+            servico.par_pid = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_PARPID"));
+            servico.aid = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_IDENTIFIER").Split('|').Last());
+            servico.par_date = DateOnly.Parse(handler.GetElementAttribute(atividade, "COLETOR_DATEONLY"));
+            servico.ordered = Boolean.Parse(handler.GetElementAttribute(atividade, "COLETOR_ORDENADO"));
+            servico.start = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_TIMESTART"));
+            servico.dur = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_DURATION"));
+            servico.movable = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_ISMOVABLE"));
+            servico.multiday = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_ISMULTIDAY"));
+            servico.data_activity_eta = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_ESTIMATE"));
+            servico.data_activity_status = Enum.Parse<Servico.Status>(handler.GetElementAttribute(atividade, "COLETOR_STATUSES"));
+            servico.data_activity_type = handler.GetElementAttribute(atividade, "COLETOR_TIPAGEM");
+            servico.data_activity_worktype = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_WORKTYPE"));
+            servico.data_activity_duration = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_DURATION2"));
+            servico.style_left = estilos["left"];
+            servico.style_width = estilos["width"];
+            // Obtém informações do trajeto da nota
+            var trajeto = handler.GetNestedElements(atividade, "GLOBAL_DIVCHILD").First();
+            servico.travel_dur = Int32.Parse(handler.GetElementAttribute(trajeto, "COLETOR_DURATION"));
+            servico.travel_style_width = handler.GetElementStyle(trajeto)["width"];
+            servico.innerText = atividade.GetAttribute("innerText");
+            espelho.servicos.Add(servico);
             j++;
             continue;
           }
           // Verifica se é uma janela de tempo
-          if(servico_classes.Contains("toaGantt-tl-shift"))
+          if (handler.HasClassElement(atividade, "COLETOR_JANELATEMPO"))
           {
-            espelho.shift_start = Int32.Parse(servico.GetDomAttribute("start"));
-            espelho.shift_dur = Int32.Parse(servico.GetDomAttribute("dur"));
-            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
+            espelho.shift_start = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_TIMESTART"));
+            espelho.shift_dur = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_DURATION"));
+            var estilos = handler.GetElementStyle(atividade);
             espelho.shift_left = estilos["left"];
             espelho.shift_width = estilos["width"];
             j++;
             continue;
           }
           // verifica se é uma alteração da jornada
-          if(servico_classes.Contains("toaGantt-queue"))
+          if (handler.HasClassElement(atividade, "COLETOR_GLOBALJOURNEY"))
           {
-            if(servico_classes.Contains("toaGantt-queue-start"))
+            if (handler.HasClassElement(atividade, "COLETOR_STARTJOURNEY"))
             {
-              espelho.queue_start_start = Int32.Parse(servico.GetDomAttribute("start"));
-              espelho.queue_start_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              espelho.queue_start_start = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_TIMESTART"));
+              espelho.queue_start_left = handler.GetElementStyle(atividade)["left"];
               j++;
               continue;
             }
-            if(servico_classes.Contains("toaGantt-queue-reactivated"))
+            if (handler.HasClassElement(atividade, "COLETOR_RESTARTJOURNEY"))
             {
-              espelho.queue_reactivated_start = Int32.Parse(servico.GetDomAttribute("start"));
-              espelho.queue_reactivated_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              espelho.queue_reactivated_start = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_TIMESTART"));
+              espelho.queue_reactivated_left = handler.GetElementStyle(atividade)["left"];
               j++;
               continue;
             }
-            if(servico_classes.Contains("toaGantt-queue-end"))
+            if (handler.HasClassElement(atividade, "COLETOR_FINALJOURNEY"))
             {
-              espelho.queue_end_start = Int32.Parse(servico.GetDomAttribute("start"));
-              espelho.queue_end_left = ColetarStyle(servico.GetDomAttribute("style"))["left"];
+              espelho.queue_end_start = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_TIMESTART"));
+              espelho.queue_end_left = handler.GetElementStyle(atividade)["left"];
               j++;
               continue;
             }
           }
           // Verifica se é uma alteração na tempo
-          if(servico_classes.Contains("toaGantt-tl-gpsmark"))
+          if (handler.HasClassElement(atividade, "COLETOR_GLOBALTRACE"))
           {
             var roteiros = new Roteiro();
-            roteiros.start = Int32.Parse(servico.GetDomAttribute("start"));
-            roteiros.dur = Int32.Parse(servico.GetDomAttribute("dur"));
-            if(servico_classes.Contains("gps-status-normal")) roteiros.status = Roteiro.Status.normal;
-            if(servico_classes.Contains("gps-status-idle")) roteiros.status = Roteiro.Status.idle;
-            if(servico_classes.Contains("gps-status-alert")) roteiros.status = Roteiro.Status.alert;
-            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
+            roteiros.start = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_TIMESTART"));
+            roteiros.dur = Int32.Parse(handler.GetElementAttribute(atividade, "COLETOR_DURATION"));
+            if (handler.HasClassElement(atividade, "COLETOR_NORMALTRACE"))
+              roteiros.status = Roteiro.Status.normal;
+            if (handler.HasClassElement(atividade, "COLETOR_STOPEDTRACE"))
+              roteiros.status = Roteiro.Status.idle;
+            if (handler.HasClassElement(atividade, "COLETOR_ALERTTRACE"))
+              roteiros.status = Roteiro.Status.alert;
+            var estilos = handler.GetElementStyle(atividade);
             roteiros.style_width = estilos["width"];
             roteiros.style_left = estilos["left"];
             espelho.roteiros.Add(roteiros);
             j++;
             continue;
           }
-          if(servico_classes.Contains("toaGantt-tw"))
+          if (handler.HasClassElement(atividade, "COLETOR_GLOBALALERT"))
           {
-            var estilos = ColetarStyle(servico.GetDomAttribute("style"));
-            espelho.tw_alert_display = (estilos["display"] != 0) ? true : false;
+            var estilos = handler.GetElementStyle(atividade);
+            espelho.tw_alert_display = estilos["display"] != 0;
             espelho.tw_alert_left = estilos["left"];
             j++;
             continue;
@@ -150,5 +145,6 @@ public partial class Manager
         }
       }
     }
-    return true;
+    return espelhos;
   }
+}
