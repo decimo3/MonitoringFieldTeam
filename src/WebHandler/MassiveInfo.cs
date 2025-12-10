@@ -37,17 +37,24 @@ namespace MonitoringFieldTeam.WebScraper
         {
           throw new InvalidOperationException($"Há caracteres inválidos na nota {line}!");
         }
+        var workHandler = new ServicoHandler(handler, service);
         try
         {
-          SearchAndEnterActivity(line);
+          workHandler.SearchAndEnterActivity();
           if (extracao.Contains("INF"))
-            informacoes["INF"].Add(GetActivityGeneralInfo(line));
+            informacoes["INF"].Add(workHandler.GetActivityGeneralInfo());
           if (extracao.Contains("COD"))
-            informacoes["COD"].AddRange(GetActivityClosings(line));
+            informacoes["COD"].AddRange(workHandler.GetActivityClosings());
           if (extracao.Contains("MAT"))
-            informacoes["MAT"].AddRange(GetActivityMaterials(line));
+            informacoes["MAT"].AddRange(workHandler.GetActivityMaterials());
+          //if (extracao.Contains("APR"))
+          //  informacoes["APR"].Add(workHandler.GetActivityAnaliseInfo());
+          //if (extracao.Contains("JPG"))
+          //  informacoes["JPG"].Add(workHandler.GetActivityFotografiaFiles());
+          //if (extracao.Contains("EVD"))
+          //  informacoes["EVD"].Add(workHandler.GetActivityEvidenciaInfo());
           if (extracao.Contains("TOI"))
-            informacoes["TOI"].Add(GetActivityOcorrencias(line));
+            informacoes["TOI"].Add(workHandler.GetActivityOcorrencias());
         }
         catch (Exception ex)
         {
