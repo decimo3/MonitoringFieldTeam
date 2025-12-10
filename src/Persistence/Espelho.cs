@@ -33,6 +33,7 @@ namespace MonitoringFieldTeam.Persistence
       abreviado = abreviado.Replace(" - Corte", "C");
       abreviado = abreviado.Replace(" - Religa", "R");
       abreviado = abreviado.Replace(" - Vistoriador ", "V");
+      abreviado = abreviado.Replace(" - Indica", "");
       // Remove the word 'team' to shorten the resource name
       abreviado = abreviado.Replace(" - Equipe ", "");
       // remove any excess word before space character
