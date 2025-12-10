@@ -18,7 +18,7 @@ public static class Autenticador
     if (handler.GetElements("AUTENTICAR_WFMAUTH", WAITSEC.Medio).Any())
     {
       handler.GetElement("AUTENTICAR_WFMUSER", WAITSEC.Curto).SendKeys(usuario);
-      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
+      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Total).Click();
       if (handler.GetElements("AUTENTICAR_WFMERROR1", WAITSEC.Curto).Any())
         throw new InvalidOperationException("O usuário informado está incorreto!");
       handler.GetElement("AUTENTICAR_WFMPASS", WAITSEC.Curto).SendKeys(palavra);
