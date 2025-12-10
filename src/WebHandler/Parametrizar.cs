@@ -19,11 +19,6 @@ namespace MonitoringFieldTeam.WebScraper
       var pixel_2th_hora = handler.GetElementStyle(regua_hora_hora[1])["left"];
       return (pixel_2th_hora - pixel_1th_hora) / 60;
     }
-    public void ProximoBalde()
-    {
-      this.contador_de_baldes = (this.contador_de_baldes + 1) % this.cfg.PISCINAS.Count;
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
-    }
     public static void VerificarPagina(WebHandler.WebHandler handler)
     {
       Log.Information("Verificando a página...");
