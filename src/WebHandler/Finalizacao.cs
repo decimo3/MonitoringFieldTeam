@@ -9,10 +9,10 @@ namespace MonitoringFieldTeam.WebScraper
     {
       return tempo > 0 ? (Double)tempo/60/24 : 0;
     }
-    private Boolean HasInfo2FinalReport()
+    private static Boolean HasInfo2FinalReport(List<Espelho> espelhos)
     {
-      if(this.espelhos.Count == 0) return false;
-      var pendentes = this.espelhos.Where(e => e.queue_end_left < 0).ToList();
+      if (espelhos.Count == 0) return false;
+      var pendentes = espelhos.Where(e => e.queue_end_left < 0).ToList();
       foreach (var pendente in pendentes)
       {
         if(pendente.servicos.Where(s => s.data_activity_status == Servico.Status.pending).Count() > 0) return false;
