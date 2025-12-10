@@ -51,28 +51,10 @@ namespace MonitoringFieldTeam.WebScraper
         Console.Write($"{prefixo} {new String(' ', s)}{i}% [{new String('#', i)}{new String(' ', 100 - i)}] {new String(' ', j)}{atual}/{new String(' ', k)}{maximo}\n");
       }
     }
-    public void VerificarPagina()
+    public static void VerificarPagina(WebHandler.WebHandler handler)
     {
-      if(this.driver.Url != this.cfg.CONFIGURACAO["WEBSITE"])
-      {
-        System.Environment.Exit(1);
-      }
-      while(true)
-      {
-        var gantt = this.driver.FindElements(By.ClassName("toaGantt"));
-        if(gantt.Any())
-        {
-          break;
-        }
-        // this.driver.FindElement(By.ClassName("oj-ux-ico-arrow-up")).Click();
-        this.driver.ExecuteCdpCommand("Network.enable", new Dictionary<string, object>());
-        this.driver.ExecuteCdpCommand("Network.clearBrowserCookies", new Dictionary<string, object>());
-        this.driver.ExecuteCdpCommand("Network.clearBrowserCache", new Dictionary<string, object>());
-        this.driver.ExecuteScript("window.localStorage.clear();");
-        this.driver.ExecuteScript("window.sessionStorage.clear();");
-        this.Refresh();
-        this.Autenticar();
-      }
+      Log.Information("Verificando a página...");
+      handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
     }
   }
 }
