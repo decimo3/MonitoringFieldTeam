@@ -8,6 +8,20 @@ public class Startup
 {
   public static void Main(string[] args)
   {
+    #region
+    var loglevel = Serilog.Events.LogEventLevel.Information;
+#if DEBUG
+    loglevel = Serilog.Events.LogEventLevel.Verbose;
+#endif
+    Log.Logger = new LoggerConfiguration()
+      .MinimumLevel.Verbose()
+      .WriteTo.Console(loglevel)
+      .WriteTo.File(System.IO.Path.Combine(
+        System.AppContext.BaseDirectory, "logs", "ofs_.log"
+        ), loglevel,
+        rollingInterval: RollingInterval.Day)
+      .CreateLogger();
+      #endregion
     while (true)
     {
     try
