@@ -38,63 +38,6 @@ namespace MonitoringFieldTeam.WebScraper
       Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
       IsFinished();
     }
-    private ReadOnlyCollection<IWebElement>? GetElements(By by, int miliseconds = 0)
-    {
-      miliseconds = miliseconds != 0 ? miliseconds : this.cfg.ESPERAS["CURTA"];
-      var endTime = DateTime.Now.AddMilliseconds(miliseconds);
-      while (DateTime.Now < endTime)
-      {
-        try
-        {
-          var elements = this.driver.FindElements(by);
-          if (elements.Count == 0)
-            continue;
-          var element = elements.First();
-          if (element.Displayed && element.Enabled)
-            return elements;
-        }
-        catch (NoSuchElementException)
-        {
-          // Element not yet in DOM, keep trying
-        }
-        catch (StaleElementReferenceException)
-        {
-          // DOM updated, try again
-        }
-        catch (WebDriverException)
-        {
-          // Catch all transient WebDriver errors, continue retrying
-        }
-        Thread.Sleep(200); // Avoid busy waiting
-      }
-      return null;
-    }
-    private IWebElement? GetElement(By by)
-    {
-      var elements = GetElements(by);
-      if (elements is null)
-        return null;
-      return elements.FirstOrDefault();
-    }
-    private List<List<string>> GetTableActivity(IWebElement tableElement)
-    {
-      var resultTable = new List<List<string>>();
-      var linhas = tableElement.FindElements(By.XPath(".//tr"));
-      if (linhas.Count == 0)
-        return resultTable;
-      foreach (var linha in linhas)
-      {
-        var valores = new List<string>();
-        if (String.IsNullOrEmpty(linha.Text)) continue;
-        var celulas = linha.FindElements(By.XPath(".//td"));
-        foreach (var celula in celulas)
-        {
-            valores.Add(celula.Text?.Replace(';',' '));
-        }
-        resultTable.Add(valores);
-      }
-      return resultTable;
-    }
     public void SearchAndEnterActivity(String workorder)
     {
       // Click on search bar to focus cursor on
