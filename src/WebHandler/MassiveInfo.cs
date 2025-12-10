@@ -20,10 +20,6 @@ namespace MonitoringFieldTeam.WebScraper
         return;
       }
       var lines = System.IO.File.ReadAllLines(filepath);
-      if (!lines.All(l => Int64.TryParse(l, out var _)))
-      {
-        throw new ArgumentException($"Há caracteres inválidos na lista de notas!");
-      }
       var informacoes = new Dictionary<string, IList>
       {
         ["INF"] = new List<GeneralInfo>(),
@@ -37,6 +33,10 @@ namespace MonitoringFieldTeam.WebScraper
       var extracao = Configuration.GetArray("EXTRACAO");
       foreach (var line in lines)
       {
+        if (!long.TryParse(line, out long service))
+        {
+          throw new InvalidOperationException($"Há caracteres inválidos na nota {line}!");
+        }
         try
         {
           SearchAndEnterActivity(line);
