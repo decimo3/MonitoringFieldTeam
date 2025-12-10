@@ -8,15 +8,16 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public static class MassiveInfo
   {
-    public void MassiveInfo()
+    public static void GetMassiveInfo(WebHandler.WebHandler handler)
     {
-      Console.WriteLine($"{DateTime.Now} - Verificando a lista de notas...");
+      Parametrizador.VerificarPagina(handler);
+      Log.Information("Verificando a lista de notas...");
       var filepath = System.IO.Path.Combine(
         Configuration.GetString("DATAPATH"),
           "ofs.txt");
       if (!System.IO.File.Exists(filepath))
       {
-        Console.WriteLine($"{DateTime.Now} - O arquivo de lista notas não existe!");
+        Log.Information("O arquivo de lista notas não existe!");
         return;
       }
       var lines = System.IO.File.ReadAllLines(filepath);
@@ -58,7 +59,7 @@ namespace MonitoringFieldTeam.WebScraper
         }
         catch (Exception ex)
         {
-          Console.WriteLine($"{DateTime.Now} - Ocorreu um erro ao processar a nota {line}.\n{ex.Message}");
+          Log.Information("Ocorreu um erro ao processar a nota {line}.\n{ex.Message}", line, ex.Message);
         }
       }
       Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -79,7 +80,7 @@ namespace MonitoringFieldTeam.WebScraper
         });
       }
       System.IO.File.Delete(filepath);
-      Console.WriteLine($"{DateTime.Now} - Os relatórios massivos foram exportados!");
+      Log.Information("Os relatórios massivos foram exportados!");
     }
   }
 }
