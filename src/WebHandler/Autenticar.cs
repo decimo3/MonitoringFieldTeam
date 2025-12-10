@@ -9,6 +9,11 @@ public static class Autenticador
   {
     var usuario = Configuration.GetString("USUARIO");
     var palavra = Configuration.GetString("PALAVRA");
+    Log.Information("Autenticando usuário...");
+    if (handler.GetElements("AUTENTICAR_SIGNOUT", WAITSEC.Medio).Any()) // FIXME
+    {
+      handler.ReloadWebPage();
+    }
     if (handler.GetElements("AUTENTICAR_OFSAUTH", WAITSEC.Medio).Any())
     {
       handler.GetElement("AUTENTICAR_OFSUSER", WAITSEC.Agora).SendKeys(usuario);
@@ -39,5 +44,6 @@ public static class Autenticador
       handler.GetElement("AUTENTICAR_WFMCHECK", WAITSEC.Agora).Click();
       handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
     }
+    Log.Information("Autenticação realizada!");
   }
 }
