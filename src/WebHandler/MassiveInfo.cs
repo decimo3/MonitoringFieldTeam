@@ -6,7 +6,7 @@ using MonitoringFieldTeam.Helpers;
 
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public static class MassiveInfo
   {
     private static string ListObjectsToCSV(IList list)
     {
