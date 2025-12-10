@@ -74,25 +74,31 @@ public partial class Manager
     }
     if(!direcao) return;
     System.Threading.Thread.Sleep(this.cfg.ESPERAS["MEDIA"]);
+  public static DateOnly Atualizar(WebHandler.WebHandler handler)
+  {
+    Log.Information("Atualizando o gráfico...");
     // Selecionar a visualização do gráfico de Gantt
-    this.driver.FindElements(By.ClassName("oj-ux-ico-clock")).First().Click();
+    handler.GetElement("GANNT_CLOCKICON", WebHandler.WAITSEC.Total).Click();
     // Abrir menu de seleção de preferências
-    this.driver.FindElements(By.ClassName("toolbar-item")).Where(e => e.Text == "Exibir").First().Click();
-    System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+    var element = handler.GetElements("GANNT_TOOLBAR").First();
+    handler.GetNestedElements(element, "GANNT_SHOWBTN").First().Click();
     // Selecionar para exibir de forma herarquica
-    var checkbox_hierarquico = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CHECK_TREE"]));
-    if(!checkbox_hierarquico.Selected) checkbox_hierarquico.Click();
+    element = handler.GetElements("GANNT_FILTERVIEW", WebHandler.WAITSEC.Curto).First();
+    element = handler.GetNestedElements(element, "GANNT_TREEGROUP").First();
+    element = handler.GetNestedElements(element, "GANNT_FILTERCHECK").First();
+    if (!element.Selected) element.Click();
     // Selecionar para exibir a rota do recurso
-    var checkbox_exibir_rota = this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["CHECK_ROUTE"]));
-    if(!checkbox_exibir_rota.Selected) checkbox_exibir_rota.Click();
+    element = handler.GetElements("GANNT_FILTERVIEW", WebHandler.WAITSEC.Curto).First();
+    element = handler.GetNestedElements(element, "GANNT_ROUTEGROUP").First();
+    element = handler.GetNestedElements(element, "GANNT_FILTERCHECK").First();
+    if (!element.Selected) element.Click();
     // Ajusta o zoom da página para visualizar toda linha do tempo
-    // this.driver.FindElement(By.XPath(this.cfg.CAMINHOS["ZOOM_FIT"])).Click();
+    //parent = handler.GetElements("GANNT_FILTERVIEW", WebHandler.WAITSEC.Curto).First();
+    //handler.GetNestedElements(parent, "ZOOM_FIT").First().Click();
     // Aplicar as preferências de seleções
-    this.driver.FindElements(By.ClassName("app-button-title")).Where(e => e.Text == "Aplicar").First().Click();
-    System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
-    this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
-    this.espelhos = new();
-    this.relatorios = new();
-    this.agora = DateTime.Now;
+    element = handler.GetElements("GANNT_FILTERVIEW").First();
+    handler.GetNestedElements(element, "GANNT_APPLYBTN").First().Click();
+    Log.Information("Gráfico atualizado!");
+    return DateOnly.Parse(handler.GetElement("GANNT_DATEPICK", WebHandler.WAITSEC.Curto).Text);
   }
 }
