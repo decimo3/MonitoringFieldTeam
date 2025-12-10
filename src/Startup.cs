@@ -24,16 +24,17 @@ public class Startup
       #endregion
     while (true)
     {
-    try
-    {
-    Verificador.Verificar();
-    var cfg = new Configuration();
-    Updater.Update(cfg);
-    using var WebHandler = new WebScraper.Manager(cfg);
-    WebHandler.Autenticar();
-    WebHandler.VerificarPagina();
-    WebHandler.Retroativo();
-    WebHandler.MassiveInfo();
+      try
+      {
+        Configuration.LoadConf("ofs.conf");
+        InstanceChecker.MultipleRun();
+        InstanceChecker.ChromeKiller();
+        Updater.Update();
+        using var handler = new WebHandler.WebHandler();
+        Autenticador.Autenticar(handler);
+        Retroativo.Relatorios(handler);
+        MassiveInfo.GetMassiveInfo(handler);
+        Monitorador.Monitorar(handler);
       }
       catch (System.Exception erro)
       {
