@@ -62,14 +62,14 @@ public static class Updater
     System.IO.Compression.ZipFile.ExtractToDirectory(DRIVER_ZIPFILE, current_folder);
   }
 
-  public static void Update(Configuration cfg)
+  public static void Update()
   {
     try
     {
       var driverpath = System.IO.Path.Combine(
         System.AppContext.BaseDirectory, "chromedriver-win64", "chromedriver.exe");
       Console.WriteLine($"{DateTime.Now} - Verificando as versões do browser e do driver...");
-      var argumento = $"-c \"(Get-Item '{cfg.CONFIGURACAO["GCHROME"]}').VersionInfo.ProductVersion.ToString()\"";
+      var argumento = $"-c \"(Get-Item '{Configuration.GetString("GCHROME")}').VersionInfo.ProductVersion.ToString()\"";
       var chrome_version = GetVersionAplicationOutput("powershell", argumento);
       Console.WriteLine($"{DateTime.Now} - Chrome major version: {chrome_version}.");
       if (System.IO.File.Exists(driverpath))
