@@ -12,7 +12,7 @@ namespace MonitoringFieldTeam.WebScraper
     {
       Console.WriteLine($"{DateTime.Now} - Verificando a lista de notas...");
       var filepath = System.IO.Path.Combine(
-          System.AppContext.BaseDirectory,
+        Configuration.GetString("DATAPATH"),
           "ofs.txt");
       if (!System.IO.File.Exists(filepath))
       {
@@ -34,18 +34,19 @@ namespace MonitoringFieldTeam.WebScraper
         ["TOI"] = new List<OcorrenciaInfo>(),
         // ["EVD"] = new List<EvidenciaInfo>()
       };
+      var extracao = Configuration.GetArray("EXTRACAO");
       foreach (var line in lines)
       {
         try
         {
           SearchAndEnterActivity(line);
-          if (cfg.EXTRACAO_KEY.Contains("INF"))
+          if (extracao.Contains("INF"))
             informacoes["INF"].Add(GetActivityGeneralInfo(line));
-          if (cfg.EXTRACAO_KEY.Contains("COD"))
+          if (extracao.Contains("COD"))
             informacoes["COD"].AddRange(GetActivityClosings(line));
-          if (cfg.EXTRACAO_KEY.Contains("MAT"))
+          if (extracao.Contains("MAT"))
             informacoes["MAT"].AddRange(GetActivityMaterials(line));
-          if (cfg.EXTRACAO_KEY.Contains("TOI"))
+          if (extracao.Contains("TOI"))
             informacoes["TOI"].Add(GetActivityOcorrencias(line));
         }
         catch (Exception ex)
@@ -59,9 +60,10 @@ namespace MonitoringFieldTeam.WebScraper
         var lista = informacoes[key];
         if (lista == null || lista.Count == 0)
           continue;
-        var csv_name = key.ToLower() + ".csv";
-        var csv_path = System.IO.Path.Combine(cfg.DOWNFOLDER, csv_name);
-        System.IO.File.WriteAllText(csv_path, ListObjectsToCSV(lista), Encoding.GetEncoding(1252));
+        var csv_path = System.IO.Path.Combine(
+          Configuration.GetString("DATAPATH"), key.ToLower() + ".csv");
+        System.IO.File.WriteAllText(csv_path,
+          TableMaker.ListObjectsToCSV(lista), Encoding.GetEncoding(1252));
         // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
         {
