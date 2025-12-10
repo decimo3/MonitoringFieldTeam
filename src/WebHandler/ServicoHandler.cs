@@ -38,106 +38,110 @@ namespace MonitoringFieldTeam.WebScraper
       Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
       IsFinished();
     }
-    public void SearchAndEnterActivity(String workorder)
+    public void SearchAndEnterActivity()
     {
-      // Click on search bar to focus cursor on
+      Log.Information("Pesquisando nota {nota}", servico);
       try
       {
-        GetElement(By.ClassName("search-bar-input")).Click();
+        // Click on search bar to focus cursor on
+        handler.GetElement("SEARCHBAR_INPUT", WebHandler.WAITSEC.Total).Click();
       }
-      catch (ElementClickInterceptedException)
+      catch (Exception)
       {
-        GetElement(By.ClassName("search-bar-input-clear")).Click();
-        GetElement(By.ClassName("logo-image")).Click();
-        GetElement(By.ClassName("search-bar-input")).Click();
+        // Second try to interact with search bar
+        handler.GetElement("SEARCHBAR_CLEAR", WebHandler.WAITSEC.Curto).Click();
+        handler.GetElement("SEARCHBAR_LOGO", WebHandler.WAITSEC.Curto).Click();
+        handler.GetElement("SEARCHBAR_INPUT", WebHandler.WAITSEC.Curto).Click();
       }
       // Fill search bar with workorder number char by char
-      var actions = new Actions(this.driver);
-      foreach (var c in workorder)
-      {
-        actions.KeyDown(c.ToString()).Perform();
-        actions.KeyUp(c.ToString()).Perform();
-      }
-      // Await amount of time and check if there is a response
-      if(GetElements(By.ClassName("found-item-activity")) is null)
-      {
-        throw new Exception($"A nota de serviço não foi encontrada!");
-      }
-      // Click on the first workorder on list
-      GetElement(By.ClassName("found-item-activity")).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
+      handler.SendKeyByKey(servico.ToString());
+      // Try to click on the first workorder on list
+      handler.GetElement("SEARCHBAR_ITEM", WebHandler.WAITSEC.Medio).Click();
+      Log.Information("Nota encontrada! Entrando...", servico);
+      handler.GetElement("ACTIVITY_CABECALHO", WebHandler.WAITSEC.Medio);
     }
-    public GeneralInfo? GetActivityGeneralInfo(string nota)
+    public GeneralInfo? GetActivityGeneralInfo()
     {
-      if (!IsFinished()) return null;
+      IsFinished();
       var result = new GeneralInfo();
-      result.Data = GetElement(By.ClassName("page-header-description"))?.Text.Split(',').Last();
-      result.Recurso = GetElement(By.ClassName("page-header-description"))?.Text.Split(',').First();
-      result.Atividade = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ATIVIDADE"]))?.Text;
-      result.NotaServico = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SERVICO"]))?.Text;
-      result.Situacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_SITUACAO"]))?.Text;
-      result.Damage = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_DAMAGE"]))?.Text;
-      result.Vencimento = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_VENCIMENTO"]))?.Text;
-      result.Descricao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_DESCRICAO"]))?.Text;
-      result.Observacao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_OBSERVA"]))?.Text.RemoveLineEndings();
+      Log.Information("Obtendo informações gerais da nota...");
+      var cabecalho = handler.GetElement("ACTIVITY_CABECALHO");
+      result.Recurso = cabecalho.Text.Split(',').First().Trim();
+      result.Data = cabecalho.Text.Split(',').Last().Trim();
+      result.Atividade = handler.GetElement("ACTIVITY_ATIVIDADE").Text;
+      result.NotaServico = handler.GetElement("ACTIVITY_SERVICO").Text;
+      result.Situacao = handler.GetElement("ACTIVITY_SITUACAO").Text;
+      result.Damage = handler.GetElement("ACTIVITY_DAMAGE").Text;
+      result.Vencimento = handler.GetElement("ACTIVITY_VENCIMENTO").Text;
+      result.Descricao = handler.GetElement("ACTIVITY_DESCRICAO").Text;
+      result.Observacao = handler.GetElement("ACTIVITY_OBSERVA").Text.RemoveLineEndings();
+      Log.Information("Informações obtidas:\n{resultado}", result);
       return result;
     }
-    public void GetActivityUploads(string nota)
+    public void GetActivityUploads()
     {
-      if (!IsFinished()) return;
-      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_ARQUIVOS"])).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      foreach (var download in GetElements(By.ClassName("download-button")))
+      IsFinished();
+      Log.Information("Realizando downloads dos arquivos...");
+      handler.GetElement("ACTIVITY_ARQUIVOS", WebHandler.WAITSEC.Curto).Click();
+      foreach (var download in handler.GetElements("ACTIVITY_DOWNLOADS", WebHandler.WAITSEC.Medio))
         download.Click();
       BackToBlack();
     }
-    public List<FinalizaInfo> GetActivityClosings(string nota)
+    public List<FinalizaInfo> GetActivityClosings()
     {
-      if (!IsFinished()) return new List<FinalizaInfo>();
-      var rejeicao = GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_REJEICAO"]));
+      IsFinished();
+      var result = new List<FinalizaInfo>();
+      Log.Information("Obtendo informações da finalização...");
+      var rejeicao = handler.GetElements("ACTIVITY_REJEICAO", WebHandler.WAITSEC.Agora).FirstOrDefault();
       if (rejeicao is not null)
       {
-        return new List<FinalizaInfo>
-        {
-          new() {
-            NotaServico = nota,
+        result.Add(
+          new FinalizaInfo()
+          {
+            NotaServico = servico.ToString(),
             Codigo = rejeicao.Text,
             Quantidade = 1.ToString()
           }
-        };
+        );
+        Log.Information("Finalizações obtidas:\n{resultado}",
+          string.Join('\n', result.Select(r => r.ToString())));
+        return result;
       }
-      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_FINALIZA"])).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      var frame = GetElement(By.ClassName("content-iframe"));
-      this.driver.SwitchTo().Frame(frame);
-      var tabela = GetElement(By.TagName("tbody")); // By.Id("itens-selected")
-      var tabelaResult = GetTableActivity(tabela);
-      this.driver.SwitchTo().DefaultContent();
+      handler.GetElement("ACTIVITY_FINALIZA", WebHandler.WAITSEC.Agora).Click();
+      var iframe = handler.GetElement("ACTIVITY_FINALIZA_IFRAME", WebHandler.WAITSEC.Medio);
+      handler.ExchangeContext("ACTIVITY_FINALIZA_IFRAME");
+      var tabela = handler.GetElement("ACTIVITY_FINALIZA_TABLE");
+      var tabelaResult = handler.GetTableData(tabela);
+      handler.ExchangeContext();
       BackToBlack();
-      return tabelaResult.Select(linha =>
+      result = tabelaResult.Select(linha =>
         new FinalizaInfo
         {
-          NotaServico = nota,
+          NotaServico = servico.ToString(),
           Codigo = linha[0],
           Quantidade = linha[1]
         }
       ).ToList();
+      Log.Information("Finalizações obtidas:\n{resultado}",
+        string.Join('\n', result.Select(r => r.ToString())));
+      return result;
     }
-    public List<MaterialInfo> GetActivityMaterials(string nota)
+    public List<MaterialInfo> GetActivityMaterials()
     {
-      if (!IsFinished()) return new List<MaterialInfo>();
+      IsFinished();
       var result = new List<MaterialInfo>();
-      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_MATERIAL"])).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      var tabelas = GetElements(By.TagName("tbody"));
+      Log.Information("Obtendo informações do material...");
+      handler.GetElement("ACTIVITY_MATERIAL", WebHandler.WAITSEC.Agora).Click();
+      var tabelas = handler.GetElements("GLOBAL_TABLE", WebHandler.WAITSEC.Total);
+      if (!tabelas.Any()) throw new InvalidOperationException("Nenhuma tabela foi encontrada!");
       foreach (var tabela in tabelas)
       {
-        var origem = tabela.GetDomAttribute("data-ofsc-inventory-pool");
-        var conteudoTabela = GetTableActivity(tabela);
+        var origem = handler.GetElementAttribute(tabela, "ACTIVITY_MATERIAL_ORIGEM");
+        var conteudoTabela = handler.GetTableData(tabela);
         result.AddRange(conteudoTabela.Select(linha =>
           new MaterialInfo
           {
-            Nota = nota,
+            Nota = servico.ToString(),
             Tipo = linha[0],
             Codigo = linha[1],
             Serie = linha[2],
@@ -148,78 +152,81 @@ namespace MonitoringFieldTeam.WebScraper
         ));
       }
       BackToBlack();
+      Log.Information("Materiais obtidos:\n{resultado}",
+        string.Join('\n', result.Select(r => r.ToString())));
       return result;
     }
-    public OcorrenciaInfo? GetActivityOcorrencias(string nota)
+    public OcorrenciaInfo? GetActivityOcorrencias()
     {
-      if (!IsFinished()) return null;
-      GetElement(By.XPath(this.cfg.CAMINHOS["ACTIVITY_INSPECAO"])).Click();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-      if (GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMEROTOI"])) is null) return null;
+      IsFinished();
+      Log.Information("Obtendo informações da ocorrências...");
+      handler.GetElement("ACTIVITY_INSPECAO", WebHandler.WAITSEC.Curto).Click();
+      if (!handler.GetElements("IDENTIFICACAO_NUMEROTOI", WebHandler.WAITSEC.Medio).Any()) return null;
       var result = new OcorrenciaInfo();
-      result.NotaServico = nota;
+      result.NotaServico = servico.ToString();
       // Sessão IDENTIFICAÇÃO no formulário de INSPECAO
-      result.CaixaTipo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_TIPOCAIXA"]))?.Text;
-      result.CaixaModelo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_MODELOCAIXA"]))?.Text;
-      result.NumeroToi = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMEROTOI"]))?.Text;
-      result.NomeTitular = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NOMETITULAR"]))?.Text;
-      result.DocumentoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_TIPODOC"]))?.Text;
-      result.DocumentoNum = GetElement(By.XPath(this.cfg.CAMINHOS["IDENTIFICACAO_NUMDOC"]))?.Text;
-      result.ResidenciaClasse = GetElement(By.XPath(this.cfg.CAMINHOS["RESIDENCIA_CLASSE"]))?.Text;
+      result.CaixaTipo = handler.GetElements("IDENTIFICACAO_TIPOCAIXA").FirstOrDefault()?.Text;
+      result.CaixaModelo = handler.GetElements("IDENTIFICACAO_MODELOCAIXA").FirstOrDefault()?.Text;
+      result.NumeroToi = handler.GetElements("IDENTIFICACAO_NUMEROTOI").FirstOrDefault()?.Text;
+      result.NomeTitular = handler.GetElements("IDENTIFICACAO_NOMETITULAR").FirstOrDefault()?.Text;
+      result.DocumentoTipo = handler.GetElements("IDENTIFICACAO_TIPODOC").FirstOrDefault()?.Text;
+      result.DocumentoNum = handler.GetElements("IDENTIFICACAO_NUMDOC").FirstOrDefault()?.Text;
+      result.ResidenciaClasse = handler.GetElements("RESIDENCIA_CLASSE").FirstOrDefault()?.Text;
       // Sessão DETALHES no formulário de INSPECAO
-      result.MotivoInspecao = GetElement(By.XPath(this.cfg.CAMINHOS["MOTIVO_INSPECAO"]))?.Text;
-      result.InstalacaoSuspensa = GetElement(By.XPath(this.cfg.CAMINHOS["INSTALACAO_SUSPENSA"]))?.Text;
-      result.InstalacaoNormalizada = GetElement(By.XPath(this.cfg.CAMINHOS["INSTALACAO_NORMALIZADA"]))?.Text;
-      result.ConsumidorAcompanhou = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_ACOMPANHOU"]))?.Text;
-      result.ClienteAutorizouLevantamento = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_AUTORIZOU"]))?.Text;
-      result.ClienteSolicitouPericia = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_SOLICITOU"]))?.Text;
-      result.ClienteQualAssinou = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_IDENTIFICADO"]))?.Text;
-      result.ClienteRecusouAssinar = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_ASSINOU"]))?.Text;
-      result.ClienteRecusouReceber = GetElement(By.XPath(this.cfg.CAMINHOS["CONSUMIDOR_RECEBEU"]))?.Text;
-      result.FisicoEntregueTOI = GetElement(By.XPath(this.cfg.CAMINHOS["VIA_AMARELA"]))?.Text;
-      result.QuantidadeEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_QUANTIDADE"]))?.Text;
-      result.ExistenciaEvidencias = GetElement(By.XPath(this.cfg.CAMINHOS["EVIDENCIAS_EXISTEM"]))?.Text;
-      result.DescricaoIrregularidade = GetElement(By.XPath(this.cfg.CAMINHOS["DESCRICAO_IRREGULARIDADE"]))?.Text.RemoveLineEndings();
+      result.MotivoInspecao = handler.GetElements("MOTIVO_INSPECAO").FirstOrDefault()?.Text;
+      result.InstalacaoSuspensa = handler.GetElements("INSTALACAO_SUSPENSA").FirstOrDefault()?.Text;
+      result.InstalacaoNormalizada = handler.GetElements("INSTALACAO_NORMALIZADA").FirstOrDefault()?.Text;
+      result.ConsumidorAcompanhou = handler.GetElements("CONSUMIDOR_ACOMPANHOU").FirstOrDefault()?.Text;
+      result.ClienteAutorizouLevantamento = handler.GetElements("CONSUMIDOR_AUTORIZOU").FirstOrDefault()?.Text;
+      result.ClienteSolicitouPericia = handler.GetElements("CONSUMIDOR_SOLICITOU").FirstOrDefault()?.Text;
+      result.ClienteQualAssinou = handler.GetElements("CONSUMIDOR_IDENTIFICADO").FirstOrDefault()?.Text;
+      result.ClienteRecusouAssinar = handler.GetElements("CONSUMIDOR_ASSINOU").FirstOrDefault()?.Text;
+      result.ClienteRecusouReceber = handler.GetElements("CONSUMIDOR_RECEBEU").FirstOrDefault()?.Text;
+      result.FisicoEntregueTOI = handler.GetElements("VIA_AMARELA").FirstOrDefault()?.Text;
+      result.QuantidadeEvidencias = handler.GetElements("EVIDENCIAS_QUANTIDADE").FirstOrDefault()?.Text;
+      result.ExistenciaEvidencias = handler.GetElements("EVIDENCIAS_EXISTEM").FirstOrDefault()?.Text;
+      result.DescricaoIrregularidade = handler.GetElements("DESCRICAO_IRREGULARIDADE").FirstOrDefault()?.Text.RemoveLineEndings();
       // Sessão LIGAÇÃO no formulário de INSPECAO
-      result.GrupoTarifarico = GetElement(By.XPath(this.cfg.CAMINHOS["GRUPO_TARIFARICO"]))?.Text;
-      result.LigacaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDICAO_TIPO"]))?.Text;
-      result.QuantidadeElementos = GetElement(By.XPath(this.cfg.CAMINHOS["ELEMENTOS_QNT"]))?.Text;
-      result.FornecimentoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["TIPO_FORNECIMENTO"]))?.Text;
-      result.TensaoTipo = GetElement(By.XPath(this.cfg.CAMINHOS["TENSAO_TIPO"]))?.Text;
-      result.TensaoNivel = GetElement(By.XPath(this.cfg.CAMINHOS["TENSAO_NIVEL"]))?.Text;
-      result.RamalTipo = GetElement(By.XPath(this.cfg.CAMINHOS["RAMAL_TIPO"]))?.Text;
-      result.SistemaEncapsulado = GetElement(By.XPath(this.cfg.CAMINHOS["ENCAPSULADO"]))?.Text;
+      result.GrupoTarifarico = handler.GetElements("GRUPO_TARIFARICO").FirstOrDefault()?.Text;
+      result.LigacaoTipo = handler.GetElements("MEDICAO_TIPO").FirstOrDefault()?.Text;
+      result.QuantidadeElementos = handler.GetElements("ELEMENTOS_QNT").FirstOrDefault()?.Text;
+      result.FornecimentoTipo = handler.GetElements("TIPO_FORNECIMENTO").FirstOrDefault()?.Text;
+      result.TensaoTipo = handler.GetElements("TENSAO_TIPO").FirstOrDefault()?.Text;
+      result.TensaoNivel = handler.GetElements("TENSAO_NIVEL").FirstOrDefault()?.Text;
+      result.RamalTipo = handler.GetElements("RAMAL_TIPO").FirstOrDefault()?.Text;
+      result.SistemaEncapsulado = handler.GetElements("ENCAPSULADO").FirstOrDefault()?.Text;
       // Sessão MEDIDOR no formulário de INSPECAO
-      result.MedidorTipo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_TIPO"]))?.Text;
-      result.MedidorNumero = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_NUMERO"]))?.Text;
-      result.MedidorMarca = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_MARCA"]))?.Text;
-      result.MedidorAno = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_ANO"]))?.Text;
-      result.MedidorPatrimonio = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_PATRIMONIO"]))?.Text;
-      result.MedidorTensao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_TENSAO"]))?.Text;
-      result.MedidorANominal = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_NOMINAL"]))?.Text;
-      result.MedidorAMaximo = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_A_MAXIMO"]))?.Text;
-      result.MedidorConstante = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_CONSTANTE"]))?.Text;
-      result.MedidorLocalizacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_LOCALIZACAO"]))?.Text;
-      result.MedidorObservacao = GetElement(By.XPath(this.cfg.CAMINHOS["MEDIDOR_OBSERVACAO"]))?.Text.RemoveLineEndings();
+      result.MedidorTipo = handler.GetElements("MEDIDOR_TIPO").FirstOrDefault()?.Text;
+      result.MedidorNumero = handler.GetElements("MEDIDOR_NUMERO").FirstOrDefault()?.Text;
+      result.MedidorMarca = handler.GetElements("MEDIDOR_MARCA").FirstOrDefault()?.Text;
+      result.MedidorAno = handler.GetElements("MEDIDOR_ANO").FirstOrDefault()?.Text;
+      result.MedidorPatrimonio = handler.GetElements("MEDIDOR_PATRIMONIO").FirstOrDefault()?.Text;
+      result.MedidorTensao = handler.GetElements("MEDIDOR_TENSAO").FirstOrDefault()?.Text;
+      result.MedidorANominal = handler.GetElements("MEDIDOR_A_NOMINAL").FirstOrDefault()?.Text;
+      result.MedidorAMaximo = handler.GetElements("MEDIDOR_A_MAXIMO").FirstOrDefault()?.Text;
+      result.MedidorConstante = handler.GetElements("MEDIDOR_CONSTANTE").FirstOrDefault()?.Text;
+      result.MedidorLocalizacao = handler.GetElements("MEDIDOR_LOCALIZACAO").FirstOrDefault()?.Text;
+      result.MedidorObservacao = handler.GetElements("MEDIDOR_OBSERVACAO").FirstOrDefault()?.Text.RemoveLineEndings();
       // Sessão DECLARANTE no formulário de INSPECAO
-      result.DeclaranteNomeCompleto = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_NOMECOMPLETO"]))?.Text;
-      result.DeclaranteGrauAfiinidade = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_GRAUAFINIDADE"]))?.Text;
-      result.DeclaranteDocumento = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_NUMDOCUMENTO"]))?.Text;
-      result.DeclaranteTempoOcupacao = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_TEMPOOCUPACAO"]))?.Text;
-      result.DeclaranteTempoUnidade = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_TEMPOUNIDADE"]))?.Text;
-      result.DeclaranteTipoOcupacao = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_TIPOOCUPACAO"]))?.Text;
-      result.DeclaranteQntResidentes = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_QNTRESIDENTES"]))?.Text;
-      result.DeclaranteEmail = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_EMAIL"]))?.Text;
-      result.DeclaranteCelular = GetElement(By.XPath(this.cfg.CAMINHOS["DECLARANTE_CELULAR"]))?.Text;
+      result.DeclaranteNomeCompleto = handler.GetElements("DECLARANTE_NOMECOMPLETO").FirstOrDefault()?.Text;
+      result.DeclaranteGrauAfiinidade = handler.GetElements("DECLARANTE_GRAUAFINIDADE").FirstOrDefault()?.Text;
+      result.DeclaranteDocumento = handler.GetElements("DECLARANTE_NUMDOCUMENTO").FirstOrDefault()?.Text;
+      result.DeclaranteTempoOcupacao = handler.GetElements("DECLARANTE_TEMPOOCUPACAO").FirstOrDefault()?.Text;
+      result.DeclaranteTempoUnidade = handler.GetElements("DECLARANTE_TEMPOUNIDADE").FirstOrDefault()?.Text;
+      result.DeclaranteTipoOcupacao = handler.GetElements("DECLARANTE_TIPOOCUPACAO").FirstOrDefault()?.Text;
+      result.DeclaranteQntResidentes = handler.GetElements("DECLARANTE_QNTRESIDENTES").FirstOrDefault()?.Text;
+      result.DeclaranteEmail = handler.GetElements("DECLARANTE_EMAIL").FirstOrDefault()?.Text;
+      result.DeclaranteCelular = handler.GetElements("DECLARANTE_CELULAR").FirstOrDefault()?.Text;
       // Sessão SELAGEM no formulário de INSPECAO
-      result.SelagemTampos = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_TAMPOS"]))?.Text;
-      result.SelagemBornes = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_BORNES"]))?.Text;
-      result.SelagemParafuso = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_PARAFUSO"]))?.Text;
-      result.SelagemTrava = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_TRAVA"]))?.Text;
-      result.SelagemTampa = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_TAMPA"]))?.Text;
-      result.SelagemBase = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_BASE"]))?.Text;
-      result.SelagemGeral = GetElement(By.XPath(this.cfg.CAMINHOS["SELAGEM_GERAL"]))?.Text;
+      result.SelagemTampos = handler.GetElements("SELAGEM_TAMPOS").FirstOrDefault()?.Text;
+      result.SelagemBornes = handler.GetElements("SELAGEM_BORNES").FirstOrDefault()?.Text;
+      result.SelagemParafuso = handler.GetElements("SELAGEM_PARAFUSO").FirstOrDefault()?.Text;
+      result.SelagemTrava = handler.GetElements("SELAGEM_TRAVA").FirstOrDefault()?.Text;
+      result.SelagemTampa = handler.GetElements("SELAGEM_TAMPA").FirstOrDefault()?.Text;
+      result.SelagemBase = handler.GetElements("SELAGEM_BASE").FirstOrDefault()?.Text;
+      result.SelagemGeral = handler.GetElements("SELAGEM_GERAL").FirstOrDefault()?.Text;
       BackToBlack();
+      Log.Information("Ocorrência obtida:\n{resultado}", result);
       return result;
     }
     public String GetServico()
