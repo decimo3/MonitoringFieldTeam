@@ -1,19 +1,25 @@
-using System.Text;
-
 namespace MonitoringFieldTeam.Persistence
 {
   public class FinalizaInfo
   {
-    public string NotaServico { get; set; }
-    public string Codigo { get; set; }
-    public string Quantidade { get; set; }
+    public string? NotaServico { get; set; }
+    public string? Codigo { get; set; }
+    public string? Quantidade { get; set; }
     public override string ToString()
     {
-      var builder = new StringBuilder();
-      if(NotaServico is not null) builder.Append($"Serviço: {NotaServico}\n");
-      if(Codigo is not null) builder.Append($"Código: {Codigo}\n");
-      if(Quantidade is not null) builder.Append($"Quantidade: {Quantidade}\n");
-      return builder.ToString();
+      var type = this.GetType();
+      var properties = type.GetProperties();
+      var result = new System.Text.StringBuilder();
+      foreach (var property in properties)
+      {
+        var value = property.GetValue(this);
+        if (value is null) continue;
+        result.Append(property.Name);
+        result.Append(": ");
+        result.Append(value);
+        result.Append('\n');
+      }
+      return result.ToString();
     }
   }
 }
