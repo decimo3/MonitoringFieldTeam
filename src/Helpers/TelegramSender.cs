@@ -2,16 +2,24 @@ using Serilog;
 namespace MonitoringFieldTeam.Helpers;
 public static class Telegram
 {
-  public static void SendMessage(String token, Int64 channel, String mensagem)
+  private static readonly String TOKEN = Configuration.GetString("BOT_TOKEN");
+  private static long GetChannelId(String bucketName)
+  {
+    var pair = Configuration.GetPairs("BOT_CHANNEL").FirstOrDefault(c => c.Key == bucketName);
+    if (pair.Key is null)
+      throw new KeyNotFoundException($"Bucket '{bucketName}' was not found in BOT_CHANNELS.");
+    return pair.Value;
+  }
+  public static void SendMessage(String bucketName, String mensagem)
   {
     var temp = String.Empty;
     try
     {
-      if(String.IsNullOrEmpty(mensagem)) return;
-      var baseurl = new Uri($"https://api.telegram.org/bot{token}/sendMessage");
+      if (String.IsNullOrEmpty(mensagem)) return;
+      var baseurl = new Uri($"https://api.telegram.org/bot{TOKEN}/sendMessage");
       using(var client = new HttpClient())
       {
-        var message_obj = new { chat_id = channel, text = mensagem, parse_mode = "MarkdownV2" };
+        var message_obj = new { chat_id = GetChannelId(bucketName), text = mensagem, parse_mode = "MarkdownV2" };
         var jsonContent = System.Text.Json.JsonSerializer.Serialize(message_obj);
         using(var msgContent = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json"))
         {
@@ -23,6 +31,7 @@ public static class Telegram
             {
               temp = stream.ReadToEnd();
               response.EnsureSuccessStatusCode();
+              Log.Information("Mensagem enviada com sucesso!\n{mensagem}", mensagem);
             }
           }
         }
@@ -30,19 +39,23 @@ public static class Telegram
     }
     catch (System.Exception erro)
     {
-      Console.Write($"{DateTime.Now} - {erro.Message}: {temp}");
-      Console.Write($"{DateTime.Now} - {erro.StackTrace}");
+      Log.Error(erro.Message);
+      if (!string.IsNullOrWhiteSpace(temp))
+        Log.Error("Mensagem de erro retornada: {temp}", temp);
+      if (erro.StackTrace is not null)
+        Log.Error(erro.StackTrace);
     }
   }
-  public static void sendDocument(Int64 channel, Stream arquivo, String filename)
+  public static void SendDocument(String bucketName, String filepath)
   {
     var temp = String.Empty;
+    var filename = Path.GetFileName(filepath);
+    var channel = GetChannelId(bucketName);
     try
     {
-      if(arquivo.Length == 0) return;
-      var token = System.Environment.GetEnvironmentVariable("BOT_TOKEN") ??
-        throw new InvalidOperationException("Environment variable BOT_TOKEN is not set!");
-      var baseurl = new Uri($"https://api.telegram.org/bot{token}/sendDocument?chat_id={channel}");
+      using var arquivo = new FileStream(filepath, FileMode.Open);
+      if (arquivo.Length == 0) return;
+      var baseurl = new Uri($"https://api.telegram.org/bot{TOKEN}/sendDocument?chat_id={channel}");
       var formulario = new MultipartFormDataContent();
       HttpContent content = new StreamContent(arquivo);
       formulario.Add(content, "document", filename);
@@ -56,14 +69,18 @@ public static class Telegram
           {
             temp = stream.ReadToEnd();
             response.EnsureSuccessStatusCode();
+            Log.Information("Documento {arquivo} enviado com sucesso!", filename);
           }
         }
       }
     }
     catch (System.Exception erro)
     {
-      Console.Write($"{DateTime.Now} - {erro.Message}: {temp}");
-      Console.Write($"{DateTime.Now} - {erro.StackTrace}");
+      Log.Error(erro.Message);
+      if (!string.IsNullOrWhiteSpace(temp))
+        Log.Error("Mensagem de erro retornada: {temp}", temp);
+      if (erro.StackTrace is not null)
+        Log.Error(erro.StackTrace);
     }
   }
 }
