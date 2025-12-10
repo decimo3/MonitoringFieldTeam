@@ -2,44 +2,41 @@ using Serilog;
 using MonitoringFieldTeam.Helpers;
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public static class WorkGetterHandler
   {
-    public Boolean Solicitacoes()
+    private const string ERROR_MESSAGE = "A solicitação enviada é inválida, verifique e envie novamente!";
+    private static readonly string LOCKFILE = System.IO.Path.Combine(System.AppContext.BaseDirectory, "ofs.lock");
+    private static void WriteLockFile(string message)
+    {
+      File.WriteAllText(LOCKFILE, message, System.Text.Encoding.UTF8);
+      Log.Information(message);
+    }
+    public static void Solicitacoes(WebHandler.WebHandler handler)
     {
       try
       {
-        var erroMensagem = "A solicitação enviada é inválida, verifique e envie a aplicação correta";
-        if(!System.IO.File.Exists(cfg.LOCKFILE)) return false;
-        var solicitacao = System.IO.File.ReadAllText(cfg.LOCKFILE, System.Text.Encoding.UTF8);
-        if(solicitacao.Length == 0 || solicitacao.Length > 50) return false;
-        Console.WriteLine($"{DateTime.Now} - Solicitação recebida: {solicitacao}.");
+        if (!System.IO.File.Exists(LOCKFILE)) return;
+        var solicitacao = System.IO.File.ReadAllText(LOCKFILE, System.Text.Encoding.UTF8);
+        if (solicitacao.Length == 0 || solicitacao.Length > 50) return;
+        Log.Information("Solicitação recebida: {solicitacao}.", solicitacao);
         var args = solicitacao.Split(' ');
-        if(args.Length != 2)
-        {
-          System.IO.File.WriteAllText(cfg.LOCKFILE, erroMensagem, System.Text.Encoding.UTF8);
-          Console.WriteLine($"{DateTime.Now} - {erroMensagem}.");
-          return false;
-        }
+        if (args.Length != 2) throw new ArgumentException(ERROR_MESSAGE);
         var aplicacao = args[0];
-        var informacao = args[1];
+        var informacao = long.Parse(args[1]);
+        var workHandler = new ServicoHandler(handler, informacao);
         switch (aplicacao)
         {
           case "evidencia":
-            var resposta = GetServico(informacao);
-            System.IO.File.WriteAllText(cfg.LOCKFILE, resposta, System.Text.Encoding.UTF8);
-            Console.WriteLine($"{DateTime.Now} - {resposta}.");
-            return true;
+            WriteLockFile(workHandler.GetServico());
+            break;
           default:
-            System.IO.File.WriteAllText(cfg.LOCKFILE, erroMensagem, System.Text.Encoding.UTF8);
-            Console.WriteLine($"{DateTime.Now} - {erroMensagem}.");
-            return false;
+            throw new InvalidOperationException(ERROR_MESSAGE);
+            break;
         }
       }
       catch (System.Exception erro)
       {
-        System.IO.File.WriteAllText(cfg.LOCKFILE, erro.Message, System.Text.Encoding.UTF8);
-        Console.WriteLine($"{DateTime.Now} - {erro.Message}.");
-        return true;
+        WriteLockFile(erro.Message);
       }
     }
   }
