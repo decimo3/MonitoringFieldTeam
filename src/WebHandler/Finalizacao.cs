@@ -3,7 +3,7 @@ using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.Persistence;
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public static class Finalizador
   {
     public Double GetTimeOnly(Int32 tempo)
     {
