@@ -68,36 +68,37 @@ public static class Updater
     {
       var driverpath = System.IO.Path.Combine(
         System.AppContext.BaseDirectory, "chromedriver-win64", "chromedriver.exe");
-      Console.WriteLine($"{DateTime.Now} - Verificando as versões do browser e do driver...");
+      Log.Information("Verificando as versões do browser e do driver...");
       var argumento = $"-c \"(Get-Item '{Configuration.GetString("GCHROME")}').VersionInfo.ProductVersion.ToString()\"";
       var chrome_version = GetVersionAplicationOutput("powershell", argumento);
-      Console.WriteLine($"{DateTime.Now} - Chrome major version: {chrome_version}.");
+      Log.Information("Chrome major version: {chrome_version}.", chrome_version);
       if (System.IO.File.Exists(driverpath))
       {
         var driver_version = GetVersionAplicationOutput(driverpath, "--version");
-        Console.WriteLine($"{DateTime.Now} - Driver major version: {driver_version}.");
+        Log.Information("Driver major version: {driver_version}.", driver_version);
         if(driver_version >= chrome_version) return;
       }
-      Console.WriteLine($"{DateTime.Now} - Buscando as novas versões do chromedriver...");
+      Log.Information("Buscando as novas versões do chromedriver...");
       var newer_version = CheckNewerChromeDriverVersion();
-      Console.WriteLine($"{DateTime.Now} - Versão do chromedriver no canal STABLE: {newer_version}");
-      Console.Write($"{DateTime.Now} - Baixando a nova versão do chromedriver...");
+      Log.Information("Versão do chromedriver no canal STABLE: {newer_version}");
+      Log.Information("Baixando a nova versão do chromedriver...");
       DownloadNewerChromeDriver(newer_version);
-      Console.Write(" Download concluído!\n");
+      Log.Information("Download concluído da nova versão do chromedriver!");
       if (System.IO.File.Exists(driverpath))
       {
-        Console.Write($"{DateTime.Now} - Removendo a versão antiga do chromedriver...");
+        Log.Information("Removendo a versão antiga do chromedriver...");
         DeleteOlderDriverFile();
       }
-      Console.Write(" Remoção concluída!\n");
-      Console.Write($"{DateTime.Now} - Descompactando atualização...");
+      Log.Information("Remoção concluída da versão antiga do chromedriver");
+      Log.Information("Descompactando atualização...");
       UnzipChromeDriverFile();
-      Console.Write(" Atualização concluída!\n");
+      Log.Information("Atualização concluída com sucesso!");
     }
     catch (System.Exception erro)
     {
-      Console.Write($"{DateTime.Now} - {erro.Message}");
-      Console.Write($"{DateTime.Now} - {erro.StackTrace}");
+      Log.Error(erro.Message);
+      if (erro.StackTrace is not null)
+        Log.Error(erro.StackTrace);
     }
   }
 }
