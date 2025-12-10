@@ -12,7 +12,9 @@ public static class Verificador
       Console.WriteLine($"{DateTime.Now} - Já existe uma instância do sistema em execução!");
       System.Environment.Exit(409);
     }
-    Console.WriteLine($"{DateTime.Now} - Finalizando processos residuais (se houver)...");
+  public static void ChromeKiller()
+  {
+    Log.Information("Finalizando processos residuais (se houver)...");
     var exec2kill = new List<String> {"chrome.exe", "chromedriver.exe"};
     foreach (var exec in exec2kill)
     {
@@ -22,7 +24,7 @@ public static class Verificador
       }
       catch (System.Exception erro)
       {
-        Console.WriteLine(erro.Message);
+        Log.Error(erro.Message);
       }
     }
   }
