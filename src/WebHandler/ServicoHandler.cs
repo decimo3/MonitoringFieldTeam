@@ -3,7 +3,7 @@ using MonitoringFieldTeam.Persistence;
 
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public class ServicoHandler
   {
     private void BackToBlack()
     {
