@@ -5,11 +5,6 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public partial class Manager
   {
-    public void Refresh()
-    {
-      this.driver.Navigate().Refresh();
-      System.Threading.Thread.Sleep(this.cfg.ESPERAS["LONGA"]);
-    }
     public static int ObterHoraAtual(WebHandler.WebHandler handler)
     {
       var regua_hora_atual = handler.GetElement("PARAMETRO_HORAATUAL");
