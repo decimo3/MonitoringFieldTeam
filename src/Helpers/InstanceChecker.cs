@@ -1,17 +1,19 @@
 using Serilog;
 namespace MonitoringFieldTeam.Helpers;
-public static class Verificador
+public static class InstanceChecker
 {
-  public static void Verificar()
+
+  public static void MultipleRun()
   {
     System.Threading.Thread.Sleep(5_000);
-    Console.WriteLine($"{DateTime.Now} - Verificando se há outras instâncias do sistema...");
+    Log.Information("Verificando se há outras instâncias do sistema...");
     var result = Helpers.Executor.Executar("tasklist", $"/NH /FI \"IMAGENAME eq ofs.exe\"");
     if(((result.Length - result.Replace("ofs.exe", "").Length) / "ofs.exe".Length) > 1)
     {
-      Console.WriteLine($"{DateTime.Now} - Já existe uma instância do sistema em execução!");
+      Log.Error("Já existe uma instância do sistema em execução!");
       System.Environment.Exit(409);
     }
+  }
   public static void ChromeKiller()
   {
     Log.Information("Finalizando processos residuais (se houver)...");
