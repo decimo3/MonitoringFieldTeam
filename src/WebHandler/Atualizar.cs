@@ -1,79 +1,41 @@
 using Serilog;
 namespace MonitoringFieldTeam.WebScraper;
-public partial class Manager
+
+public static class Atualizador
 {
-  public void Atualizar(String piscina, Boolean direcao)
+  public static string SelecionarBalde(WebHandler.WebHandler handler, string piscina, bool direcao)
   {
-    this.balde_nome = piscina.Split('>').Last();
+    Log.Information("Selecionando o(s) balde(s) {piscina}", piscina);
+    // Check if it is on GANNT graph display. Throw error if not it is.
+    handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
+    // Get bucket parts and order due direction (to open or close buckets)
     var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().ToArray();
-    for (var i = 0; i < sub_baldes.Length; i++)
+    // Get bucket arrow class due direction (to open or close buckets)
+    var arrow_class = direcao ? "GANNT_ARROWPLUS" : "GANNT_ARROWMINUS";
+    foreach (var sub_balde in sub_baldes)
     {
-      var baldes = this.driver.FindElements(By.ClassName("edt-item"));
-      for (var j = 0; j < baldes.Count; j++)
+      var baldes = handler.GetElements("GANNT_BUCKETS", WebHandler.WAITSEC.Curto);
+      foreach (var balde in baldes)
       {
-        if(j == baldes.Count - 1)
+        // var balde = handler.GetElement("GANNT_BUCKET", WebHandler.WAITSEC.Curto, j + 1);
+        var texto = balde.Text; // handler.GetElementAttribute(balde, "GLOBAL_TEXT");
+        if (string.IsNullOrEmpty(texto)) continue;
+        Log.Debug("Balde {balde}, Texto: {texto}", balde, texto);
+        if (texto.Contains(sub_balde))
         {
-          ProximoBalde();
-          throw new InvalidOperationException($"O balde {sub_baldes[j]} não foi encontrado!");
-        }
-        var texto = baldes[j].GetAttribute("innerText");
-        if(String.IsNullOrEmpty(texto)) continue;
-        if(texto.Contains(sub_baldes[i]))
-        {
-          if(direcao)
+          if (sub_balde == sub_baldes.Last())
           {
-            if(i > 0)
-            {
-              if(texto.Contains(sub_baldes[i - 1]))
-              {
-                continue;
-              }
-            }
-            if(i == (sub_baldes.Length - 1))
-            {
-              if(baldes[j].Displayed)
-              {
-                baldes[j].Click();
-                break;
-              }
-              else
-              {
-                // TODO - Solucionar ElementNotInteractableException()
-                // The page cover elements after the date is changed
-                // Discover how to uncover elements to interact
-                // "Solucionado" atualizando a página a cada troca de data
-                throw new NotImplementedException();
-              }
-            }
+            handler.GetNestedElements(balde, "GANNT_BUCKET").First().Click();
+            Log.Information("Balde '{sub_balde}' selecionado com sucesso!", sub_balde);
+            return direcao ? sub_baldes.Last() : sub_baldes.First();
           }
-          else
-          {
-            if(i < sub_baldes.Length - 1)
-            {
-              if(texto.Contains(sub_baldes[i + 1]))
-              {
-                continue;
-              }
-            }
-            if(i == (sub_baldes.Length))
-            {
-              if(baldes[j].Displayed)
-              {
-                baldes[j].Click();
-                break;
-              }
-            }
-          }
-          var tree_arrow = baldes[j].FindElements(By.XPath("./div/button")).First();
-          var arrow_class = direcao ? "ptplus" : "ptminus";
-          if(tree_arrow.GetAttribute("class").Contains(arrow_class)) tree_arrow.Click();
-          System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-          break;
+          handler.GetNestedElements(balde, arrow_class).FirstOrDefault()?.Click();
         }
       }
+      throw new InvalidOperationException($"O balde `{sub_balde}` não foi encontrado!");
     }
-    if(!direcao) return;
-    System.Threading.Thread.Sleep(this.cfg.ESPERAS["MEDIA"]);
+    throw new InvalidOperationException($"Houve um erro ao tentar selecionar `{piscina}`!");
+  }
   public static DateOnly Atualizar(WebHandler.WebHandler handler)
   {
     Log.Information("Atualizando o gráfico...");
