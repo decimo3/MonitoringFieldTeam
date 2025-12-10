@@ -1,16 +1,17 @@
 using System.Text.Json;
+using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.Persistence;
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public static class Exportar
   {
-    public void ExportarPropriedadesEspelhos()
+    public static void ExportarPropriedadesEspelhos(List<Espelho> espelhos, string balde_nome)
     {
-      var conf = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
-      var json = System.Text.Json.JsonSerializer.Serialize<List<Espelho>>(this.espelhos, conf);
-      var filename = $"{this.cfg.DOWNFOLDER}\\{this.agora.ToString("yyyyMMdd_HHmmss")}_{this.balde_nome}.json";
-      System.IO.File.WriteAllText(filename, json);
-      System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado!");
+      var conf = new JsonSerializerOptions { WriteIndented = true };
+      var json = JsonSerializer.Serialize(espelhos, conf);
+      var filename = Path.Combine(Configuration.GetString("DATAPATH"),
+        $"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}_{balde_nome}.json");
+      File.WriteAllText(filename, json);
     }
   }
 }
