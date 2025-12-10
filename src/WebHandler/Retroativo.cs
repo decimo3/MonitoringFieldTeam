@@ -2,67 +2,72 @@ using Serilog;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.WebHandler;
 namespace MonitoringFieldTeam.WebScraper;
+
+public static class Retroativo
 {
-  public partial class Manager
+  private const Int32 DIAS_RETROATIVOS = -30;
+  public static void Relatorios(WebHandler.WebHandler handler)
   {
-    private Int32 DIAS_RETROATIVOS = -30;
-    public void Retroativo()
+    Parametrizador.VerificarPagina(handler);
+    Log.Information("Verificando relatórios retroativos...");
+    var datapath = Configuration.GetString("DATAPATH");
+    var now = DateOnly.FromDateTime(DateTime.Now);
+    var startdate = DateTime.ParseExact(Configuration.GetString("RETRODAY"), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    var dias_retroativos = -(DateTime.Now - startdate).Days;
+    for (var dia = now.AddDays(dias_retroativos); dia < now; dia = dia.AddDays(1))
     {
-      if (cfg.CONFIGURACAO.TryGetValue("RETRODAY", out String start_day))
+      if (dia.DayOfWeek == DayOfWeek.Sunday) continue;
+      foreach (var piscina in Configuration.GetArray("RECURSO"))
       {
-        var startdate = DateTime.ParseExact(start_day, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
-        DIAS_RETROATIVOS = -(DateTime.Now - startdate).Days;
+        var balde = piscina.Split('>').Last();
+        if (Finalizador.TemFinalizacao(datapath, dia, balde)) continue;
+        Log.Information("Coletando retroativo: balde '{balde}', data {data}.", balde, dia);
+        TrocarData(handler, dia);
+        Atualizador.SelecionarBalde(handler, piscina, true);
+        var espelhos = Coletor.Coletar(handler);
+        var relatorios = Finalizador.Finalizacao(espelhos, dia, false);
+        var filename = Finalizador.CreateReport(relatorios, balde, dia);
+        #if !DEBUG
+        Telegram.SendDocument(balde, filename);
+        #endif
+        Atualizador.SelecionarBalde(handler, piscina, false);
       }
-      var dia_now = DateOnly.FromDateTime(DateTime.Now);
-      for (var dia_pri = dia_now.AddDays(DIAS_RETROATIVOS); dia_pri < dia_now; dia_pri=dia_pri.AddDays(1))
-      {
-        if(dia_pri.DayOfWeek == DayOfWeek.Sunday) continue;
-        foreach (var piscina in cfg.PISCINAS)
-        {
-          if(this.TemFinalizacao(dia_pri, piscina)) continue;
-          TrocarData(dia_pri);
-          Atualizar(piscina, true);
-          Parametrizar();
-          Coletor();
-          Finalizacao(false);
-          Atualizar(piscina, false);
-          Refresh();
-        }
-      }
-      TrocarData(dia_now);
     }
-    public void TrocarData(DateOnly data)
+    TrocarData(handler, now);
+  }
+  public static DateOnly TrocarData(WebHandler.WebHandler handler, DateOnly data)
+  {
+    const int QUANTIDADE_MAXIMA_DE_PAGINAS_DE_CALENDARIOS = 2;
+    var data_atual = DateOnly.Parse(handler.GetElement("GANNT_DATEPICK", WAITSEC.Agora).Text);
+    if (data_atual == data) return data_atual;
+
+    var datepicker = handler.GetElements("GANNT_DATERANGE", WAITSEC.Curto);
+    if (!datepicker.Any()) handler.GetElement("GANNT_DATEPICK", WAITSEC.Curto).Click();
+    for (int i = 0; i < QUANTIDADE_MAXIMA_DE_PAGINAS_DE_CALENDARIOS; i++)
     {
-      var data_atual = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
-      if(data_atual == data) return;
-      IWebElement calendario = TrocarData(data.ToString("MMMM yyyy").ToLower());
-      foreach (var sem in calendario.FindElements(By.XPath(".//table/tbody/tr")))
+      var calendarios = handler.GetElements("GANNT_DATEGROUP", WAITSEC.Curto);
+      foreach (var calendario in calendarios)
       {
-        foreach (var dia in sem.FindElements(By.XPath(".//td")))
+        var desired_monthstring = data.ToString("MMMM yyyy").ToLower();
+        var current_monthstring = handler.GetNestedElements(calendario, "GANNT_DATETEXT").First().Text.ToLower();
+        if (current_monthstring == desired_monthstring)
         {
-          if(!Int32.TryParse(dia.Text, out Int32 dia_num)) continue;
-          if(dia_num == data.Day)
+          foreach (var sem in handler.GetNestedElements(calendario, "GANNT_DATEWEEK"))
           {
-            dia.Click();
-            this.datalabel = DateOnly.Parse(this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Text);
-            System.Threading.Thread.Sleep(this.cfg.ESPERAS["CURTA"]);
-            return;
+            foreach (var dia in handler.GetNestedElements(sem, "GLOBAL_TABLECEL"))
+            {
+              if (!Int32.TryParse(dia.Text, out Int32 dia_num)) continue;
+              if (dia_num == data.Day)
+              {
+                dia.Click();
+                return DateOnly.Parse(handler.GetElement("GANNT_DATEPICK", WAITSEC.Curto).Text);
+              }
+            }
           }
         }
       }
+      handler.GetElement("GANNT_DATEPREV", WAITSEC.Agora).Click();
     }
-    public IWebElement TrocarData(String dataonly)
-    {
-      var datepicker = this.driver.FindElements(By.ClassName("toolbar-date-range-picker-calendar"));
-      if(!datepicker.Any()) this.driver.FindElement(By.ClassName("toolbar-date-picker-button")).Click();
-      var calendarios = this.driver.FindElements(By.ClassName("ui-datepicker-group"));
-      foreach (var elemento in calendarios)
-        if(elemento.FindElement(By.XPath(".//div/div")).Text.ToLower() == dataonly) return elemento;
-      this.driver.FindElement(By.ClassName("ui-datepicker-prev")).Click();
-      calendarios = this.driver.FindElements(By.ClassName("ui-datepicker-group"));
-      foreach (var elemento in calendarios)
-        if(elemento.FindElement(By.XPath(".//div/div")).Text.ToLower() == dataonly) return elemento;
-      throw new IndexOutOfRangeException("O mês solicitado não foi encontrado!");
-    }
+    throw new InvalidOperationException($"A data '{data}' não pode ser selecionada!");
   }
 }
