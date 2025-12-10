@@ -35,23 +35,16 @@ namespace MonitoringFieldTeam.WebScraper
       Log.Information("Relatório '{filename}' exportado!\n{csv}", filename, csv);
       return filepath;
     }
-    public void Finalizacao(Boolean check_pending = true)
+    public static List<Relatorio_DTO> Finalizacao(List<Espelho> espelhos, DateOnly datalabel, Boolean check_pending = true)
     {
-      if(check_pending)
-      {
-        if(!HasInfo2FinalReport()) return;
-      }
-      else
-      {
-        ExportarPropriedadesEspelhos();
-      }
       var relatorios = new List<Relatorio_DTO>();
+      if (check_pending || !HasInfo2FinalReport(espelhos)) return relatorios;
       foreach (var espelho in espelhos)
       {
         if(espelho.queue_start_start < 0) continue;
         var relatorio = new Relatorio();
         relatorio.recurso = espelho.recurso;
-        relatorio.data_referencia = this.datalabel;
+        relatorio.data_referencia = datalabel;
         relatorio.login_calendario = GetTimeOnly(espelho.shift_start);
         relatorio.login_horario = GetTimeOnly(espelho.queue_start_start);
         relatorio.logout_calendario = GetTimeOnly(espelho.shift_start + espelho.shift_dur);
