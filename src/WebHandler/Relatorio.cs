@@ -3,25 +3,25 @@ using Serilog;
 using MonitoringFieldTeam.Persistence;
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public static class Relator
   {
-    public void Relatorio()
+    public static string? Relatar(List<FeedBack> feedbacks, string balde_nome, DateTime agora)
     {
-      if(relatorios.Length > 0)
+      if (!feedbacks.Any())
       {
-        this.relatorios = this.relatorios.Replace("-", "");
-        this.relatorios.Insert(0, $"_Balde de recursos: *{this.balde_nome}*_\n\n");
-        this.relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
-        this.relatorios.Append($"\n_Relatório extraído em {this.agora}_");
-        var relatorio_string = this.relatorios.ToString();
-        System.Console.WriteLine(relatorio_string);
-        if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
-        Helpers.Telegram.SendMessage(cfg.CONFIGURACAO["BOT_TOKEN"], channel, relatorio_string.Replace("-", "\\-"));
+        Log.Information("Nenhum ofensor do IDG nesta análise!");
+        return null;
       }
-      else
-      {
-        System.Console.WriteLine($"{DateTime.Now} - Nenhum ofensor ao IDG nesta análise!");
-      }
+      var relatorios = new StringBuilder();
+      relatorios.Insert(0, $"_Balde de recursos: *{balde_nome}*_\n\n");
+      relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
+      foreach (var feedback in feedbacks)
+        relatorios.AppendLine(feedback.ToString());
+      relatorios = relatorios.Replace("-", "");
+      relatorios.Append($"\n\n_Relatório extraído em {agora}_");
+      var relatorios_texto = relatorios.ToString();
+      Log.Information("Lista de ofensores:\n{relatorios}", relatorios_texto);
+      return relatorios_texto;
     }
   }
 }
