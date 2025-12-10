@@ -3,7 +3,7 @@ using MonitoringFieldTeam.WebHandler;
 
 namespace MonitoringFieldTeam.WebScraper
 {
-  public partial class Manager
+  public static class Parametrizador
   {
     public static int ObterHoraAtual(WebHandler.WebHandler handler)
     {
