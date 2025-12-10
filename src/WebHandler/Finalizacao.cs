@@ -123,23 +123,7 @@ namespace MonitoringFieldTeam.WebScraper
         var relatorio_dto = new Relatorio_DTO(relatorio);
         relatorios.Add(relatorio_dto);
       }
-      if(!relatorios.Any())
-      {
-        ExportarPropriedadesEspelhos();
-        CreateVoidReport();
-        return;
-      }
-      var filename = $"{this.datalabel.ToString("yyyyMMdd")}_{this.balde_nome}.done.csv";
-      var filepath = System.IO.Path.Combine(this.cfg.DOWNFOLDER, filename);
-      var csv = Helpers.TableMaker<Relatorio_DTO>.Serialize(relatorios);
-      System.IO.File.WriteAllText(filepath, csv);
-      foreach (var line in csv.Split('\n')) System.Console.WriteLine($"{DateTime.Now} - {line}");
-      if(!cfg.BOT_CHANNELS.TryGetValue(this.balde_nome, out long channel)) return;
-      using(var arquivo = new FileStream(filepath, FileMode.Open))
-      {
-        Helpers.Telegram.sendDocument(channel, arquivo, filename);
-      }
-      System.Console.WriteLine($"{DateTime.Now} - Arquivo {filename} exportado e transmitido!");
+      return relatorios;
     }
   }
 }
