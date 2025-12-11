@@ -20,16 +20,20 @@ public static class Retroativo
       foreach (var piscina in Configuration.GetArray("RECURSO"))
       {
         var balde = piscina.Split('>').Last();
-        if (Finalizador.TemFinalizacao(dia, balde)) continue;
-        Log.Information("Coletando retroativo: balde '{balde}', data {data}.", balde, dia);
-        TrocarData(handler, dia);
-        Atualizador.SelecionarBalde(handler, piscina, true);
-        var espelhos = Coletor.Coletar(handler);
-        var relatorios = Finalizador.Finalizacao(espelhos, dia, false);
-        var filename = Finalizador.CreateReport(relatorios, balde, dia);
+        if (!Finalizador.TemFinalizacao(dia, balde))
+        {
+          Log.Information("Finalização retroativa: balde '{balde}', data {data}.", balde, dia);
+          TrocarData(handler, dia);
+          Atualizador.SelecionarBalde(handler, piscina, true);
+          var espelhos = Coletor.Coletar(handler);
+          var relatorios = Finalizador.Finalizacao(espelhos, dia, false);
+          var filename = Finalizador.CreateReport(relatorios, balde, dia);
+          #if !DEBUG
+            Telegram.SendDocument(balde, filename);
+          #endif
+        }
         var reportpath = ReportDownloader.Download(handler, balde, dia);
         #if !DEBUG
-        Telegram.SendDocument(balde, filename);
         Telegram.SendDocument(balde, reportpath);
         #endif
         Atualizador.SelecionarBalde(handler, piscina, false);
