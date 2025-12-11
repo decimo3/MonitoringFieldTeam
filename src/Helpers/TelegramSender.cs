@@ -49,6 +49,8 @@ public static class Telegram
   public static void SendDocument(String bucketName, String filepath)
   {
     var temp = String.Empty;
+    if (string.IsNullOrEmpty(filepath) || !System.IO.File.Exists(filepath))
+      throw new FileNotFoundException("O caminho para o arquivo é inválido!");
     var filename = Path.GetFileName(filepath);
     var channel = GetChannelId(bucketName);
     try
