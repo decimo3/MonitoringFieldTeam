@@ -62,6 +62,7 @@ public sealed class WebHandler : IDisposable
     var pathfind_filepath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory, "ofs.path");
     this.WAYPATH = Configuration.ArquivoConfiguracao(pathfind_filepath);
+    ReloadWebPage();
   }
   public IList<IWebElement> GetElements
   (
