@@ -20,7 +20,7 @@ public static class Retroativo
       foreach (var piscina in Configuration.GetArray("RECURSO"))
       {
         var balde = piscina.Split('>').Last();
-        if (Finalizador.TemFinalizacao(datapath, dia, balde)) continue;
+        if (Finalizador.TemFinalizacao(dia, balde)) continue;
         Log.Information("Coletando retroativo: balde '{balde}', data {data}.", balde, dia);
         TrocarData(handler, dia);
         Atualizador.SelecionarBalde(handler, piscina, true);

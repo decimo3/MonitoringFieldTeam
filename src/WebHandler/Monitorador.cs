@@ -12,7 +12,7 @@ public static class Monitorador
     while (true)
     {
       var piscina = piscinas[contador_de_baldes];
-      if (Finalizador.TemFinalizacao(datapath, DateOnly.FromDateTime(DateTime.Now), piscina))
+      if (Finalizador.TemFinalizacao(DateOnly.FromDateTime(DateTime.Now), piscina))
       {
         contador_de_baldes = (contador_de_baldes + 1) % piscinas.Length;
         continue;
