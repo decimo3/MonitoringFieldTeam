@@ -25,7 +25,7 @@ GANNT_BUCKETS=.edt-item
 GANNT_BUCKET=//div[1]/button[3]/span
 GANNT_TOOLBAR=.toolbar-items-list
 GANNT_SHOWBTN=//*[normalize-space(.) = 'Exibir']
-GANNT_ACTBTN=//*[normalize-space(.) = 'Ações']
+GANNT_ACTIONBTN=//*[normalize-space(.) = 'Ações']
 GANNT_DATEPICK=.toolbar-date-picker-button
 GANNT_DATEWEEK=//table/tbody/tr
 GANNT_DATERANGE=.toolbar-date-range-picker-calendar
@@ -40,6 +40,8 @@ GANNT_TREEGROUP=//*[@name='recursively']
 GANNT_ROUTEGROUP=//*[@name='show_tech_trace']
 GANNT_FILTERCHECK=//input
 GANNT_APPLYBTN=//*[@title='Aplicar']
+GANNT_OPTIONSVIEW=/html/body/div[27]/div/div
+GANNT_EXPORTBTN=//*[@aria-label='Exportar']
 GANNT_CANVAS=.toaGantt-canvas
 ZOOM_FIT=/html/body/div[27]/div/div/div/div[1]/form/div/div[7]/span[2]
 CONTAINER=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[2]/div[3]/div/div[1]/table/tbody/tr[2]
