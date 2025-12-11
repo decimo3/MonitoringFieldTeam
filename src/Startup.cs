@@ -42,10 +42,7 @@ public class Startup
         Log.Error(erro.Message);
         if (erro.StackTrace is not null)
           Log.Debug(erro.StackTrace);
-#if !DEBUG
         Log.Information("Tentando reiniciar o sistema...");
-        Executor.Reiniciar();
-#endif
       }
     }
   }
