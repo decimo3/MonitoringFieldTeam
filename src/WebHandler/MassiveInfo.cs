@@ -66,12 +66,12 @@ namespace MonitoringFieldTeam.WebScraper
       foreach (var key in informacoes.Keys)
       {
         var lista = informacoes[key];
-        if (lista == null || lista.Count == 0)
-          continue;
+        if (lista == null || lista.Count == 0) continue;
+        var filtered = lista.Cast<object?>().Where(i => i is not null).ToList();
         var csv_path = System.IO.Path.Combine(
           Configuration.GetString("DATAPATH"), key.ToLower() + ".csv");
         System.IO.File.WriteAllText(csv_path,
-          TableMaker.ListObjectsToCSV(lista), Encoding.GetEncoding(1252));
+          TableMaker.ListObjectsToCSV(filtered), Encoding.GetEncoding(1252));
         // Abre com o programa padrão do sistema (ex: Bloco de Notas para .txt)
         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
         {
