@@ -20,6 +20,7 @@ public static class TableMaker
     values.Clear();
     foreach (var item in list)
     {
+      if (item is null) continue;
       foreach (var property in properties)
       {
         var value = property.GetValue(item);
