@@ -27,8 +27,10 @@ public static class Retroativo
         var espelhos = Coletor.Coletar(handler);
         var relatorios = Finalizador.Finalizacao(espelhos, dia, false);
         var filename = Finalizador.CreateReport(relatorios, balde, dia);
+        var reportpath = ReportDownloader.Download(handler, balde, dia);
         #if !DEBUG
         Telegram.SendDocument(balde, filename);
+        Telegram.SendDocument(balde, reportpath);
         #endif
         Atualizador.SelecionarBalde(handler, piscina, false);
       }
