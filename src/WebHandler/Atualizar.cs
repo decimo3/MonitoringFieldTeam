@@ -10,6 +10,8 @@ public static class Atualizador
     handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
     // Get bucket parts and order due direction (to open or close buckets)
     var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().ToArray();
+    // FIXME - reimplement tree navigation
+    if (sub_baldes.Length > 1) throw new NotImplementedException("A navegação por subbaldes não está operável!");
     // Get bucket arrow class due direction (to open or close buckets)
     var arrow_class = direcao ? "GANNT_ARROWPLUS" : "GANNT_ARROWMINUS";
     foreach (var sub_balde in sub_baldes)
