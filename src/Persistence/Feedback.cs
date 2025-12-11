@@ -24,7 +24,6 @@ public class FeedBack
       relatorios.Append($" {aviso}\\!");
       if(tempo != null)
         relatorios.Append($" \\~{tempo}min");
-      relatorios.Append('\n');
       return relatorios.ToString();
   }
 }
