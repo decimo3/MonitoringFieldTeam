@@ -16,7 +16,7 @@ public static class Coletor
     {
       var recurso = handler.GetElements("RECURSO", WebHandler.WAITSEC.Agora, i).SingleOrDefault();
       if (recurso is null) break;
-      var texto = recurso.Text;
+      var texto = handler.GetElementAttribute(recurso, "GLOBAL_TEXT");
       var par_pid = handler.GetElementAttribute(recurso, "COLETOR_PARPID");
       var style_top = handler.GetElementStyle(recurso)["top"];
       espelhos.Add(new Espelho(texto, Int32.Parse(par_pid), style_top));
