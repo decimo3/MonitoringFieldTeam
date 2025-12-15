@@ -34,7 +34,8 @@ public static class Monitorador
       Log.Information("Exportando as análises...");
       var texto = Relator.Relatar(relatorios, piscina, timestamp);
       #if !DEBUG
-      if (texto is not null) Telegram.SendMessage(balde, texto);
+        if (texto is not null)
+          Telegram.SendMessage(balde, texto);
       #endif
       Log.Information("Realizando análise final...");
       var finalizacoes = Finalizador.Finalizacao(espelhos, date, true);

@@ -10,9 +10,9 @@ public class Startup
   {
     #region
     var loglevel = Serilog.Events.LogEventLevel.Information;
-#if DEBUG
-    loglevel = Serilog.Events.LogEventLevel.Verbose;
-#endif
+    #if DEBUG
+      loglevel = Serilog.Events.LogEventLevel.Verbose;
+    #endif
     Log.Logger = new LoggerConfiguration()
       .MinimumLevel.Verbose()
       .WriteTo.Console(loglevel)
