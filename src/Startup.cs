@@ -21,7 +21,7 @@ public class Startup
         ), loglevel,
         rollingInterval: RollingInterval.Day)
       .CreateLogger();
-      #endregion
+    #endregion
     while (true)
     {
       try
