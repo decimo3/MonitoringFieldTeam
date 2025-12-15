@@ -10,6 +10,9 @@
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <ApplicationIcon>appicon.ico</ApplicationIcon>
+    <Version>${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}</Version>
+    <FileVersion>${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}.0</FileVersion>
+    <AssemblyVersion>${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
