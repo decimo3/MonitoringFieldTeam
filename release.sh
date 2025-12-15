@@ -1,6 +1,6 @@
 #!/bin/env bash
 
-WORKDIR=${pwd}
+WORKDIR=$PWD
 
 # Fetch tags and get the latest one
 git fetch --tags
