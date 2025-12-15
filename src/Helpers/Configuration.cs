@@ -27,21 +27,24 @@ public static class Configuration
   }
   public static string GetString(string key)
   {
-    if (GetObject(key) is not string config)
-      throw new ValueNotFoundException($"Não foi possível obter o valor pela chave {key}");
-    return config;
+    var obj = GetObject(key);
+    if (obj is string s) return s;
+    if (obj is string[] a) return a[0];
+    throw new ValueNotFoundException("O objeto de configuração não pode ser convertido para o tipo especificado!");
   }
   public static string[] GetArray(string key)
   {
-    if (GetObject(key) is not string[] config)
-      throw new ValueNotFoundException($"Não foi possível obter o valor pela chave {key}");
-    return config;
+    var obj = GetObject(key);
+    if (obj is string[] a) return a;
+    if (obj is string s) return new string[] { s };
+    throw new ValueNotFoundException("O objeto de configuração não pode ser convertido para o tipo especificado!");
   }
   public static (string Key, long Value)[] GetPairs(string key)
   {
-    if (GetObject(key) is not (string Key, long Value)[] config)
-      throw new ValueNotFoundException($"Não foi possível obter o valor pela chave {key}");
-    return config;
+    var obj = GetObject(key);
+    if (obj is (string Key, long Value)[] a) return a;
+    if (obj is ValueTuple<string, long> p) return new[] { (p.Item1, p.Item2) };
+    throw new ValueNotFoundException("O objeto de configuração não pode ser convertido para o tipo especificado!");
   }
   private static object ParseValue(string value)
   {
