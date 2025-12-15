@@ -9,6 +9,7 @@ public class Startup
   public static void Main(string[] args)
   {
     #region
+    Thread.Sleep(TimeSpan.FromSeconds((int)WAITSEC.Curto));
     var loglevel = Serilog.Events.LogEventLevel.Information;
     #if DEBUG
       loglevel = Serilog.Events.LogEventLevel.Verbose;

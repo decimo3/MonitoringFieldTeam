@@ -5,7 +5,6 @@ public static class InstanceChecker
 
   public static void MultipleRun()
   {
-    System.Threading.Thread.Sleep(5_000);
     Log.Information("Verificando se há outras instâncias do sistema...");
     var result = Helpers.Executor.Executar("tasklist", $"/NH /FI \"IMAGENAME eq ofs.exe\"");
     if(((result.Length - result.Replace("ofs.exe", "").Length) / "ofs.exe".Length) > 1)
