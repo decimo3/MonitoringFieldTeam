@@ -4,8 +4,7 @@ obj
 temp
 data
 logs
-ofs.conf
-chrome-win64
+googlechrome-win64
 chromedriver-win64
 *.txt
 *.csv
@@ -13,3 +12,5 @@ chromedriver-win64
 *.html
 *.env
 *.xlsx
+*.dev
+*.bak
