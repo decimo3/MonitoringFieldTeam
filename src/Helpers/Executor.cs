@@ -25,12 +25,12 @@ public static class Executor
   }
   public static void Reiniciar()
   {
+    Log.Information("Tentando reiniciar o sistema...");
     var executable = System.Environment.ProcessPath ??
       throw new InvalidOperationException("O caminho do processo não pode ser encontrado!");
     var arguments = System.Environment.GetCommandLineArgs();
     Log.Information("Iniciando o novo processo...");
     System.Diagnostics.Process.Start(executable, String.Join(' ', arguments.Skip(1).ToArray()));
     Log.Information("Encerrando processo atual...");
-    System.Environment.Exit(0);
   }
 }
