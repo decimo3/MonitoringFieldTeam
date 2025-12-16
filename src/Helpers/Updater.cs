@@ -80,7 +80,7 @@ public static class Updater
       }
       Log.Information("Buscando as novas versões do chromedriver...");
       var newer_version = CheckNewerChromeDriverVersion();
-      Log.Information("Versão do chromedriver no canal STABLE: {newer_version}");
+      Log.Information("Versão do chromedriver: {newer_version}", newer_version);
       Log.Information("Baixando a nova versão do chromedriver...");
       DownloadNewerChromeDriver(newer_version);
       Log.Information("Download concluído da nova versão do chromedriver!");
