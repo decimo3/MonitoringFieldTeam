@@ -5,14 +5,13 @@ namespace MonitoringFieldTeam.WebScraper;
 
 public static class Retroativo
 {
-  private const Int32 DIAS_RETROATIVOS = -30;
   public static void Relatorios(WebHandler.WebHandler handler)
   {
     Parametrizador.VerificarPagina(handler);
     Log.Information("Verificando relatórios retroativos...");
-    var datapath = Configuration.GetString("DATAPATH");
     var now = DateOnly.FromDateTime(DateTime.Now);
-    var startdate = DateTime.ParseExact(Configuration.GetString("RETRODAY"), "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    var startdate = DateTime.ParseExact(Configuration.GetString("RETRODAY"),
+      "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
     var dias_retroativos = -(DateTime.Now - startdate).Days;
     for (var dia = now.AddDays(dias_retroativos); dia < now; dia = dia.AddDays(1))
     {
