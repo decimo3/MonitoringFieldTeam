@@ -27,9 +27,9 @@ namespace MonitoringFieldTeam.WebScraper
         ["COD"] = new List<FinalizaInfo>(),
         ["MAT"] = new List<MaterialInfo>(),
         // ["APR"] = new List<AnaliseInfo>(),
-        // ["JPG"] = new List<FotografiaInfo>(),
+        ["JPG"] = new List<String>(),
         ["TOI"] = new List<OcorrenciaInfo>(),
-        // ["EVD"] = new List<EvidenciaInfo>()
+        ["EVD"] = new List<String>()
       };
       var extracao = Configuration.GetArray("EXTRACAO");
       foreach (var line in lines)
@@ -50,10 +50,10 @@ namespace MonitoringFieldTeam.WebScraper
             informacoes["MAT"].AddRange(workHandler.GetActivityMaterials());
           //if (extracao.Contains("APR"))
           //  informacoes["APR"].Add(workHandler.GetActivityAnaliseInfo());
-          //if (extracao.Contains("JPG"))
-          //  informacoes["JPG"].Add(workHandler.GetActivityFotografiaFiles());
-          //if (extracao.Contains("EVD"))
-          //  informacoes["EVD"].Add(workHandler.GetActivityEvidenciaInfo());
+          if (extracao.Contains("JPG"))
+            informacoes["JPG"].AddRange(workHandler.GetActivityUploads(true));
+          if (extracao.Contains("EVD"))
+            informacoes["EVD"].AddRange(workHandler.GetActivityUploads(false));
           if (extracao.Contains("TOI"))
             informacoes["TOI"].Add(workHandler.GetActivityOcorrencias());
         }
@@ -66,6 +66,7 @@ namespace MonitoringFieldTeam.WebScraper
       foreach (var key in informacoes.Keys)
       {
         var lista = informacoes[key];
+        if (lista is List<String>) continue;
         if (lista == null || lista.Count == 0) continue;
         var filtered = lista.Cast<object?>().Where(i => i is not null).ToList();
         var csv_path = System.IO.Path.Combine(
