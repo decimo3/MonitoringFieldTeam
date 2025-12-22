@@ -360,6 +360,16 @@ public sealed class WebHandler : IDisposable
     }
     throw new FileNotFoundException("Download file not found within timeout!");
   }
+  public void VerticalScroll(IWebElement container, int scrool)
+  {
+    var origin = new WheelInputDevice.ScrollOrigin() { Element = container };
+    new Actions(driver).ScrollFromOrigin(origin, 0, scrool).Perform();
+  }
+  public void HorizontalScroll(IWebElement container, int scrool)
+  {
+    var origin = new WheelInputDevice.ScrollOrigin() { Element = container };
+    new Actions(driver).ScrollFromOrigin(origin, scrool, 0).Perform();
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
