@@ -111,7 +111,7 @@ ACTIVITY_MATERIAL_ORIGEM=data-ofsc-inventory-pool
 ACTIVITY_ARQUIVOS=//*[@data-label='formArquivos']
 ACTIIVITY_EVIDENCIAS=//*[@data-label='FormArquivos']
 ACTIVITY_DOWNLOADS=.download-button
-ACTIVITY_REJEICAO=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[6]/div[2]/div/div/div/div/div/div/div[9]/div/div/div[7]/div/div[2]/div[1]/div[1]/div/div[2]
+ACTIVITY_REJEICAO=//*[@data-label='LG_MOT_REJEICAO']
 ACTIVITY_INSPECAO=//*[@data-label='FormServ']
 # Sessão IDENTIFICAÇÃO no formulário de INSPECAO
 IDENTIFICACAO_TIPOCAIXA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
