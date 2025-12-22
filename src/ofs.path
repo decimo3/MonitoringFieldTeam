@@ -88,6 +88,7 @@ COLETOR_GLOBALALERT=.toaGantt-tw
 PARAMETRO_HORAATUAL=.toaGantt-time-line
 PARAMETRO_HORALINHA=.toaGantt-hour-line
 # Sessão DETALHES no formulário da ATIVIDADE
+ACTIVITY_CONTAINER=.jbf-container-wrapper
 ACTIVITY_CABECALHO=.page-header-description
 ACTIVITY_ATIVIDADE=//*[@data-label='aid']
 ACTIVITY_SITUACAO=//*[@data-label='astatus']
