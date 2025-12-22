@@ -78,14 +78,21 @@ namespace MonitoringFieldTeam.WebScraper
       Log.Information("Informações obtidas:\n{resultado}", result);
       return result;
     }
-    public void GetActivityUploads()
+    public List<String> GetActivityUploads(bool fotografias_ou_evidencias)
     {
       IsFinished();
+      var files = new List<String>();
       Log.Information("Realizando downloads dos arquivos...");
-      handler.GetElement("ACTIVITY_ARQUIVOS", WebHandler.WAITSEC.Curto).Click();
-      foreach (var download in handler.GetElements("ACTIVITY_DOWNLOADS", WebHandler.WAITSEC.Medio))
-        download.Click();
+      var pathname = fotografias_ou_evidencias ? "ACTIVITY_ARQUIVOS" : "ACTIIVITY_EVIDENCIAS";
+      var acrescimo = fotografias_ou_evidencias ? 10 : 20;
+      handler.GetElement(pathname, WebHandler.WAITSEC.Curto).Click();
+      var downloads = handler.GetElements("ACTIVITY_DOWNLOADS", WebHandler.WAITSEC.Medio);
+      if (downloads.Count > 10)
+        throw new InvalidOperationException("Muitos arquivos anexados! Baixar manualmente!");
+      for (int i = 1; i <= downloads.Count; i++)
+        files.Add(handler.DownloadFile(downloads[i - 1], servico.ToString(), i - 1 + acrescimo));
       BackToBlack();
+      return files;
     }
     public List<FinalizaInfo> GetActivityClosings()
     {
