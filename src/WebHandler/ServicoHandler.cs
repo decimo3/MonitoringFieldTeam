@@ -245,7 +245,8 @@ namespace MonitoringFieldTeam.WebScraper
       {
         SearchAndEnterActivity();
         builder.Append(GetActivityGeneralInfo());
-        GetActivityUploads();
+        GetActivityUploads(true);
+        GetActivityUploads(false);
         builder.Append(GetActivityClosings());
         builder.Append(GetActivityMaterials());
       }
