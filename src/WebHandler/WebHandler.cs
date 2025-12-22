@@ -148,11 +148,12 @@ public sealed class WebHandler : IDisposable
     this.driver.ExecuteCdpCommand("Network.enable", new Dictionary<string, object>());
     this.driver.ExecuteCdpCommand("Network.clearBrowserCookies", new Dictionary<string, object>());
     this.driver.ExecuteCdpCommand("Network.clearBrowserCache", new Dictionary<string, object>());
-    // Ensure cookies removed at Selenium level
-    this.driver.Manage().Cookies.DeleteAllCookies();
-    // Clear storage and refresh the current window
-    this.driver.ExecuteScript("window.localStorage.clear()");
-    this.driver.ExecuteScript("window.sessionStorage.clear()");
+    driver.ExecuteCdpCommand("Storage.clearDataForOrigin",
+      new Dictionary<string, object>
+      {
+        ["origin"] = this.url,
+        ["storageTypes"] = "appcache,cache_storage,cookies,indexeddb,local_storage,service_workers,websql"
+      });
     this.driver.Navigate().GoToUrl(this.url);
   }
   public IList<IWebElement> GetNestedElements
