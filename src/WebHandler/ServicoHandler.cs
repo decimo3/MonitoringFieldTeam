@@ -18,6 +18,8 @@ namespace MonitoringFieldTeam.WebScraper
     }
     private void BackToBlack()
     {
+      var container = handler.GetElement("ACTIVITY_CONTAINER", WebHandler.WAITSEC.Agora);
+      handler.VerticalScroll(container, -9999);
       var backbtn = handler.GetElement("GLOBAL_BACKBTN", WebHandler.WAITSEC.Agora);
       if (!handler.IsElementCovered(backbtn))
       {
