@@ -301,6 +301,64 @@ public sealed class WebHandler : IDisposable
     ";
     return (bool)this.driver.ExecuteScript(js, element);
   }
+  private static bool IsFileLocked(FileInfo file)
+  {
+    try
+    {
+      using var stream = file.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+      return false;
+    }
+    catch (IOException)
+    {
+      return true;
+    }
+  }
+  private static void WaitUntilFileIsReady(FileInfo file, DateTime timeout)
+  {
+    long lastSize = -1;
+    while (DateTime.Now < timeout)
+    {
+      file.Refresh();
+      if (!IsFileLocked(file) && file.Length == lastSize) return;
+      lastSize = file.Length;
+      Thread.Sleep(MILISECONDS_TIMECHECK_INTERVAL);
+    }
+    throw new TimeoutException("File is still being written.");
+  }
+  public string DownloadFile(IWebElement element, String? desiredFilename = null, int? counter = null)
+  {
+    var timestamp = DateTime.Now;
+    var time2wait = timestamp.AddSeconds((int)WAITSEC.Longo);
+    var datapath = Configuration.GetString("DATAPATH");
+    element.Click();
+    while (DateTime.Now < time2wait)
+    {
+      System.Threading.Thread.Sleep(MILISECONDS_TIMECHECK_INTERVAL);
+      var dirinf = new System.IO.DirectoryInfo(datapath);
+      var file = dirinf.GetFiles()
+        .OrderByDescending(f => f.LastWriteTime)
+        .FirstOrDefault(
+          f => f.LastWriteTime > timestamp &&
+          !f.Extension.EndsWith("tmp") &&
+          !f.Extension.EndsWith("crdownload"));
+      if (file is not null)
+      {
+        WaitUntilFileIsReady(file, time2wait);
+        if (desiredFilename is null) return file.FullName;
+        var extension = System.IO.Path.GetExtension(file.FullName);
+        if (counter is not null)
+        {
+          datapath = System.IO.Path.Combine(datapath, desiredFilename);
+          System.IO.Directory.CreateDirectory(datapath);
+          desiredFilename += '_' + counter.ToString();
+        }
+        var newfilename = System.IO.Path.Combine(datapath, desiredFilename + extension);
+        System.IO.File.Move(file.FullName, newfilename, true);
+        return newfilename;
+      }
+    }
+    throw new FileNotFoundException("Download file not found within timeout!");
+  }
   private void Dispose(bool disposing)
   {
     if (disposing)
