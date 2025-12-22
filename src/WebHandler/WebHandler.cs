@@ -299,8 +299,7 @@ public sealed class WebHandler : IDisposable
         }
         return true;
     ";
-    var jsExecutor = (IJavaScriptExecutor)driver;
-    return (bool)jsExecutor.ExecuteScript(js, element);
+    return (bool)this.driver.ExecuteScript(js, element);
   }
   private void Dispose(bool disposing)
   {
