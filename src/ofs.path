@@ -114,6 +114,58 @@ ACTIIVITY_EVIDENCIAS=//*[@data-label='FormArquivos']
 ACTIVITY_DOWNLOADS=.download-button
 ACTIVITY_REJEICAO=//*[@data-label='LG_MOT_REJEICAO']
 ACTIVITY_INSPECAO=//*[@data-label='FormServ']
+# TODO - LATLOG can be get by href of element
+ACTIVITY_MAPA_DIV=#tilelayer_baseLayer
+ACTIVITY_MAPA_IFRAME=//div/div[3]/iframe
+ACTIVITY_MAPA_LATLOG=//div//a
+# Sessão CONDICOES no formulário da ANALISE
+APR_CONDICOES_GERAIS=//*[@data-label='LG_APR_SC_Q01']
+APR_CONDICOES_POSTE=//*[@data-label='LG_APR_SC_Q02_01']
+APR_CONDICOES_CAIXA=//*[@data-label='LG_APR_SC_Q02_02']
+APR_CONDICOES_BORNE=//*[@data-label='LG_APR_SC_Q02_03']
+APR_CONDICOES_CABOS=//*[@DATA-LABEL='LG_APR_SC_Q02_05']
+# Sessão RISCOS no formulário da ANALISE
+APR_RISCOS_QUEDA_PESSOA=//*[@data-label='LG_APR_SC_Q03_01']
+APR_RISCOS_ARCO_VOLTAICO=//*[@data-label='LG_APR_SC_Q03_05']
+APR_RISCOS_CHOQUE_ELETRICO=//*[@data-label='LG_APR_SC_Q03_13']
+APR_RISCOS_QUEDA_MATERIAIS=//*[@data-label='LG_APR_SC_Q03_02']
+APR_RISCOS_CURTO_CIRCUITO=//*[@data-label='LG_APR_SC_Q03_06']
+APR_RISCOS_PROJECAO_IMPACTO=//*[@data-label='LG_APR_SC_Q03_14']
+APR_RISCOS_ERGONOMICO=//*[@data-label='LG_APR_SC_Q03_07']
+APR_RISCOS_RETORNO_TENSAO=//*[@data-label='LG_APR_SC_Q03_15']
+APR_RISCOS_RELIGAMENTO_INDEVIDO=//*[@data-label='LG_APR_SC_Q03_04']
+APR_RISCOS_REENERGIZACAO_ACIDENTAL=//*[@data-label='LG_APR_SC_Q03_08']
+# Sessão MEDIDAS no formulário da ANALISE
+APR_MEDIDAS_IDENTIFICAR_PONTOS=//*[@data-label='LG_APR_SC_Q04_01']
+APR_MEDIDAS_SECCIONAR_FONTES=//*[@data-label='LG_APR_SC_Q04_03']
+APR_MEDIDAS_VERIFICAR_TENSAO=//*[@data-label='LG_APR_SC_Q04_02']
+APR_MEDIDAS_PROTEGER_ELEMENTOS=//*[@data-label='LG_APR_SC_Q04_04']
+# Sessão PROTECAO no formulário da ANALISE
+APR_PROTECAO_CAPACETE=//*[@data-label='LG_APR_SC_Q05_01']
+APR_PROTECAO_FACIAL=//*[@data-label='LG_APR_SC_Q05_04']
+APR_PROTECAO_CINTO=//*[@data-label='LG_APR_SC_Q05_10']
+APR_PROTECAO_VAQUETA=//*[@data-label='LG_APR_SC_Q05_02']
+APR_PROTECAO_BOTINA=//*[@data-label='LG_APR_SC_Q05_08']
+APR_PROTECAO_TALABARTE=//*[@data-label='LG_APR_SC_Q05_11']
+APR_PROTECAO_UNIFORME_RF=//*[@data-label='LG_APR_SC_Q05_14']
+APR_PROTECAO_LUVA_CLASSE=//*[@data-label='LG_APR_SC_Q05_03']
+APR_PROTECAO_OCULOS=//*[@data-label='LG_APR_SC_Q05_06']
+APR_PROTECAO_TRAVA_QUEDAS=//*[@data-label='LG_APR_SC_Q05_12']
+APR_PROTECAO_OUTROS=//*[@data-label='LG_APR_SC_Q05_15_Outros']
+# Sessão BARREIRAS no formulário da ANALISE
+APR_BARREIRAS_CONE=//*[@data-label='LG_APR_SC_Q06_01']
+APR_BARREIRAS_FIRA=//*[@data-label='LG_APR_SC_Q06_02']
+# Sessão DELIMITADO no formulário da ANALISE
+APR_DELIMITADO_LUMINOSO=//*[@data-label='LG_APR_SC_Q07_02']
+# Sessão DISTANCIAS no formulário da ANALISE
+APR_DISTANCIAS_LV=//*[@data-label='LG_APR_SC_Q08_01']
+APR_DISTANCIAS_ZR=//*[@data-label='LG_APR_SC_Q08_02']
+APR_DISTANCIAS_ZC=//*[@data-label='LG_APR_SC_Q08_03']
+APR_DISTANCIAS_ZL=//*[@data-label='LG_APR_SC_Q08_04']
+# Sessão de CRONOGRAMA, OBSERVAÇÃO e de RECUSA no formulário da ANALISE
+APR_CRONOGRAMA_ORDEM=//*[@data-label='LG_APR_SC_Q09']
+APR_OBSERVACAO=//*[@data-label='LG_APR_SC_Q10']
+APR_DIREITO_RECUSA=//*[@data-label='LG_APR_MAN_DireitoRecusa']
 # Sessão IDENTIFICAÇÃO no formulário de INSPECAO
 IDENTIFICACAO_TIPOCAIXA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[1]/div[1]/div/div[2]
 IDENTIFICACAO_MODELOCAIXA=/html/body/div[14]/div[1]/main/div/div[2]/div[2]/div/div[2]/form/div/div[4]/div[2]/div/div/div/div/div/div/div[1]/div/div[2]/div[2]/div[1]/div/div[2]
