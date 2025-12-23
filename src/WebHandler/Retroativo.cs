@@ -38,7 +38,8 @@ public static class Retroativo
           Log.Information("Relatório retroativo: balde '{balde}', data {data}.", balde, dia);
           var reportpath = ReportDownloader.Download(handler, balde, dia);
           #if !DEBUG
-            Telegram.SendDocument(balde, reportpath);
+            if (reportpath is not null)
+              Telegram.SendDocument(balde, reportpath);
           #endif
         }
         Atualizador.SelecionarBalde(handler, piscina, false);
