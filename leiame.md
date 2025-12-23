@@ -53,11 +53,11 @@ Entre as informações que ele coleta:
 - Códigos de finalização;
 - Materiais empregados e retirados;
 - Formulário digital de inspeção (TOI);
+- Evidências gerais do serviço;
+- Evidências de inspeções (TOI);
 
 Futuramente:
 
-- Evidências gerais do serviço;
-- Evidências de inspeções (TOI);
 - Formulário digital da APR;
 - Exportação das assinaturas da APR;
 
