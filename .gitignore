@@ -14,3 +14,4 @@ chromedriver-win64
 *.xlsx
 *.dev
 *.bak
+*.zip
