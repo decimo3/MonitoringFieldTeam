@@ -23,6 +23,7 @@ public static class Retroativo
           continue;
         TrocarData(handler, dia);
         Atualizador.SelecionarBalde(handler, piscina, true);
+        Atualizador.Atualizar(handler);
         if (!Finalizador.TemFinalizacao(dia, balde))
         {
           Log.Information("Finalização retroativa: balde '{balde}', data {data}.", balde, dia);
