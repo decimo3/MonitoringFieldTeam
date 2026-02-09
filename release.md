@@ -1,3 +1,3 @@
-# Fix "empty bucket" error on retroactive report
+# Fix "empty retroactive report" when bucket has pendents activities
 
-Added missing instruction to update filters and allow show nested buckets.
+Replaced logical comparison to nested comparison to avoid export empty report on retroactive reports.
