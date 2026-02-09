@@ -27,6 +27,8 @@ namespace MonitoringFieldTeam.Persistence
       var abreviado = recurso.Trim();
       // Change long-dash for simple dash;
       abreviado = abreviado.Replace('–', '-');
+      // Change non-breaking for regular space
+      abreviado = abreviado.Replace('\u00A0', '\u0020');
       // Replace double spaces by singles
       abreviado = abreviado.Replace("  ", " ");
       // Abbreviates words that determine the type of activity
