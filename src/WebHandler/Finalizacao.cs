@@ -38,7 +38,9 @@ namespace MonitoringFieldTeam.WebScraper
     public static List<Relatorio_DTO> Finalizacao(List<Espelho> espelhos, DateOnly datalabel, Boolean check_pending = true)
     {
       var relatorios = new List<Relatorio_DTO>();
-      if (check_pending || !HasInfo2FinalReport(espelhos)) return relatorios;
+      if (check_pending)
+        if (!HasInfo2FinalReport(espelhos))
+          return relatorios;
       foreach (var espelho in espelhos)
       {
         if(espelho.queue_start_start < 0) continue;
