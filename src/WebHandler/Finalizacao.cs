@@ -107,7 +107,23 @@ namespace MonitoringFieldTeam.WebScraper
             continue;
           }
         }
+        // added startup delay info on report
+        var orderedList = espelho.servicos.OrderBy(s => s.start).ToList();
+        var checklistIndex = orderedList.FindIndex(s => s.innerText == "Início de turno");
+        if (checklistIndex == -1)
+          relatorio.saida_canteiro = default;
+        else if (checklistIndex == orderedList.Count - 1)
+          relatorio.saida_canteiro = GetTimeOnly(orderedList[checklistIndex].start + orderedList[checklistIndex].dur);
+        else
+        {
+          var nextItem = orderedList[checklistIndex + 1];
+          relatorio.saida_canteiro =
+            (nextItem.innerText == "INDISPONIBILIDADE") ? GetTimeOnly(nextItem.start + nextItem.dur) :
+              GetTimeOnly(orderedList[checklistIndex].start + orderedList[checklistIndex].dur);
+        }
+        relatorio.atraso_startup = relatorio.saida_canteiro - relatorio.login_considerado;
         relatorio.jornada_considerado = relatorio.jornada_tempo - (relatorio.intervalo_considerado + relatorio.checklist_considerado);
+        relatorio.final_deslocando = GetTimeOnly(espelho.final_dur);
         relatorio.tempo_produtivo = relatorio.tempo_executando + relatorio.tempo_deslocando;
         relatorio.tempo_ocupacao = relatorio.tempo_produtivo + relatorio.tempo_rejeitando;
         relatorio.tempo_ociosidade = relatorio.jornada_considerado - relatorio.tempo_ocupacao;
