@@ -10,10 +10,9 @@ public static class Atualizador
     handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
     // Get bucket parts and order due direction (to open or close buckets)
     var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().ToArray();
-    // FIXME - reimplement tree navigation
-    if (sub_baldes.Length > 1) throw new NotImplementedException("A navegação por subbaldes não está operável!");
     // Get bucket arrow class due direction (to open or close buckets)
     var arrow_class = direcao ? "GANNT_ARROWPLUS" : "GANNT_ARROWMINUS";
+    String balde_anterior = String.Empty;
     foreach (var sub_balde in sub_baldes)
     {
       var baldes = handler.GetElements("GANNT_BUCKETS", WebHandler.WAITSEC.Curto);
@@ -25,6 +24,7 @@ public static class Atualizador
         Log.Debug("Balde {balde}, Texto: {texto}", balde, texto);
         if (texto.Contains(sub_balde))
         {
+          if (String.IsNullOrEmpty(balde_anterior) && texto.Contains(balde_anterior)) continue;
           if (sub_balde == sub_baldes.Last())
           {
             handler.GetNestedElements(balde, "GANNT_BUCKET").First().Click();
@@ -32,9 +32,14 @@ public static class Atualizador
             return direcao ? sub_baldes.Last() : sub_baldes.First();
           }
           handler.GetNestedElements(balde, arrow_class).FirstOrDefault()?.Click();
+          System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
+          balde_anterior = sub_balde;
+          break;
         }
       }
-      throw new InvalidOperationException($"O balde `{sub_balde}` não foi encontrado!");
+      // If the 'balde_anterior' and 'sub_balde' are different, then the bucket were not found!
+      if (balde_anterior != sub_balde)
+        throw new InvalidOperationException($"O balde `{sub_balde}` não foi encontrado!");
     }
     throw new InvalidOperationException($"Houve um erro ao tentar selecionar `{piscina}`!");
   }
