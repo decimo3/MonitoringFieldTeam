@@ -12,6 +12,8 @@ namespace MonitoringFieldTeam.Persistence
     public TimeOnly logout_considerado { get; set; }
     public TimeOnly checklist_tempo { get; set; }
     public TimeOnly checklist_considerado { get; set; }
+    public TimeOnly saida_canteiro { get; set; }
+    public TimeOnly atraso_startup { get; set; }
     public TimeOnly intervalo_tempo { get; set; }
     public TimeOnly intervalo_considerado { get; set; }
     public TimeOnly tempo_indisponivel { get; set; }
@@ -20,6 +22,7 @@ namespace MonitoringFieldTeam.Persistence
     public TimeOnly tempo_executando { get; set; }
     public TimeOnly tempo_deslocando { get; set; }
     public TimeOnly tempo_rejeitando { get; set; }
+    public TimeOnly final_deslocando { get; set; }
     public TimeOnly estima_deslocando { get; set; }
     public TimeOnly estima_executando { get; set; }
     public TimeOnly tempo_ocupacao { get; set; }
@@ -46,6 +49,8 @@ namespace MonitoringFieldTeam.Persistence
       this.logout_considerado = Double2TimeOnly(relatorio.logout_considerado);
       this.checklist_tempo = Double2TimeOnly(relatorio.checklist_tempo);
       this.checklist_considerado = Double2TimeOnly(relatorio.checklist_considerado);
+      this.saida_canteiro = Double2TimeOnly(relatorio.saida_canteiro);
+      this.atraso_startup = Double2TimeOnly(relatorio.atraso_startup);
       this.intervalo_tempo = Double2TimeOnly(relatorio.intervalo_tempo);
       this.intervalo_considerado = Double2TimeOnly(relatorio.intervalo_considerado);
       this.tempo_indisponivel = Double2TimeOnly(relatorio.tempo_indisponivel);
@@ -54,6 +59,7 @@ namespace MonitoringFieldTeam.Persistence
       this.tempo_deslocando = Double2TimeOnly(relatorio.tempo_deslocando);
       this.tempo_executando = Double2TimeOnly(relatorio.tempo_executando);
       this.tempo_rejeitando = Double2TimeOnly(relatorio.tempo_rejeitando);
+      this.final_deslocando = Double2TimeOnly(relatorio.final_deslocando);
       this.estima_deslocando = Double2TimeOnly(relatorio.estima_deslocando);
       this.estima_executando = Double2TimeOnly(relatorio.estima_executando);
       this.tempo_ocupacao = Double2TimeOnly(relatorio.tempo_ocupacao);
