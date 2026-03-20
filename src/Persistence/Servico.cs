@@ -21,6 +21,6 @@ namespace MonitoringFieldTeam.Persistence
     public Int32 travel_dur { get; set; }
     public Int32 travel_style_width { get; set; }
     public String innerText { get; set; } = String.Empty;
-    public enum Status {cancelled, pending, enroute, started, complete, notdone}
+    public enum Status {cancelled, pending, enroute, started, complete, notdone, suspended}
   }
 }
