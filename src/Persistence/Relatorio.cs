@@ -12,6 +12,8 @@ namespace MonitoringFieldTeam.Persistence
     public Double logout_considerado { get; set; }
     public Double checklist_tempo { get; set; }
     public Double checklist_considerado { get; set; }
+    public Double saida_canteiro { get; set; }
+    public Double atraso_startup { get; set; }
     public Double intervalo_tempo { get; set; }
     public Double intervalo_considerado { get; set; }
     public Double tempo_indisponivel { get; set; }
@@ -20,6 +22,7 @@ namespace MonitoringFieldTeam.Persistence
     public Double tempo_deslocando { get; set; }
     public Double tempo_executando { get; set; }
     public Double tempo_rejeitando { get; set; }
+    public Double final_deslocando { get; set; }
     public Double estima_deslocando { get; set; }
     public Double estima_executando { get; set; }
     public Double tempo_ocupacao { get; set; }
