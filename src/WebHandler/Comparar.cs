@@ -7,6 +7,7 @@ namespace MonitoringFieldTeam.WebScraper
   public static class Comparador
   {
     public static readonly Regex ResourceNumberRegex = new(@"\s(\d+)\s");
+    public static readonly Regex HorariosKeysRegex = new(@"^([A-Z]{3,5})[\[]([0-9]{1,2})\.([0-9]{1,2})[\]]$");
     private const int TOLERANCIA = 3;
     public static List<FeedBack> Comparar(List<Espelho> espelhos, int horario_atual, int pixels_por_minuto)
     {
@@ -161,14 +162,10 @@ namespace MonitoringFieldTeam.WebScraper
     {
       var pairs = Configuration.GetPairs("HORARIO");
       var pair = pairs.FirstOrDefault(c => c.Key == prefixo);
-      if (pair.Key is not null)
-        return (int)pair.Value;
-      var chaves = pairs.Select(p => p.Key).ToList();
-      var padrao = @"^([A-Z]{3,5})[\[]([0-9]{1,2})\.([0-9]{1,2})[\]]$";
-      var regex = new Regex(padrao);
+      if (pair.Key is not null) return (int)pair.Value;
       foreach (var kv in pairs)
       {
-        var match = regex.Match(kv.Key);
+        var match = HorariosKeysRegex.Match(kv.Key);
         if (match != null && match.Groups[1].Value == prefixo)
         {
           if (numero >= Int32.Parse(match.Groups[2].Value))
