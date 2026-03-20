@@ -6,6 +6,7 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public static class Comparador
   {
+    public static readonly Regex ResourceNumberRegex = new(@"\s(\d+)\s");
     private const int TOLERANCIA = 3;
     public static List<FeedBack> Comparar(List<Espelho> espelhos, int horario_atual, int pixels_por_minuto)
     {
@@ -30,9 +31,10 @@ namespace MonitoringFieldTeam.WebScraper
         if (horario_atual < espelho.shift_left && espelho.queue_start_start < 0) continue;
         if (horario_atual > janela_final && espelho.queue_end_start > 0) continue;
         // DONE - Verificar se a janela do recurso está com horário mínimo
-        var prefixo_do_recurso = espelho.recurso[..^3];
-        var numero_do_recurso = Int32.Parse(espelho.recurso[^3..]);
-        Int32 minutos_esperados_para_a_janela = EncontrarChave(prefixo_do_recurso, numero_do_recurso);
+        var prefixo_do_recurso = espelho.recurso.Split(' ').First();
+        var ResourceNumberMatch = ResourceNumberRegex.Match(espelho.recurso);
+        var numero_do_recurso = Int32.Parse(ResourceNumberMatch.Groups[1].Value);
+        var minutos_esperados_para_a_janela = EncontrarChave(prefixo_do_recurso, numero_do_recurso);
         if (minutos_esperados_para_a_janela == 0) continue;
         if (espelho.queue_start_start > 0 && espelho.queue_end_start < 0)
         {
