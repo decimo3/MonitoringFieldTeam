@@ -41,7 +41,10 @@ public static class Updater
       response.EnsureSuccessStatusCode();
       using(var stream = response.Content.ReadAsStream())
       {
-        using(var file = System.IO.File.Create(DRIVER_ZIPFILE))
+        using(var file = System.IO.File.Create(
+          System.IO.Path.Combine(
+            System.AppContext.BaseDirectory,
+            DRIVER_ZIPFILE)))
         {
           stream.CopyTo(file);
           file.Flush();
@@ -52,14 +55,19 @@ public static class Updater
 
   private static void DeleteOlderDriverFile()
   {
-    var files = System.IO.Directory.GetFiles("chromedriver-win64");
+    var drivefolderpath = System.IO.Path.Combine(
+      System.AppContext.BaseDirectory, "chromedriver-win64");
+    if (!Directory.Exists(drivefolderpath)) return;
+    var files = System.IO.Directory.GetFiles(drivefolderpath);
     foreach (var file in files) System.IO.File.Delete(file);
   }
 
   private static void UnzipChromeDriverFile()
   {
-    var current_folder = System.IO.Directory.GetCurrentDirectory();
-    System.IO.Compression.ZipFile.ExtractToDirectory(DRIVER_ZIPFILE, current_folder);
+    var zipfilepath = System.IO.Path.Combine(
+      System.AppContext.BaseDirectory, DRIVER_ZIPFILE);
+    System.IO.Compression.ZipFile.ExtractToDirectory(
+      zipfilepath, System.AppContext.BaseDirectory);
   }
 
   public static void Update()
