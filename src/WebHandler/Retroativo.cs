@@ -50,7 +50,7 @@ public static class Retroativo
   }
   public static DateOnly TrocarData(WebHandler.WebHandler handler, DateOnly data)
   {
-    const int QUANTIDADE_MAXIMA_DE_PAGINAS_DE_CALENDARIOS = 2;
+    const int QUANTIDADE_MAXIMA_DE_PAGINAS_DE_CALENDARIOS = 3;
     var data_atual = DateOnly.Parse(handler.GetElement("GANNT_DATEPICK", WAITSEC.Agora).Text);
     if (data_atual == data) return data_atual;
 
