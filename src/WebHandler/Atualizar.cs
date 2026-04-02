@@ -24,7 +24,7 @@ public static class Atualizador
         Log.Debug("Balde {balde}, Texto: {texto}", balde, texto);
         if (texto.Contains(sub_balde))
         {
-          if (String.IsNullOrEmpty(balde_anterior) && texto.Contains(balde_anterior)) continue;
+          if (!String.IsNullOrEmpty(balde_anterior) && texto.Contains(balde_anterior)) continue;
           if (sub_balde == sub_baldes.Last())
           {
             handler.GetNestedElements(balde, "GANNT_BUCKET").First().Click();
