@@ -34,9 +34,24 @@ public class Startup
         Updater.Update();
         using var handler = new WebHandler.WebHandler();
         Autenticador.Autenticar(handler);
-        Retroativo.Relatorios(handler);
-        MassiveInfo.GetMassiveInfo(handler);
-        Monitorador.Monitorar(handler);
+        var operacao = Configuration.GetString("OPERACAO");
+        if (operacao == "RETRODAY")
+        {
+          Retroativo.Relatorios(handler);
+          break;
+        }
+        if (operacao == "EXTRACAO")
+        {
+          MassiveInfo.GetMassiveInfo(handler);
+          break;
+        }
+        if (operacao == "MONITORA")
+        {
+          Monitorador.Monitorar(handler);
+          break;
+        }
+        throw new InvalidOperationException(
+          $"O modo de operação '{operacao}' é inválido!");
       }
       catch (System.Exception erro)
       {
