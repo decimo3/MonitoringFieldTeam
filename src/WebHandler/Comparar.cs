@@ -6,7 +6,7 @@ namespace MonitoringFieldTeam.WebScraper
 {
   public static class Comparador
   {
-    public static readonly Regex ResourceNumberRegex = new(@"\s(\d+)\s");
+    public static readonly Regex ResourceNumberRegex = new(@"(?<!\()\b(\d{3})\b(?!\))");
     public static readonly Regex HorariosKeysRegex = new(@"^([A-Z]{3,5})[\[]([0-9]{1,2})\.([0-9]{1,2})[\]]$");
     private const int TOLERANCIA = 3;
     public static List<FeedBack> Comparar(List<Espelho> espelhos, int horario_atual, int pixels_por_minuto)
