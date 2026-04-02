@@ -62,7 +62,7 @@ namespace MonitoringFieldTeam.WebScraper
       Log.Information("Nota encontrada! Entrando...", servico);
       handler.GetElement("ACTIVITY_CABECALHO", WebHandler.WAITSEC.Medio);
     }
-    public GeneralInfo? GetActivityGeneralInfo()
+    public GeneralInfo GetActivityGeneralInfo()
     {
       IsFinished();
       var result = new GeneralInfo();
@@ -165,7 +165,7 @@ namespace MonitoringFieldTeam.WebScraper
         string.Join('\n', result.Select(r => r.ToString())));
       return result;
     }
-    public OcorrenciaInfo? GetActivityOcorrencias()
+    public OcorrenciaInfo GetActivityOcorrencias()
     {
       IsFinished();
       Log.Information("Obtendo informações da ocorrências...");
