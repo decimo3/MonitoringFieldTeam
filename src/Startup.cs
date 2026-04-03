@@ -50,6 +50,11 @@ public class Startup
           Monitorador.Monitorar(handler);
           break;
         }
+        if (operacao == "SERVIDOR")
+        {
+          WebServer.Run(handler);
+          break;
+        }
         throw new InvalidOperationException(
           $"O modo de operação '{operacao}' é inválido!");
       }
