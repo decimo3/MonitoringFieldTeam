@@ -1,13 +1,16 @@
-# Improved report details and reimplemented navigation tree
+# New Server Operation Mode for Distributed Work
 
-Now, the retroachive report have three more columns:
+The program will run in server mode, responding to HTTP requests.
 
-* saida_canteiro: the time the team leaves the site, calculated from the end time of the `Início de Turno` or the end of the subsequent `Indisponibilidade` period after the `Início de Turno`.
-* atraso_startup: total time elapsed between the team's login window or login time in OFS and the time of departure from the site.
-* final_deslocando: total time elapsed between the end time of the team's last note and the end time of the shift in OFS.
+This will enable distributed work and allow handling large amounts of information.
 
-> These columns are to help analyze wasted time and assess the efficiency of supervision during team departures.
+Besides this, some minor fixes and improvements have been made:
 
-In addition to this change, the resource abbreviation instruction was removed to facilitate comparison with the resource name in team composition.
-
-The bucket hierarchy navigation system was also reimplemented.
+1. Fixed nullability check of the previous bucket due to inverted logic;
+    > During the tree navigation reimplementation, a check was added that only works for bucket navigation. When selecting a single bucket, it failed due to inverted logic.
+2. Increased page navigation count to allow selecting data from the previous four months;
+    > The program previously navigated only two pages back, but to retrieve 90 days of historical data, if the fourth month is at the beginning, two pages are not enough.
+3. Fixed the regex used to retrieve resource numbers;
+    > The previous regex only captured numbers between spaces.
+4. Now the program operates in only one mode at a time;
+    > Instead of executing features sequentially, the program now runs in a single mode at a time.
