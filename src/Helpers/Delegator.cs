@@ -1,3 +1,7 @@
+using System.Net.Http.Json;
+using System.Text.Json;
+using MonitoringFieldTeam.Persistence;
+using Serilog;
 namespace MonitoringFieldTeam.Helpers;
 
 public static class Delegator
@@ -43,7 +47,55 @@ public static class Delegator
       return;
     }
     Log.Information("{qtd} workers online!", online_workers.Length);
-    // TODO - Send orders to online workers
+    // DONE - Send orders to online workers
+    var tasks = new List<Task>();
+    var semaphore = new SemaphoreSlim(online_workers.Length);
+    var extracao = Configuration.GetArray("EXTRACAO");
+    for(var i = 0; i < orders.Length; i++)
+    {
+      semaphore.Wait();
+      int instanceNumber = i % online_workers.Length;
+      tasks.Add(
+        Task.Run(
+          async () =>
+          {
+            try
+            {
+              var worker = online_workers[instanceNumber];
+              if (!long.TryParse(orders[i], out long nota))
+                throw new InvalidOperationException(
+                  $"Há caracteres inválidos na nota {orders[i]}!");
+              var requestInfo = new RequestInfo(extracao, nota);
+              var request = new HttpRequestMessage()
+              {
+                Method = HttpMethod.Get,
+                RequestUri = new System.Uri(worker),
+                Content = new StringContent(
+                  JsonSerializer.Serialize(requestInfo))
+              };
+              var response = client.Send(request);
+              response.EnsureSuccessStatusCode();
+              var responseInfo = await response.Content.ReadFromJsonAsync<ResponseInfo>();
+              if (responseInfo is null)
+              {
+                var responseText = await response.Content.ReadAsStringAsync();
+                Log.Debug($"Response text: {responseText}");
+                throw new InvalidOperationException(
+                  $"Houve um erro no formato da resposta!");
+              }
+            }
+            catch (Exception erro)
+            {
+              Log.Error(erro.Message);
+            }
+            finally
+            {
+              semaphore.Release();
+            }
+          }
+        )
+      );
+    }
     // TODO - Store successful response on DB
     // TODO - Export the report in the end
   }
