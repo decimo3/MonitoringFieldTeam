@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,45 +31,34 @@ public static class WebServer
     var builder = WebApplication.CreateBuilder();
     builder.WebHost.UseUrls("http://localhost:7826");
     var app = builder.Build();
-    app.MapGet("/", (string info, long nota) =>
+    app.MapGet("/", (HttpContext context) =>
     {
+      using var reader = new StreamReader(context.Request.Body);
+      var requestInfo = JsonSerializer.Deserialize<RequestInfo>(reader.ReadToEnd());
+      if (requestInfo is null)
+        return Results.Ok();
       lock (_lock)
       {
         try
         {
-          var workHandler = new ServicoHandler(handler, nota);
+          var responseInfo = new ResponseInfo();
+          var workHandler = new ServicoHandler(handler, requestInfo.nota);
           workHandler.SearchAndEnterActivity();
-          switch (info.ToLower())
-          {
-            case "informacao":
-              var generalInfo = workHandler.GetActivityGeneralInfo();
-              return Results.Json<GeneralInfo>(generalInfo);
-            case "finalizacao":
-              var activityClosings = workHandler.GetActivityClosings();
-              return Results.Json<List<FinalizaInfo>>(activityClosings);
-            case "material":
-              var materialInfo = workHandler.GetActivityMaterials();
-              return Results.Json<List<MaterialInfo>>(materialInfo);
-            case "inspecao":
-              var inspecaoInfo = workHandler.GetActivityOcorrencias();
-              return Results.Json<OcorrenciaInfo>(inspecaoInfo);
-            case "fotografia":
-              {
-                var uploadsInfo = workHandler.GetActivityUploads(false);
-                using var zipedfile = WebServer.ZipFiles(uploadsInfo);
-                return Results.File(zipedfile);
-              }
-            case "evidencia":
-              {
-                var evidenceInfo = workHandler.GetActivityUploads(true);
-                using var zipedfile = WebServer.ZipFiles(evidenceInfo);
-                return Results.File(zipedfile);
-              }
-            // TODO - case "relatorios":
-            // TODO - case "retroachieve":
-          }
-          throw new InvalidOperationException(
-            $"A operação `{info}` é inválida!");
+          if (requestInfo.info.Contains("INF"))
+            responseInfo.GeneralInfo = workHandler.GetActivityGeneralInfo();
+          if (requestInfo.info.Contains("COD"))
+            responseInfo.FinalizaInfo = workHandler.GetActivityClosings();
+          if (requestInfo.info.Contains("MAT"))
+            responseInfo.MaterialInfo = workHandler.GetActivityMaterials();
+          if (requestInfo.info.Contains("TOI"))
+            responseInfo.OcorrenciaInfo = workHandler.GetActivityOcorrencias();
+          /* TODO - convert from List<String> to List<Uri>
+          if (requestInfo.info.Contains("JPG"))
+            responseInfo.UploadsInfo = workHandler.GetActivityUploads(false);
+          if (requestInfo.info.Contains("EVD"))
+            responseInfo.EvidenceInfo = workHandler.GetActivityUploads(true);
+          */
+          return Results.Json(responseInfo);
         }
         catch (System.Exception erro)
         {
