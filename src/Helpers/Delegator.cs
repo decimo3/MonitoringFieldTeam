@@ -15,8 +15,34 @@ public static class Delegator
       return;
     }
     var orders = System.IO.File.ReadAllLines(filepath);
-    // TODO - Get the list of workers
-    // TODO - Check witch workers are on
+    // DONE - Get the list of workers
+    var workers = Configuration.GetArray("WEBSITE");
+    // DONE - Check witch workers are on
+    using var client = new HttpClient();
+    var online_workers = Array.Empty<string>();
+    foreach (var worker in workers)
+    {
+      try
+      {
+        if (string.IsNullOrEmpty(worker)) continue;
+        var request = new HttpRequestMessage();
+        request.Method = HttpMethod.Get;
+        request.RequestUri = new System.Uri(worker);
+        var response = client.Send(request);
+        response.EnsureSuccessStatusCode();
+        online_workers = online_workers.Append(worker).ToArray();
+      }
+      catch (HttpRequestException)
+      {
+        Log.Error("O worker {worker} está offline!", worker);
+      }
+    }
+    if (online_workers.Length == 0)
+    {
+      Log.Error("Não foram encontrado workers online!");
+      return;
+    }
+    Log.Information("{qtd} workers online!", online_workers.Length);
     // TODO - Send orders to online workers
     // TODO - Store successful response on DB
     // TODO - Export the report in the end
