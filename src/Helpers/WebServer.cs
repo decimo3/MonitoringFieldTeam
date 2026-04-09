@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,20 +10,6 @@ namespace MonitoringFieldTeam.Helpers;
 
 public static class WebServer
 {
-  private static Stream ZipFiles(List<String> files)
-  {
-    var memoryStream = new MemoryStream();
-    using var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true);
-    foreach (var file in files)
-    {
-      var entry = archive.CreateEntry(Path.GetFileName(file));
-      using var entryStream = entry.Open();
-      using var fileStream = File.OpenRead(file);
-      fileStream.CopyTo(entryStream);
-    }
-    memoryStream.Position = 0;
-    return memoryStream;
-  }
   private static object _lock = new();
   public static void Run(WebHandler.WebHandler handler)
   {
