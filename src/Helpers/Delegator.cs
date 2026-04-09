@@ -49,6 +49,7 @@ public static class Delegator
     Log.Information("{qtd} workers online!", online_workers.Length);
     // DONE - Send orders to online workers
     var tasks = new List<Task>();
+    using var database = new Database();
     var semaphore = new SemaphoreSlim(online_workers.Length);
     var extracao = Configuration.GetArray("EXTRACAO");
     for(var i = 0; i < orders.Length; i++)
@@ -83,6 +84,15 @@ public static class Delegator
                 throw new InvalidOperationException(
                   $"Houve um erro no formato da resposta!");
               }
+              // DONE - Store successful response on DB
+              if (responseInfo.GeneralInfo is not null)
+                database.AddGeneralInfo(responseInfo.GeneralInfo);
+              if (responseInfo.FinalizaInfo is not null)
+                database.AddFinalizaInfo(responseInfo.FinalizaInfo);
+              if (responseInfo.MaterialInfo is not null)
+                database.AddMaterialInfo(responseInfo.MaterialInfo);
+              if (responseInfo.OcorrenciaInfo is not null)
+                database.AddOcorrenciaInfo(responseInfo.OcorrenciaInfo);
             }
             catch (Exception erro)
             {
@@ -96,7 +106,6 @@ public static class Delegator
         )
       );
     }
-    // TODO - Store successful response on DB
     // TODO - Export the report in the end
   }
 }
