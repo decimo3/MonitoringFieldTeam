@@ -27,7 +27,7 @@ public static class WebServer
     var app = builder.Build();
     app.UseStaticFiles(new StaticFileOptions
     {
-      RequestPath = "/",
+      RequestPath = "",
       FileProvider = new PhysicalFileProvider(ROOT)
     });
     app.MapGet("/", (HttpContext context) =>
