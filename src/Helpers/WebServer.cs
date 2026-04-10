@@ -30,10 +30,12 @@ public static class WebServer
       RequestPath = "",
       FileProvider = new PhysicalFileProvider(ROOT)
     });
-    app.MapGet("/", (HttpContext context) =>
+    app.MapGet("/", async (HttpContext context) =>
     {
       using var reader = new StreamReader(context.Request.Body);
-      var requestInfo = JsonSerializer.Deserialize<RequestInfo>(reader.ReadToEnd());
+      var payload = await reader.ReadToEndAsync();
+      if (string.IsNullOrEmpty(payload)) return Results.Ok();
+      var requestInfo = JsonSerializer.Deserialize<RequestInfo>(payload);
       if (requestInfo is null)
         return Results.Ok();
       lock (_lock)
