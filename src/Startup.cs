@@ -29,12 +29,17 @@ public class Startup
       try
       {
         Configuration.LoadConf("ofs.conf");
+        Updater.Update();
+        var operacao = Configuration.GetString("OPERACAO");
+        if (operacao == "DELEGADOR")
+        {
+          Delegator.Run();
+          break;
+        }
         InstanceChecker.MultipleRun();
         InstanceChecker.ChromeKiller();
-        Updater.Update();
         using var handler = new WebHandler.WebHandler();
         Autenticador.Autenticar(handler);
-        var operacao = Configuration.GetString("OPERACAO");
         if (operacao == "RETRODAY")
         {
           Retroativo.Relatorios(handler);
