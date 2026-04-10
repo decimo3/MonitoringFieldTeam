@@ -8,6 +8,6 @@ public class ResponseInfo
   public List<FinalizaInfo>? FinalizaInfo { get; set; }
   public List<MaterialInfo>? MaterialInfo { get; set; }
   public OcorrenciaInfo? OcorrenciaInfo { get; set; }
-  public List<Uri>? UploadsInfo { get; set; }
-  public List<Uri>? EvidenceInfo { get; set; }
+  public List<String>? UploadsInfo { get; set; }
+  public List<String>? EvidenceInfo { get; set; }
 }
