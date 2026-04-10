@@ -75,7 +75,7 @@ public static class Delegator
                 Content = new StringContent(
                   JsonSerializer.Serialize(requestInfo))
               };
-              var response = client.Send(request);
+              var response = await client.SendAsync(request);
               response.EnsureSuccessStatusCode();
               var responseInfo = await response.Content.ReadFromJsonAsync<ResponseInfo>();
               if (responseInfo is null)
@@ -107,6 +107,7 @@ public static class Delegator
         )
       );
     }
+    Task.WhenAll(tasks).GetAwaiter().GetResult();
     // TODO - Export the report in the end
   }
 }
