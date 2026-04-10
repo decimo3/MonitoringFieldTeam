@@ -55,6 +55,7 @@ public static class Delegator
     for(var i = 0; i < orders.Length; i++)
     {
       semaphore.Wait();
+      var order = orders[i];
       int instanceNumber = i % online_workers.Length;
       tasks.Add(
         Task.Run(
@@ -63,9 +64,9 @@ public static class Delegator
             try
             {
               var worker = online_workers[instanceNumber];
-              if (!long.TryParse(orders[i], out long nota))
+              if (!long.TryParse(order, out long nota))
                 throw new InvalidOperationException(
-                  $"Há caracteres inválidos na nota {orders[i]}!");
+                  $"Há caracteres inválidos na nota {order}!");
               var requestInfo = new RequestInfo(extracao, nota);
               var request = new HttpRequestMessage()
               {
