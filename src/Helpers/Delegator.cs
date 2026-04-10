@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json;
 using MonitoringFieldTeam.Persistence;
@@ -50,6 +51,7 @@ public static class Delegator
     // DONE - Send orders to online workers
     var tasks = new List<Task>();
     using var database = new Database();
+    var retry_orders = new ConcurrentBag<string>();
     var semaphore = new SemaphoreSlim(online_workers.Length);
     var extracao = Configuration.GetArray("EXTRACAO");
     for(var i = 0; i < orders.Length; i++)
@@ -97,6 +99,7 @@ public static class Delegator
             }
             catch (Exception erro)
             {
+              retry_orders.Add(order);
               Log.Error(erro.Message);
             }
             finally
@@ -108,6 +111,12 @@ public static class Delegator
       );
     }
     Task.WhenAll(tasks).GetAwaiter().GetResult();
-    // TODO - Export the report in the end
+    // DONE - Export the report in the end
+    if (retry_orders.Count != 0)
+    {
+      System.IO.File.WriteAllText(filepath, string.Join('\n', retry_orders));
+      return;
+    }
+    System.IO.File.Delete(filepath);
   }
 }
