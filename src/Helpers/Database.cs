@@ -22,6 +22,8 @@ public sealed class Database : IDisposable
 
   public void CreateDatabaseScheme()
   {
+    var datapath = Configuration.GetString("DATAPATH");
+    if (System.IO.File.Exists(datapath)) return;
     using var curr = new SQLiteCommand(_conn);
     var filepath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
