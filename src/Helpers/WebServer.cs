@@ -32,15 +32,15 @@ public static class WebServer
     });
     app.MapGet("/", async (HttpContext context) =>
     {
-      using var reader = new StreamReader(context.Request.Body);
-      var payload = await reader.ReadToEndAsync();
-      if (string.IsNullOrEmpty(payload)) return Results.Ok();
-      var requestInfo = JsonSerializer.Deserialize<RequestInfo>(payload);
-      if (requestInfo is null)
-        return Results.Ok();
-      lock (_lock)
+      try
       {
-        try
+        using var reader = new StreamReader(context.Request.Body);
+        var payload = await reader.ReadToEndAsync();
+        if (string.IsNullOrEmpty(payload)) return Results.Ok();
+        var requestInfo = JsonSerializer.Deserialize<RequestInfo>(payload);
+        if (requestInfo is null)
+          return Results.Ok();
+        lock (_lock)
         {
           var responseInfo = new ResponseInfo();
           var workHandler = new ServicoHandler(handler, requestInfo.nota);
@@ -62,10 +62,10 @@ public static class WebServer
               .Select(p => BuildFileUrl(context.Request, p)).ToList();
           return Results.Json(responseInfo);
         }
-        catch (System.Exception erro)
-        {
-          return Results.Text(erro.Message, statusCode: 400);
-        }
+      }
+      catch (System.Exception erro)
+      {
+        return Results.Text(erro.Message, statusCode: 400);
       }
     });
     app.Run();
