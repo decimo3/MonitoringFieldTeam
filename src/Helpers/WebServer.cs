@@ -55,10 +55,10 @@ public static class WebServer
             responseInfo.OcorrenciaInfo = workHandler.GetActivityOcorrencias();
           // DONE - convert from local file path to remote resource path
           if (requestInfo.info.Contains("JPG"))
-            responseInfo.UploadsInfo = workHandler.GetActivityUploads(false)
+            responseInfo.UploadsInfo = workHandler.GetActivityUploads(true)
               .Select(p => BuildFileUrl(context.Request, p)).ToList();
           if (requestInfo.info.Contains("EVD"))
-            responseInfo.EvidenceInfo = workHandler.GetActivityUploads(true)
+            responseInfo.EvidenceInfo = workHandler.GetActivityUploads(false)
               .Select(p => BuildFileUrl(context.Request, p)).ToList();
           return Results.Json(responseInfo);
         }
