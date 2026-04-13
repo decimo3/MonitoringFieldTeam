@@ -23,7 +23,7 @@ public static class WebServer
   public static void Run(WebHandler.WebHandler handler)
   {
     var builder = WebApplication.CreateBuilder();
-    builder.WebHost.UseUrls("http://localhost:7826");
+    builder.WebHost.UseUrls("http://*:7826");
     var app = builder.Build();
     app.UseStaticFiles(new StaticFileOptions
     {
