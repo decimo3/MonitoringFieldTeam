@@ -1,4 +1,4 @@
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using MonitoringFieldTeam.Persistence;
 
 namespace MonitoringFieldTeam.Helpers;
@@ -6,11 +6,11 @@ namespace MonitoringFieldTeam.Helpers;
 public sealed class Database : IDisposable
 {
   private static readonly string DNS = Configuration.GetString("DATAPATH");
-  private readonly SQLiteConnection _conn;
+  private readonly SqliteConnection _conn;
 
   public Database()
   {
-    _conn = new SQLiteConnection(DNS);
+    _conn = new SqliteConnection(DNS);
     _conn.Open();
     CreateDatabaseScheme();
   }
@@ -24,7 +24,7 @@ public sealed class Database : IDisposable
   {
     var datapath = Configuration.GetString("DATAPATH");
     if (System.IO.File.Exists(datapath)) return;
-    using var curr = new SQLiteCommand(_conn);
+    using var curr = _conn.CreateCommand();
     var filepath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
       "database.sql");
@@ -37,60 +37,66 @@ public sealed class Database : IDisposable
 
   public void AddGeneralInfo(GeneralInfo generalInfo)
   {
-    using var curr = new SQLiteCommand(_conn);
+    using var curr = _conn.CreateCommand();
     curr.CommandText = @"INSERT INTO general (data, notaservico, recurso,
             atividade, situacao, damage, vencimento, descricao, observacao)
             VALUES (@data, @nota, @recurso,
             @atividade, @situacao, @damage, @vencimento, @descricao, @observacao)";
     curr.Parameters.Clear();
-    curr.Parameters.Add(new SQLiteParameter("@data", generalInfo.Data));
-    curr.Parameters.Add(new SQLiteParameter("@nota", generalInfo.NotaServico));
-    curr.Parameters.Add(new SQLiteParameter("@recurso", generalInfo.Recurso));
-    curr.Parameters.Add(new SQLiteParameter("@atividade", generalInfo.Atividade));
-    curr.Parameters.Add(new SQLiteParameter("@situacao", generalInfo.Situacao));
-    curr.Parameters.Add(new SQLiteParameter("@damage", generalInfo.Damage));
-    curr.Parameters.Add(new SQLiteParameter("@vencimento", generalInfo.Vencimento));
-    curr.Parameters.Add(new SQLiteParameter("@descricao", generalInfo.Descricao));
-    curr.Parameters.Add(new SQLiteParameter("@observacao", generalInfo.Observacao));
+    curr.Parameters.Add(new SqliteParameter("@data", generalInfo.Data));
+    curr.Parameters.Add(new SqliteParameter("@nota", generalInfo.NotaServico));
+    curr.Parameters.Add(new SqliteParameter("@recurso", generalInfo.Recurso));
+    curr.Parameters.Add(new SqliteParameter("@atividade", generalInfo.Atividade));
+    curr.Parameters.Add(new SqliteParameter("@situacao", generalInfo.Situacao));
+    curr.Parameters.Add(new SqliteParameter("@damage", generalInfo.Damage));
+    curr.Parameters.Add(new SqliteParameter("@vencimento", generalInfo.Vencimento));
+    curr.Parameters.Add(new SqliteParameter("@descricao", generalInfo.Descricao));
+    curr.Parameters.Add(new SqliteParameter("@observacao", generalInfo.Observacao));
     curr.ExecuteNonQuery();
   }
 
   public void AddFinalizaInfo(List<FinalizaInfo> finalizaInfos)
   {
-    using var curr = new SQLiteCommand(_conn);
+    using var curr = _conn.CreateCommand();
+    using var transaction = _conn.BeginTransaction();
+    curr.Transaction = transaction;
     curr.CommandText = @"INSERT INTO finaliza (notaservico, codigo, quantidade) VALUES (@notaservico, @codigo, @quantidade)";
-    curr.Parameters.Clear();
     foreach (var finalizaInfo in finalizaInfos)
     {
-      curr.Parameters.Add(new SQLiteParameter("@notaservico", finalizaInfo.NotaServico));
-      curr.Parameters.Add(new SQLiteParameter("@codigo", finalizaInfo.Codigo));
-      curr.Parameters.Add(new SQLiteParameter("@quantidade", finalizaInfo.Quantidade));
+      curr.Parameters.Clear();
+      curr.Parameters.Add(new SqliteParameter("@notaservico", finalizaInfo.NotaServico));
+      curr.Parameters.Add(new SqliteParameter("@codigo", finalizaInfo.Codigo));
+      curr.Parameters.Add(new SqliteParameter("@quantidade", finalizaInfo.Quantidade));
+      curr.ExecuteNonQuery();
     }
-    curr.ExecuteNonQuery();
+    transaction.Commit();
   }
 
   public void AddMaterialInfo(List<MaterialInfo> materialInfos)
   {
-    using var curr = new SQLiteCommand(_conn);
+    using var curr = _conn.CreateCommand();
+    using var transaction = _conn.BeginTransaction();
+    curr.Transaction = transaction;
     curr.CommandText = @"INSERT INTO material (nota, tipo, codigo, serie, descricao, quantidade, origem)
       VALUES (@nota, @tipo, @codigo, @serie, @descricao, @quantidade, @origem)";
-    curr.Parameters.Clear();
     foreach (var materialInfo in materialInfos)
     {
-      curr.Parameters.Add(new SQLiteParameter("@nota", materialInfo.Nota));
-      curr.Parameters.Add(new SQLiteParameter("@tipo", materialInfo.Tipo));
-      curr.Parameters.Add(new SQLiteParameter("@codigo", materialInfo.Codigo));
-      curr.Parameters.Add(new SQLiteParameter("@serie", materialInfo.Serie));
-      curr.Parameters.Add(new SQLiteParameter("@descricao", materialInfo.Descricao));
-      curr.Parameters.Add(new SQLiteParameter("@quantidade", materialInfo.Quantidade));
-      curr.Parameters.Add(new SQLiteParameter("@origem", materialInfo.Origem));
+      curr.Parameters.Clear();
+      curr.Parameters.Add(new SqliteParameter("@nota", materialInfo.Nota));
+      curr.Parameters.Add(new SqliteParameter("@tipo", materialInfo.Tipo));
+      curr.Parameters.Add(new SqliteParameter("@codigo", materialInfo.Codigo));
+      curr.Parameters.Add(new SqliteParameter("@serie", materialInfo.Serie));
+      curr.Parameters.Add(new SqliteParameter("@descricao", materialInfo.Descricao));
+      curr.Parameters.Add(new SqliteParameter("@quantidade", materialInfo.Quantidade));
+      curr.Parameters.Add(new SqliteParameter("@origem", materialInfo.Origem));
+      curr.ExecuteNonQuery();
     }
-    curr.ExecuteNonQuery();
+    transaction.Commit();
   }
 
   public void AddOcorrenciaInfo(OcorrenciaInfo ocorrenciaInfo)
   {
-    using var curr = new SQLiteCommand(_conn);
+    using var curr = _conn.CreateCommand();
     curr.CommandText = @"INSERT INTO ocorrencia (
       notaservico, caixatipo, caixamodelo, numerotoi, nometitular, documentotipo, documentonum, residenciaclasse,
       motivoinspecao, instalacaosuspensa, instalacaonormalizada, consumidoracompanhou, clienteautorizoulevantamento,
@@ -115,67 +121,67 @@ public sealed class Database : IDisposable
       @selagemtampos, @selagembornes, @selagemparafuso, @selagemtrava, @selagemtampa, @selagembase, @selagemgeral
     )";
     curr.Parameters.Clear();
-    curr.Parameters.Add(new SQLiteParameter("@notaservico", ocorrenciaInfo.NotaServico));
-    curr.Parameters.Add(new SQLiteParameter("@caixatipo", ocorrenciaInfo.CaixaTipo));
-    curr.Parameters.Add(new SQLiteParameter("@caixamodelo", ocorrenciaInfo.CaixaModelo));
-    curr.Parameters.Add(new SQLiteParameter("@numerotoi", ocorrenciaInfo.NumeroToi));
-    curr.Parameters.Add(new SQLiteParameter("@nometitular", ocorrenciaInfo.NomeTitular));
-    curr.Parameters.Add(new SQLiteParameter("@documentotipo", ocorrenciaInfo.DocumentoTipo));
-    curr.Parameters.Add(new SQLiteParameter("@documentonum", ocorrenciaInfo.DocumentoNum));
-    curr.Parameters.Add(new SQLiteParameter("@residenciaclasse", ocorrenciaInfo.ResidenciaClasse));
+    curr.Parameters.Add(new SqliteParameter("@notaservico", ocorrenciaInfo.NotaServico));
+    curr.Parameters.Add(new SqliteParameter("@caixatipo", ocorrenciaInfo.CaixaTipo));
+    curr.Parameters.Add(new SqliteParameter("@caixamodelo", ocorrenciaInfo.CaixaModelo));
+    curr.Parameters.Add(new SqliteParameter("@numerotoi", ocorrenciaInfo.NumeroToi));
+    curr.Parameters.Add(new SqliteParameter("@nometitular", ocorrenciaInfo.NomeTitular));
+    curr.Parameters.Add(new SqliteParameter("@documentotipo", ocorrenciaInfo.DocumentoTipo));
+    curr.Parameters.Add(new SqliteParameter("@documentonum", ocorrenciaInfo.DocumentoNum));
+    curr.Parameters.Add(new SqliteParameter("@residenciaclasse", ocorrenciaInfo.ResidenciaClasse));
 
-    curr.Parameters.Add(new SQLiteParameter("@motivoinspecao", ocorrenciaInfo.MotivoInspecao));
-    curr.Parameters.Add(new SQLiteParameter("@instalacaosuspensa", ocorrenciaInfo.InstalacaoSuspensa));
-    curr.Parameters.Add(new SQLiteParameter("@instalacaonormalizada", ocorrenciaInfo.InstalacaoNormalizada));
-    curr.Parameters.Add(new SQLiteParameter("@consumidoracompanhou", ocorrenciaInfo.ConsumidorAcompanhou));
-    curr.Parameters.Add(new SQLiteParameter("@clienteautorizoulevantamento", ocorrenciaInfo.ClienteAutorizouLevantamento));
-    curr.Parameters.Add(new SQLiteParameter("@clientesolicitoupericia", ocorrenciaInfo.ClienteSolicitouPericia));
-    curr.Parameters.Add(new SQLiteParameter("@clientequalassinou", ocorrenciaInfo.ClienteQualAssinou));
-    curr.Parameters.Add(new SQLiteParameter("@clienterecusouassinar", ocorrenciaInfo.ClienteRecusouAssinar));
-    curr.Parameters.Add(new SQLiteParameter("@clienterecusoureceber", ocorrenciaInfo.ClienteRecusouReceber));
-    curr.Parameters.Add(new SQLiteParameter("@fisicoentreguetoi", ocorrenciaInfo.FisicoEntregueTOI));
-    curr.Parameters.Add(new SQLiteParameter("@quantidadeevidencias", ocorrenciaInfo.QuantidadeEvidencias));
-    curr.Parameters.Add(new SQLiteParameter("@existenciaevidencias", ocorrenciaInfo.ExistenciaEvidencias));
-    curr.Parameters.Add(new SQLiteParameter("@descricaoirregularidade", ocorrenciaInfo.DescricaoIrregularidade));
+    curr.Parameters.Add(new SqliteParameter("@motivoinspecao", ocorrenciaInfo.MotivoInspecao));
+    curr.Parameters.Add(new SqliteParameter("@instalacaosuspensa", ocorrenciaInfo.InstalacaoSuspensa));
+    curr.Parameters.Add(new SqliteParameter("@instalacaonormalizada", ocorrenciaInfo.InstalacaoNormalizada));
+    curr.Parameters.Add(new SqliteParameter("@consumidoracompanhou", ocorrenciaInfo.ConsumidorAcompanhou));
+    curr.Parameters.Add(new SqliteParameter("@clienteautorizoulevantamento", ocorrenciaInfo.ClienteAutorizouLevantamento));
+    curr.Parameters.Add(new SqliteParameter("@clientesolicitoupericia", ocorrenciaInfo.ClienteSolicitouPericia));
+    curr.Parameters.Add(new SqliteParameter("@clientequalassinou", ocorrenciaInfo.ClienteQualAssinou));
+    curr.Parameters.Add(new SqliteParameter("@clienterecusouassinar", ocorrenciaInfo.ClienteRecusouAssinar));
+    curr.Parameters.Add(new SqliteParameter("@clienterecusoureceber", ocorrenciaInfo.ClienteRecusouReceber));
+    curr.Parameters.Add(new SqliteParameter("@fisicoentreguetoi", ocorrenciaInfo.FisicoEntregueTOI));
+    curr.Parameters.Add(new SqliteParameter("@quantidadeevidencias", ocorrenciaInfo.QuantidadeEvidencias));
+    curr.Parameters.Add(new SqliteParameter("@existenciaevidencias", ocorrenciaInfo.ExistenciaEvidencias));
+    curr.Parameters.Add(new SqliteParameter("@descricaoirregularidade", ocorrenciaInfo.DescricaoIrregularidade));
 
-    curr.Parameters.Add(new SQLiteParameter("@grupotarifarico", ocorrenciaInfo.GrupoTarifarico));
-    curr.Parameters.Add(new SQLiteParameter("@ligacaotipo", ocorrenciaInfo.LigacaoTipo));
-    curr.Parameters.Add(new SQLiteParameter("@quantidadeelementos", ocorrenciaInfo.QuantidadeElementos));
-    curr.Parameters.Add(new SQLiteParameter("@fornecimentotipo", ocorrenciaInfo.FornecimentoTipo));
-    curr.Parameters.Add(new SQLiteParameter("@tensaotipo", ocorrenciaInfo.TensaoTipo));
-    curr.Parameters.Add(new SQLiteParameter("@tensaonivel", ocorrenciaInfo.TensaoNivel));
-    curr.Parameters.Add(new SQLiteParameter("@ramaltipo", ocorrenciaInfo.RamalTipo));
-    curr.Parameters.Add(new SQLiteParameter("@sistemaencapsulado", ocorrenciaInfo.SistemaEncapsulado));
+    curr.Parameters.Add(new SqliteParameter("@grupotarifarico", ocorrenciaInfo.GrupoTarifarico));
+    curr.Parameters.Add(new SqliteParameter("@ligacaotipo", ocorrenciaInfo.LigacaoTipo));
+    curr.Parameters.Add(new SqliteParameter("@quantidadeelementos", ocorrenciaInfo.QuantidadeElementos));
+    curr.Parameters.Add(new SqliteParameter("@fornecimentotipo", ocorrenciaInfo.FornecimentoTipo));
+    curr.Parameters.Add(new SqliteParameter("@tensaotipo", ocorrenciaInfo.TensaoTipo));
+    curr.Parameters.Add(new SqliteParameter("@tensaonivel", ocorrenciaInfo.TensaoNivel));
+    curr.Parameters.Add(new SqliteParameter("@ramaltipo", ocorrenciaInfo.RamalTipo));
+    curr.Parameters.Add(new SqliteParameter("@sistemaencapsulado", ocorrenciaInfo.SistemaEncapsulado));
 
-    curr.Parameters.Add(new SQLiteParameter("@medidortipo", ocorrenciaInfo.MedidorTipo));
-    curr.Parameters.Add(new SQLiteParameter("@medidornumero", ocorrenciaInfo.MedidorNumero));
-    curr.Parameters.Add(new SQLiteParameter("@medidormarca", ocorrenciaInfo.MedidorMarca));
-    curr.Parameters.Add(new SQLiteParameter("@medidorano", ocorrenciaInfo.MedidorAno));
-    curr.Parameters.Add(new SQLiteParameter("@medidorpatrimonio", ocorrenciaInfo.MedidorPatrimonio));
-    curr.Parameters.Add(new SQLiteParameter("@medidortensao", ocorrenciaInfo.MedidorTensao));
-    curr.Parameters.Add(new SQLiteParameter("@medidoranominal", ocorrenciaInfo.MedidorANominal));
-    curr.Parameters.Add(new SQLiteParameter("@medidoramaximo", ocorrenciaInfo.MedidorAMaximo));
-    curr.Parameters.Add(new SQLiteParameter("@medidorconstante", ocorrenciaInfo.MedidorConstante));
-    curr.Parameters.Add(new SQLiteParameter("@medidorlocalizacao", ocorrenciaInfo.MedidorLocalizacao));
-    curr.Parameters.Add(new SQLiteParameter("@medidorobservacao", ocorrenciaInfo.MedidorObservacao));
+    curr.Parameters.Add(new SqliteParameter("@medidortipo", ocorrenciaInfo.MedidorTipo));
+    curr.Parameters.Add(new SqliteParameter("@medidornumero", ocorrenciaInfo.MedidorNumero));
+    curr.Parameters.Add(new SqliteParameter("@medidormarca", ocorrenciaInfo.MedidorMarca));
+    curr.Parameters.Add(new SqliteParameter("@medidorano", ocorrenciaInfo.MedidorAno));
+    curr.Parameters.Add(new SqliteParameter("@medidorpatrimonio", ocorrenciaInfo.MedidorPatrimonio));
+    curr.Parameters.Add(new SqliteParameter("@medidortensao", ocorrenciaInfo.MedidorTensao));
+    curr.Parameters.Add(new SqliteParameter("@medidoranominal", ocorrenciaInfo.MedidorANominal));
+    curr.Parameters.Add(new SqliteParameter("@medidoramaximo", ocorrenciaInfo.MedidorAMaximo));
+    curr.Parameters.Add(new SqliteParameter("@medidorconstante", ocorrenciaInfo.MedidorConstante));
+    curr.Parameters.Add(new SqliteParameter("@medidorlocalizacao", ocorrenciaInfo.MedidorLocalizacao));
+    curr.Parameters.Add(new SqliteParameter("@medidorobservacao", ocorrenciaInfo.MedidorObservacao));
 
-    curr.Parameters.Add(new SQLiteParameter("@declarantenomecompleto", ocorrenciaInfo.DeclaranteNomeCompleto));
-    curr.Parameters.Add(new SQLiteParameter("@declarantegrauafiinidade", ocorrenciaInfo.DeclaranteGrauAfiinidade));
-    curr.Parameters.Add(new SQLiteParameter("@declarantedocumento", ocorrenciaInfo.DeclaranteDocumento));
-    curr.Parameters.Add(new SQLiteParameter("@declarantetempoocupacao", ocorrenciaInfo.DeclaranteTempoOcupacao));
-    curr.Parameters.Add(new SQLiteParameter("@declarantetempounidade", ocorrenciaInfo.DeclaranteTempoUnidade));
-    curr.Parameters.Add(new SQLiteParameter("@declarantetipoocupacao", ocorrenciaInfo.DeclaranteTipoOcupacao));
-    curr.Parameters.Add(new SQLiteParameter("@declaranteqntresidentes", ocorrenciaInfo.DeclaranteQntResidentes));
-    curr.Parameters.Add(new SQLiteParameter("@declaranteemail", ocorrenciaInfo.DeclaranteEmail));
-    curr.Parameters.Add(new SQLiteParameter("@declarantecelular", ocorrenciaInfo.DeclaranteCelular));
+    curr.Parameters.Add(new SqliteParameter("@declarantenomecompleto", ocorrenciaInfo.DeclaranteNomeCompleto));
+    curr.Parameters.Add(new SqliteParameter("@declarantegrauafiinidade", ocorrenciaInfo.DeclaranteGrauAfiinidade));
+    curr.Parameters.Add(new SqliteParameter("@declarantedocumento", ocorrenciaInfo.DeclaranteDocumento));
+    curr.Parameters.Add(new SqliteParameter("@declarantetempoocupacao", ocorrenciaInfo.DeclaranteTempoOcupacao));
+    curr.Parameters.Add(new SqliteParameter("@declarantetempounidade", ocorrenciaInfo.DeclaranteTempoUnidade));
+    curr.Parameters.Add(new SqliteParameter("@declarantetipoocupacao", ocorrenciaInfo.DeclaranteTipoOcupacao));
+    curr.Parameters.Add(new SqliteParameter("@declaranteqntresidentes", ocorrenciaInfo.DeclaranteQntResidentes));
+    curr.Parameters.Add(new SqliteParameter("@declaranteemail", ocorrenciaInfo.DeclaranteEmail));
+    curr.Parameters.Add(new SqliteParameter("@declarantecelular", ocorrenciaInfo.DeclaranteCelular));
 
-    curr.Parameters.Add(new SQLiteParameter("@selagemtampos", ocorrenciaInfo.SelagemTampos));
-    curr.Parameters.Add(new SQLiteParameter("@selagembornes", ocorrenciaInfo.SelagemBornes));
-    curr.Parameters.Add(new SQLiteParameter("@selagemparafuso", ocorrenciaInfo.SelagemParafuso));
-    curr.Parameters.Add(new SQLiteParameter("@selagemtrava", ocorrenciaInfo.SelagemTrava));
-    curr.Parameters.Add(new SQLiteParameter("@selagemtampa", ocorrenciaInfo.SelagemTampa));
-    curr.Parameters.Add(new SQLiteParameter("@selagembase", ocorrenciaInfo.SelagemBase));
-    curr.Parameters.Add(new SQLiteParameter("@selagemgeral", ocorrenciaInfo.SelagemGeral));
+    curr.Parameters.Add(new SqliteParameter("@selagemtampos", ocorrenciaInfo.SelagemTampos));
+    curr.Parameters.Add(new SqliteParameter("@selagembornes", ocorrenciaInfo.SelagemBornes));
+    curr.Parameters.Add(new SqliteParameter("@selagemparafuso", ocorrenciaInfo.SelagemParafuso));
+    curr.Parameters.Add(new SqliteParameter("@selagemtrava", ocorrenciaInfo.SelagemTrava));
+    curr.Parameters.Add(new SqliteParameter("@selagemtampa", ocorrenciaInfo.SelagemTampa));
+    curr.Parameters.Add(new SqliteParameter("@selagembase", ocorrenciaInfo.SelagemBase));
+    curr.Parameters.Add(new SqliteParameter("@selagemgeral", ocorrenciaInfo.SelagemGeral));
 
     curr.ExecuteNonQuery();
   }
