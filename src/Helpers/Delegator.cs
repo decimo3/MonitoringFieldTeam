@@ -21,7 +21,7 @@ public static class Delegator
     }
     var orders = System.IO.File.ReadAllLines(filepath);
     // DONE - Get the list of workers
-    var workers = Configuration.GetArray("WEBSITE");
+    var workers = Configuration.GetArray("WORKERS");
     // DONE - Check witch workers are on
     using var client = new HttpClient();
     var online_workers = Array.Empty<string>();
