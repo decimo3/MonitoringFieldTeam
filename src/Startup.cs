@@ -29,13 +29,13 @@ public class Startup
       try
       {
         Configuration.LoadConf("ofs.conf");
-        Updater.Update();
         var operacao = Configuration.GetString("OPERACAO");
         if (operacao == "DELEGADOR")
         {
           Delegator.Run();
           break;
         }
+        Updater.Update();
         InstanceChecker.MultipleRun();
         InstanceChecker.ChromeKiller();
         using var handler = new WebHandler.WebHandler();
