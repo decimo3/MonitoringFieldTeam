@@ -5,7 +5,7 @@ namespace MonitoringFieldTeam.Helpers;
 
 public sealed class Database : IDisposable
 {
-  private static readonly string DNS = Configuration.GetString("DATAPATH");
+  private static readonly string DNS = Configuration.GetString("DATABASE");
   private readonly SqliteConnection _conn;
 
   public Database()
@@ -22,8 +22,6 @@ public sealed class Database : IDisposable
 
   public void CreateDatabaseScheme()
   {
-    var datapath = Configuration.GetString("DATABASE");
-    if (System.IO.File.Exists(datapath)) return;
     using var curr = _conn.CreateCommand();
     var filepath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
