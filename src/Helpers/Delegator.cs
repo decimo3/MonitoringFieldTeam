@@ -60,6 +60,7 @@ public static class Delegator
     }
     Log.Information("{qtd} ordens de serviço para extração.", orders.Length);
     // DONE - Get the list of workers
+    Log.Information("Obtendo as lista de servidores...");
     var workers = Configuration.GetArray("WORKERS");
     // DONE - Check witch workers are on
     using var client = new HttpClient();
@@ -108,6 +109,7 @@ public static class Delegator
               if (!long.TryParse(order, out long nota))
                 throw new InvalidOperationException(
                   $"Há caracteres inválidos na nota {order}!");
+              Log.Information("Nota: {nota}, Worker: {worker}", nota, worker);
               var requestInfo = new RequestInfo(extracao, nota);
               var request = new HttpRequestMessage()
               {
@@ -118,14 +120,11 @@ public static class Delegator
               };
               var response = await client.SendAsync(request);
               response.EnsureSuccessStatusCode();
-              var responseInfo = await response.Content.ReadFromJsonAsync<ResponseInfo>();
-              if (responseInfo is null)
-              {
-                var responseText = await response.Content.ReadAsStringAsync();
-                Log.Debug($"Response text: {responseText}");
-                throw new InvalidOperationException(
-                  $"Houve um erro no formato da resposta!");
-              }
+              var responseText = await response.Content.ReadAsStringAsync();
+              Log.Information("Nota {nota} respondida pelo worker {worker}", nota, worker);
+              Log.Debug("Response text: {responseText}", responseText);
+              var responseInfo = await response.Content.ReadFromJsonAsync<ResponseInfo>() ??
+                throw new InvalidOperationException("Houve um erro no formato da resposta!");
               // DONE - Store successful response on DB
               if (responseInfo.GeneralInfo is not null)
                 database.AddGeneralInfo(responseInfo.GeneralInfo);
@@ -150,6 +149,7 @@ public static class Delegator
       );
     }
     Task.WhenAll(tasks).GetAwaiter().GetResult();
+    Log.Information("Finalizado reatório {report}", filepath);
     // DONE - Export the report in the end
     if (retry_orders.Count != 0)
     {
