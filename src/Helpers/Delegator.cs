@@ -26,7 +26,7 @@ public static class Delegator
     }
     foreach (var filepath in files)
     {
-    string[] orders;
+    string[] orders = Array.Empty<string>();
     Log.Information("Relatório atual {rel}", filepath);
     using (var reader = new StreamReader(filepath))
     {
