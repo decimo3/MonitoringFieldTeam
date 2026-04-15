@@ -1,25 +1,64 @@
 using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json;
+using CsvHelper;
 using MonitoringFieldTeam.Persistence;
 using Serilog;
 namespace MonitoringFieldTeam.Helpers;
 
 public static class Delegator
 {
+  private static readonly List<string> CODIGOS_DE_RAMAL_OU_MEDIDOR = new()
+    {"18.0", "6.15", "6.16", "6.43", "7.10", "7.11", "7.12", "7.15", "7.16", "7.17"};
   public static void Run()
   {
     // DONE - Get the list of orders
-    Log.Information("Verificando a lista de notas...");
-    var filepath = System.IO.Path.Combine(
-      Configuration.GetString("DATAPATH"),
-      "ofs.txt");
-    if (!System.IO.File.Exists(filepath))
+    Log.Information("Procurando relatórios do OFS...");
+    var files = System.IO.Directory.GetFiles(
+      Configuration.GetString("DATAPATH"))
+        .Where(f => System.IO.Path.GetExtension(f) == ".csv" &&
+          System.IO.Path.GetFileName(f).StartsWith("Atividade"))
+        .ToArray();
+    if (files.Length == 0)
     {
-      Log.Information("O arquivo de lista notas não foi encontrado!");
+      Log.Error("Não foram encontrados relatórios do OFS!");
       return;
     }
-    var orders = System.IO.File.ReadAllLines(filepath);
+    foreach (var filepath in files)
+    {
+    string[] orders;
+    Log.Information("Relatório atual {rel}", filepath);
+    using (var reader = new StreamReader(filepath))
+    {
+      using (var csv = new CsvReader(reader,
+        System.Globalization.CultureInfo.InvariantCulture))
+      {
+        var records = csv.GetRecords<dynamic>();
+        orders = records
+        .Select(r =>
+        {
+          var dict = (IDictionary<string, object>)r;
+          return dict.ToDictionary(
+              kv => kv.Key,
+              kv => kv.Value?.ToString()
+          );
+        })
+        .Where(r =>
+        {
+          if (r["Status da Atividade"] != "concluído") return false;
+          if (string.IsNullOrWhiteSpace(r["Ordem de Serviço"])) return false;
+          var codigos = (r["Códs. de Fechamento"] + r["Motivo de Rejeição"]).Split(';');
+          return codigos.Any(c => CODIGOS_DE_RAMAL_OU_MEDIDOR.Contains(c));
+        })
+        .Select(r => r["Ordem de Serviço"]!).ToArray();
+      }
+    }
+    if (orders.Length == 0)
+    {
+      Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
+      continue;
+    }
+    Log.Information("{qtd} ordens de serviço para extração.", orders.Length);
     // DONE - Get the list of workers
     var workers = Configuration.GetArray("WORKERS");
     // DONE - Check witch workers are on
@@ -118,5 +157,6 @@ public static class Delegator
       return;
     }
     System.IO.File.Delete(filepath);
+    }
   }
 }
