@@ -28,6 +28,13 @@ public static class Delegator
     {
     string[] orders = Array.Empty<string>();
     Log.Information("Relatório atual {rel}", filepath);
+    if (System.IO.Path.GetFileName(filepath) == "ofs.txt")
+    {
+      orders = System.IO.File.ReadAllLines(filepath);
+    }
+    if (System.IO.Path.GetExtension(filepath) == ".csv" &&
+      System.IO.Path.GetFileName(filepath).StartsWith("Atividades"))
+    {
     using (var reader = new StreamReader(filepath))
     {
       using (var csv = new CsvReader(reader,
@@ -52,6 +59,7 @@ public static class Delegator
         })
         .Select(r => r["Ordem de Serviço"]!).ToArray();
       }
+    }
     }
     if (orders.Length == 0)
     {
