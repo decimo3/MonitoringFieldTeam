@@ -153,8 +153,13 @@ public static class Delegator
     // DONE - Export the report in the end
     if (retry_orders.Count != 0)
     {
-      System.IO.File.WriteAllText(filepath, string.Join('\n', retry_orders));
-      return;
+      System.IO.File.AppendAllText(
+        System.IO.Path.Combine(
+          Configuration.GetString("DATAPATH"),
+          "ofs.txt"
+        ), string.Join('\n', retry_orders));
+      Log.Warning("Arquivo {file} regravado com {count} ordens para nova tentativa!", filepath, retry_orders.Count);
+      continue;
     }
     System.IO.File.Delete(filepath);
     }
