@@ -167,7 +167,6 @@ public static class Delegator
           "ofs.txt"
         ), string.Join('\n', retry_orders) + '\n');
       Log.Warning("Arquivo {file} regravado com {count} ordens para nova tentativa!", filepath, retry_orders.Count);
-      continue;
     }
     System.IO.File.Delete(filepath);
     }
