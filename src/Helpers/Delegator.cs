@@ -146,7 +146,8 @@ public static class Delegator
             catch (Exception erro)
             {
               retry_orders.Add(order);
-              Log.Error(erro.Message);
+              Log.Error("Aconteceu um erro na nota {nota} no worker {worker}!\nERRO: {erro}.",
+                order, worker, erro.Message);
             }
             finally
             {
