@@ -165,6 +165,8 @@ public static class Delegator
         ), string.Join('\n', retry_orders) + '\n');
       Log.Warning("Arquivo {file} regravado com {count} ordens para nova tentativa!", filepath, retry_orders.Count);
     }
+    // FIXED - if the currrent item is "ofs.txt" and there are orders to retry, don't delete the file!
+    if (System.IO.Path.GetFileName(filepath) == "ofs.txt" && retry_orders.Count != 0) continue;
     System.IO.File.Delete(filepath);
     }
   }
