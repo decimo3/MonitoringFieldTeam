@@ -14,14 +14,10 @@ public static class Delegator
   {
     // DONE - Get the list of orders
     Log.Information("Procurando relatórios do OFS...");
-    var files = System.IO.Directory.GetFiles(
-      Configuration.GetString("DATAPATH"))
-        .Where(f => System.IO.Path.GetExtension(f) == ".csv" &&
-          System.IO.Path.GetFileName(f).StartsWith("Atividade"))
-        .ToArray();
+    var files = System.IO.Directory.GetFiles(Configuration.GetString("DATAPATH"));
     if (files.Length == 0)
     {
-      Log.Error("Não foram encontrados relatórios do OFS!");
+      Log.Error("Não foram encontrados arquivos na pasta designada!");
       return;
     }
     foreach (var filepath in files)
