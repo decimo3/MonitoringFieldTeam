@@ -9,7 +9,7 @@ namespace MonitoringFieldTeam.Helpers;
 public static class Delegator
 {
   private static readonly List<string> CODIGOS_DE_RAMAL_OU_MEDIDOR = new()
-    {"18.0", "6.15", "6.16", "6.43", "7.10", "7.11", "7.12", "7.15", "7.16", "7.17"};
+    {"18.0", "6.11", "6.15", "6.16", "6.43", "7.10", "7.11", "7.12", "7.15", "7.16", "7.17"};
   public static void Run()
   {
     // DONE - Get the list of orders
