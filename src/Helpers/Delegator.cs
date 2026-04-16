@@ -107,13 +107,13 @@ public static class Delegator
       semaphore.Wait();
       var order = orders[i];
       int instanceNumber = i % online_workers.Length;
+      var worker = online_workers[instanceNumber];
       tasks.Add(
         Task.Run(
           async () =>
           {
             try
             {
-              var worker = online_workers[instanceNumber];
               if (!long.TryParse(order, out long nota))
                 throw new InvalidOperationException(
                   $"Há caracteres inválidos na nota {order}!");
