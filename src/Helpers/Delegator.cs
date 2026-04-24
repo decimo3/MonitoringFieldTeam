@@ -86,12 +86,7 @@ public static class Delegator
         "Não foram encontradas notas para extração na base de dados!");
     }
     Log.Information("{qtd} ordens de serviço para extração.", orders.Count);
-    return orders
-      .GroupBy(o => o.OrderNumber)
-      .Select(g => new { Count = g.Count(), Order = g.First() })
-      .Where(x => x.Count == 1 && x.Order.StatusCode != 200)
-      .Select(x => x.Order)
-      .ToList();
+    return orders.Where(x => x.StatusCode != 200).ToList();
   }
 
   public static string[] GetOnlineWorkers()
