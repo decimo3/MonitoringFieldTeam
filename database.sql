@@ -4,7 +4,7 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS ordenacao (
-  identifier BIGINT PRIMARY KEY AUTOINCREMENT,
+  identifier INTEGER PRIMARY KEY AUTOINCREMENT,
   order_number BIGINT NOT NULL,
   status_code INTEGER NOT NULL,
   created_at TIMESTAMP NOT NULL,
