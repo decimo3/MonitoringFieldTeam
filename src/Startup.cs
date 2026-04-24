@@ -57,7 +57,8 @@ public class Startup
         }
         if (operacao == "SERVIDOR")
         {
-          WebServer.Run(handler);
+          var server = new WebServer(handler);
+          server.Run();
           break;
         }
         throw new InvalidOperationException(
