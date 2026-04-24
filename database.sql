@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS ordenacao (
   status_code INTEGER NOT NULL,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,
-  observation TEXT DEFAULT NULL,
+  observation TEXT DEFAULT NULL
 );
 
 -- General information about activities
