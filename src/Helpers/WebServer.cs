@@ -81,6 +81,7 @@ public sealed class WebServer : IDisposable
         return Results.Text(erro.Message, statusCode: 400);
       }
     });
+    MonitoringFieldTeam.WebScraper.Autenticador.Autenticar(handler);
     MonitoringFieldTeam.WebScraper.Parametrizador.VerificarPagina(handler);
     app.Run();
   }

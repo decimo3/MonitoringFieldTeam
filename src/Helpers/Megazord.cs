@@ -19,7 +19,6 @@ public static class Megazord
       {
         var index = i;
         handlers[index] = new MonitoringFieldTeam.WebHandler.WebHandler(index);
-        tasks.Add(Task.Factory.StartNew(() => WebScraper.Autenticador.Autenticar(handlers[index]), TaskCreationOptions.LongRunning));
         servers[index] = new MonitoringFieldTeam.Helpers.WebServer(handlers[index], instanceUrls[index]);
         tasks.Add(Task.Factory.StartNew(() => servers[index].Run(), TaskCreationOptions.LongRunning));
       }
