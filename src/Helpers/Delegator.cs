@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json;
 using CsvHelper;
@@ -8,34 +7,25 @@ namespace MonitoringFieldTeam.Helpers;
 
 public static class Delegator
 {
-  public static void Run()
+  private static readonly int ESTIMATED_TIME_PER_ORDER = 20;
+
+  private static long[] GetOrdersFromFile(string filepath)
   {
-    // DONE - Get the list of orders
-    Log.Information("Procurando relatórios do OFS...");
-    var files = System.IO.Directory.GetFiles(Configuration.GetString("DATAPATH"));
-    if (files.Length == 0)
-    {
-      Log.Error("Não foram encontrados arquivos na pasta designada!");
-      return;
-    }
-    foreach (var filepath in files)
-    {
-    string[] orders = Array.Empty<string>();
-    Log.Information("Relatório atual {rel}", filepath);
     if (System.IO.Path.GetFileName(filepath) == "ofs.txt")
     {
-      orders = System.IO.File.ReadAllLines(filepath);
+      return System.IO.File.ReadAllLines(filepath)
+        .Where(line => long.TryParse(line, out _))
+        .Select(long.Parse)
+        .ToArray();
     }
     if (System.IO.Path.GetExtension(filepath) == ".csv" &&
       System.IO.Path.GetFileName(filepath).StartsWith("Atividades"))
     {
-    using (var reader = new StreamReader(filepath))
-    {
-      using (var csv = new CsvReader(reader,
-        System.Globalization.CultureInfo.InvariantCulture))
-      {
-        var records = csv.GetRecords<dynamic>();
-        orders = records
+      using var reader = new StreamReader(filepath);
+      using var csv = new CsvReader(reader,
+        System.Globalization.CultureInfo.InvariantCulture);
+      var records = csv.GetRecords<dynamic>();
+      return records
         .Select(r =>
         {
           var dict = (IDictionary<string, object>)r;
@@ -46,19 +36,66 @@ public static class Delegator
         })
         .Where(r =>
           (r["Status da Atividade"] == "concluído") &&
-          !string.IsNullOrWhiteSpace(r["Ordem de Serviço"])
+          !string.IsNullOrWhiteSpace(r["Ordem de Serviço"]) &&
+          long.TryParse(r["Ordem de Serviço"], out _)
         )
-        .Select(r => r["Ordem de Serviço"]!).ToArray();
-      }
+        .Select(r => long.Parse(r["Ordem de Serviço"]!))
+        .ToArray();
     }
-    }
-    if (orders.Length == 0)
+    Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
+    return Array.Empty<long>();
+  }
+
+  private static void AddOrdersFromFile()
+  {
+    using var database = new Database();
+    Log.Information("Procurando arquivos de notas...");
+    var files = System.IO.Directory.GetFiles(Configuration.GetString("DATAPATH"));
+    if (files.Length == 0)
     {
-      Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
-      continue;
+      Log.Error("Não foram encontrados arquivos na pasta designada!");
+      return;
     }
-    Log.Information("{qtd} ordens de serviço para extração.", orders.Length);
-    // DONE - Get the list of workers
+    foreach (var filepath in files)
+    {
+      Log.Information("Relatório atual {rel}", filepath);
+      var orders = GetOrdersFromFile(filepath);
+      if (orders.Length == 0)
+      {
+        Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
+        continue;
+      }
+      database.AddOrderList(orders.Select(order => new OrderInfo
+      {
+        OrderNumber = order,
+        StatusCode = 0,
+        CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now,
+      }).ToList());
+      System.IO.File.Delete(filepath);
+    }
+  }
+
+  public static List<OrderInfo> GetOrdersFromBase()
+  {
+    using var database = new Database();
+    var orders = database.GetOrderList();
+    if (orders.Count == 0)
+    {
+      throw new InvalidOperationException(
+        "Não foram encontradas notas para extração na base de dados!");
+    }
+    Log.Information("{qtd} ordens de serviço para extração.", orders.Count);
+    return orders
+      .GroupBy(o => o.OrderNumber)
+      .Select(g => new { Count = g.Count(), Order = g.First() })
+      .Where(x => x.Count == 1 && x.Order.StatusCode != 200)
+      .Select(x => x.Order)
+      .ToList();
+  }
+
+  public static string[] GetOnlineWorkers()
+  {
     Log.Information("Obtendo as lista de servidores...");
     var workers = Configuration.GetArray("WORKERS");
     // DONE - Check witch workers are on
@@ -83,17 +120,29 @@ public static class Delegator
     }
     if (online_workers.Length == 0)
     {
-      Log.Error("Não foram encontrado workers online!");
-      return;
+      throw new InvalidOperationException(
+        "Não foram encontrado workers online!");
     }
     Log.Information("{qtd} workers online!", online_workers.Length);
+    return online_workers;
+  }
+
+  public static void Run()
+  {
+    AddOrdersFromFile();
+    // DONE - Get the list of orders
+    var orders = GetOrdersFromBase();
+    // DONE - Get the list of workers
+    var online_workers = GetOnlineWorkers();
+    var estimate_time = TimeSpan.FromSeconds(orders.Count * ESTIMATED_TIME_PER_ORDER / online_workers.Length);
+    Log.Information("Tempo estimado para processamento: {estimate_time}.", estimate_time);
     // DONE - Send orders to online workers
     var tasks = new List<Task>();
-    using var database = new Database();
-    var retry_orders = new ConcurrentBag<string>();
     var semaphore = new SemaphoreSlim(online_workers.Length);
     var extracao = Configuration.GetArray("EXTRACAO");
-    for(var i = 0; i < orders.Length; i++)
+    using var database = new Database();
+    using var client = new HttpClient();
+    for (var i = 0; i < orders.Count; i++)
     {
       semaphore.Wait();
       var order = orders[i];
@@ -103,13 +152,11 @@ public static class Delegator
         Task.Run(
           async () =>
           {
+            var response = new HttpResponseMessage();
             try
             {
-              if (!long.TryParse(order, out long nota))
-                throw new InvalidOperationException(
-                  $"Há caracteres inválidos na nota {order}!");
-              Log.Information("Nota: {nota}, Worker: {worker}", nota, worker);
-              var requestInfo = new RequestInfo(extracao, nota);
+              Log.Information("Nota: {nota}, Worker: {worker}", order.OrderNumber, worker);
+              var requestInfo = new RequestInfo(extracao, order.OrderNumber);
               var request = new HttpRequestMessage()
               {
                 Method = HttpMethod.Get,
@@ -117,10 +164,10 @@ public static class Delegator
                 Content = new StringContent(
                   JsonSerializer.Serialize(requestInfo))
               };
-              var response = await client.SendAsync(request);
+              response = await client.SendAsync(request);
               response.EnsureSuccessStatusCode();
               var responseText = await response.Content.ReadAsStringAsync();
-              Log.Information("Nota {nota} respondida pelo worker {worker}", nota, worker);
+              Log.Information("Nota {nota} respondida pelo worker {worker}", order.OrderNumber, worker);
               Log.Debug("Response text: {responseText}", responseText);
               var responseInfo = await response.Content.ReadFromJsonAsync<ResponseInfo>() ??
                 throw new InvalidOperationException("Houve um erro no formato da resposta!");
@@ -133,15 +180,26 @@ public static class Delegator
                 database.AddMaterialInfo(responseInfo.MaterialInfo);
               if (responseInfo.OcorrenciaInfo is not null)
                 database.AddOcorrenciaInfo(responseInfo.OcorrenciaInfo);
+              order.Observation = $"Processada informações {string.Join(", ", extracao)} com sucesso!";
+            }
+            catch (TaskCanceledException erro)
+            {
+              response.StatusCode = System.Net.HttpStatusCode.RequestTimeout;
+              order.Observation = erro.Message;
+              Log.Error("O worker {worker} ficou offline durante a requisição da nota {nota}!", worker, order);
             }
             catch (Exception erro)
             {
-              retry_orders.Add(order);
+              response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+              order.Observation = erro.Message;
               Log.Error("Aconteceu um erro na nota {nota} no worker {worker}!\nERRO: {erro}.",
                 order, worker, erro.Message);
             }
             finally
             {
+              order.StatusCode = (int)response.StatusCode;
+              order.UpdatedAt = DateTime.Now;
+              database.PutOrderInfo(order);
               semaphore.Release();
             }
           }
@@ -149,20 +207,5 @@ public static class Delegator
       );
     }
     Task.WhenAll(tasks).GetAwaiter().GetResult();
-    Log.Information("Finalizado reatório {report}", filepath);
-    // DONE - Export the report in the end
-    if (retry_orders.Count != 0)
-    {
-      System.IO.File.AppendAllText(
-        System.IO.Path.Combine(
-          Configuration.GetString("DATAPATH"),
-          "ofs.txt"
-        ), string.Join('\n', retry_orders) + '\n');
-      Log.Warning("Arquivo {file} regravado com {count} ordens para nova tentativa!", filepath, retry_orders.Count);
-    }
-    // FIXED - if the currrent item is "ofs.txt" and there are orders to retry, don't delete the file!
-    if (System.IO.Path.GetFileName(filepath) == "ofs.txt" && retry_orders.Count != 0) continue;
-    System.IO.File.Delete(filepath);
-    }
   }
 }
