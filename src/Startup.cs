@@ -38,6 +38,11 @@ public class Startup
         Updater.Update();
         InstanceChecker.MultipleRun();
         InstanceChecker.ChromeKiller();
+        if (operacao == "MEGAZORD")
+        {
+          Megazord.Run();
+          break;
+        }
         using var handler = new WebHandler.WebHandler();
         Autenticador.Autenticar(handler);
         if (operacao == "RETRODAY")
