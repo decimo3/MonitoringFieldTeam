@@ -43,11 +43,11 @@ public sealed class WebHandler : IDisposable
     {'.', By.ClassName}
   };
   private const int MILISECONDS_TIMECHECK_INTERVAL = 200;
-  public WebHandler()
+  public WebHandler(int instance = 0)
   {
     this.url = Configuration.GetString("WEBSITE");
     string temppath = System.IO.Path.Combine(
-      System.AppContext.BaseDirectory, "temp");
+      System.AppContext.BaseDirectory, "temp", "profile" + instance);
     var chromedriverpath = System.IO.Path.Combine(
       System.AppContext.BaseDirectory,
       "chromedriver-win64", "chromedriver.exe");
