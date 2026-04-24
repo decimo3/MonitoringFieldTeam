@@ -183,4 +183,56 @@ public sealed class Database : IDisposable
 
     curr.ExecuteNonQuery();
   }
+
+  public void AddOrderList(List<OrderInfo> orders)
+  {
+    using var curr = _conn.CreateCommand();
+    using var transaction = _conn.BeginTransaction();
+    curr.Transaction = transaction;
+    curr.CommandText = @"INSERT INTO ordenacao (order_number, status_code, created_at, updated_at, observation) VALUES (@order_number, @status_code, @created_at, @updated_at, @observation)";
+    foreach (var order in orders)
+    {
+      curr.Parameters.Clear();
+      curr.Parameters.Add(new SqliteParameter("@order_number", order.OrderNumber));
+      curr.Parameters.Add(new SqliteParameter("@status_code", order.StatusCode));
+      curr.Parameters.Add(new SqliteParameter("@created_at", order.CreatedAt));
+      curr.Parameters.Add(new SqliteParameter("@updated_at", order.UpdatedAt));
+      curr.Parameters.Add(new SqliteParameter("@observation", order.Observation ?? (object)DBNull.Value));
+      curr.ExecuteNonQuery();
+    }
+    transaction.Commit();
+  }
+
+  public List<OrderInfo> GetOrderList()
+  {
+    var orders = new List<OrderInfo>();
+    using var curr = _conn.CreateCommand();
+    curr.CommandText = @"SELECT identifier, order_number, status_code, created_at, updated_at, observation FROM ordenacao";
+    using var reader = curr.ExecuteReader();
+    while (reader.Read())
+    {
+      orders.Add(new OrderInfo
+      {
+        Identifier = reader.GetInt64(0),
+        OrderNumber = reader.GetInt64(1),
+        StatusCode = reader.GetInt32(2),
+        CreatedAt = reader.GetDateTime(3),
+        UpdatedAt = reader.GetDateTime(4),
+        Observation = reader.IsDBNull(5) ? null : reader.GetString(5)
+      });
+    }
+    return orders;
+  }
+
+  public void PutOrderInfo(OrderInfo item)
+  {
+    using var curr = _conn.CreateCommand();
+    curr.CommandText = @"UPDATE ordenacao SET status_code = @status_code, updated_at = @updated_at, observation = @observation WHERE identifier = @identifier";
+    curr.Parameters.Clear();
+    curr.Parameters.Add(new SqliteParameter("@identifier", item.Identifier));
+    curr.Parameters.Add(new SqliteParameter("@status_code", item.StatusCode));
+    curr.Parameters.Add(new SqliteParameter("@updated_at", item.UpdatedAt));
+    curr.Parameters.Add(new SqliteParameter("@observation", item.Observation ?? (object)DBNull.Value));
+    curr.ExecuteNonQuery();
+  }
 }
