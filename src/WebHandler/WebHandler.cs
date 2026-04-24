@@ -57,6 +57,9 @@ public sealed class WebHandler : IDisposable
     this.options.BinaryLocation = Configuration.GetString("GCHROME");
     this.options.AddUserProfilePreference("profile.default_content_settings.popups", 0);
     this.options.AddUserProfilePreference("download.default_directory", Configuration.GetString("DATAPATH"));
+    this.options.AddArgument("--disable-background-timer-throttling");
+    this.options.AddArgument("--disable-backgrounding-occluded-windows");
+    this.options.AddArgument("--disable-renderer-backgrounding");
     this.driver = new ChromeDriver(this.service, options);
     this.driver.Manage().Window.Maximize();
     var pathfind_filepath = System.IO.Path.Combine(
