@@ -160,10 +160,10 @@ public static class Delegator
                   JsonSerializer.Serialize(requestInfo))
               };
               response = await client.SendAsync(request);
-              response.EnsureSuccessStatusCode();
               var responseText = await response.Content.ReadAsStringAsync();
               Log.Information("Nota {nota} respondida pelo worker {worker}", order.OrderNumber, worker);
-              Log.Debug("Response text: {responseText}", responseText);
+              if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException(responseText);
               var responseInfo = await response.Content.ReadFromJsonAsync<ResponseInfo>() ??
                 throw new InvalidOperationException("Houve um erro no formato da resposta!");
               // DONE - Store successful response on DB
