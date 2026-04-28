@@ -30,6 +30,7 @@ public class Startup
       {
         Configuration.LoadConf("ofs.conf");
         var operacao = Configuration.GetString("OPERACAO");
+        Log.Information("Modo de operação: {operacao}", operacao);
         if (operacao == "DELEGADOR")
         {
           Delegator.Run();
