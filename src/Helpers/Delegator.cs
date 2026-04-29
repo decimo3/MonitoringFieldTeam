@@ -9,14 +9,18 @@ public static class Delegator
 {
   private static readonly int ESTIMATED_TIME_PER_ORDER = 20;
 
-  private static long[] GetOrdersFromFile(string filepath)
+  private static List<OrderInfo> GetOrdersFromFile(string filepath)
   {
     if (System.IO.Path.GetFileName(filepath) == "ofs.txt")
     {
       return System.IO.File.ReadAllLines(filepath)
         .Where(line => long.TryParse(line, out _))
-        .Select(long.Parse)
-        .ToArray();
+        .Select(l => new OrderInfo
+        {
+          ActivityId = 0,
+          OrderNumber = long.Parse(l)
+        })
+        .ToList();
     }
     if (System.IO.Path.GetExtension(filepath) == ".csv" &&
       System.IO.Path.GetFileName(filepath).StartsWith("Atividades"))
@@ -39,11 +43,15 @@ public static class Delegator
           !string.IsNullOrWhiteSpace(r["Ordem de Serviço"]) &&
           long.TryParse(r["Ordem de Serviço"], out _)
         )
-        .Select(r => long.Parse(r["Ordem de Serviço"]!))
-        .ToArray();
+        .Select(r => new OrderInfo
+        {
+          ActivityId = long.Parse(r["ID da Atividade"]!),
+          OrderNumber = long.Parse(r["Ordem de Serviço"]!)
+        })
+        .ToList();
     }
     Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
-    return Array.Empty<long>();
+    return new List<OrderInfo>();
   }
 
   private static void AddOrdersFromFile()
