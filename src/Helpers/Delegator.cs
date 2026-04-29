@@ -81,14 +81,15 @@ public static class Delegator
   public static List<OrderInfo> GetOrdersFromBase()
   {
     using var database = new Database();
-    var orders = database.GetOrderList();
+    var orders = database.GetOrderList()
+      .Where(x => x.StatusCode != 200).ToList();
     if (orders.Count == 0)
     {
       throw new InvalidOperationException(
         "Não foram encontradas notas para extração na base de dados!");
     }
     Log.Information("{qtd} ordens de serviço para extração.", orders.Count);
-    return orders.Where(x => x.StatusCode != 200).ToList();
+    return orders;
   }
 
   public static string[] GetOnlineWorkers()
