@@ -81,7 +81,8 @@ public sealed class WebServer : IDisposable
         return Results.Text(erro.Message, statusCode: 400);
       }
     });
-    MonitoringFieldTeam.WebScraper.Autenticador.Autenticar(handler);
+    if (Configuration.GetString("OPERACAO") == "MEGAZORD")
+      MonitoringFieldTeam.WebScraper.Autenticador.Autenticar(handler);
     MonitoringFieldTeam.WebScraper.Parametrizador.VerificarPagina(handler);
     app.Run();
   }
