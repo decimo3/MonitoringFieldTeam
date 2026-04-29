@@ -7,14 +7,17 @@ namespace MonitoringFieldTeam.WebScraper
   {
     private readonly WebHandler.WebHandler handler;
     private readonly long servico;
+    private readonly long activityId;
     public ServicoHandler
     (
       WebHandler.WebHandler handler,
-      long servico
+      long servico,
+      long activityId = 0
     )
     {
       this.handler = handler;
       this.servico = servico;
+      this.activityId = activityId;
     }
     private void BackToBlack()
     {
@@ -42,11 +45,11 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public void SearchAndEnterActivity()
     {
-      Log.Information("Pesquisando nota {nota}", servico);
+      Log.Information("Pesquisando nota {nota}, atividade {atividade}", servico, activityId);
       try
       {
         // Click on search bar to focus cursor on
-        handler.GetElement("SEARCHBAR_INPUT", WebHandler.WAITSEC.Total).Click();
+        handler.GetElement("SEARCHBAR_INPUT", WebHandler.WAITSEC.Curto).Click();
       }
       catch (Exception)
       {
@@ -58,8 +61,35 @@ namespace MonitoringFieldTeam.WebScraper
       // Fill search bar with workorder number char by char
       handler.SendKeyByKey(servico.ToString());
       // Try to click on the first workorder on list
-      handler.GetElement("SEARCHBAR_ITEM", WebHandler.WAITSEC.Medio).Click();
+      var searchbar = handler.GetElement("FOUNDORDERS_DIV", WebHandler.WAITSEC.Total);
+      var list = handler.GetNestedElements(searchbar, "FOUNDORDERS_LIST").First();
+      var itens = handler.GetNestedElements(list, "FOUNDORDERS_ITENS");
+      OpenQA.Selenium.IWebElement element;
+      if (!itens.Any())
+        throw new InvalidOperationException($"Nenhuma atividade encontrada para a nota {servico}!");
+      if (activityId == 0)
+      {
+        if (itens.Count != 1)
+          throw new InvalidOperationException(
+            $"Múltiplas atividades encontradas para a nota {servico}! Não é possível selecionar automaticamente.");
+        element = itens.First();
+      }
+      // Filter elements by activityId if diff from 0
+      else
+      {
+        foreach (var item in itens)
+        {
+          var icon = handler.GetNestedElements(item, "FOUNDORDERS_ICON").First();
+          var aid = handler.GetElementAttribute(icon, "FOUNDORDERS_ATTR");
+          if (string.IsNullOrEmpty(aid) || !long.TryParse(aid, out var idAttr)) continue;
+          if (idAttr != activityId) continue;
+          element = item;
+          return;
+        }
+        throw new InvalidOperationException($"Atividade {activityId} não encontrada para a nota {servico}!");
+      }
       Log.Information("Nota encontrada! Entrando...", servico);
+      element.Click();
       handler.GetElement("ACTIVITY_CABECALHO", WebHandler.WAITSEC.Medio);
     }
     public GeneralInfo GetActivityGeneralInfo()
