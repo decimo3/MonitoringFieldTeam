@@ -189,11 +189,12 @@ public sealed class Database : IDisposable
     using var curr = _conn.CreateCommand();
     using var transaction = _conn.BeginTransaction();
     curr.Transaction = transaction;
-    curr.CommandText = @"INSERT INTO ordenacao (order_number, status_code, created_at, updated_at, observation) VALUES (@order_number, @status_code, @created_at, @updated_at, @observation)";
+    curr.CommandText = @"INSERT INTO ordenacao (order_number, activity_id, status_code, created_at, updated_at, observation) VALUES (@order_number, @activity_id, @status_code, @created_at, @updated_at, @observation)";
     foreach (var order in orders)
     {
       curr.Parameters.Clear();
       curr.Parameters.Add(new SqliteParameter("@order_number", order.OrderNumber));
+      curr.Parameters.Add(new SqliteParameter("@activity_id", order.ActivityId));
       curr.Parameters.Add(new SqliteParameter("@status_code", order.StatusCode));
       curr.Parameters.Add(new SqliteParameter("@created_at", order.CreatedAt));
       curr.Parameters.Add(new SqliteParameter("@updated_at", order.UpdatedAt));
@@ -207,7 +208,7 @@ public sealed class Database : IDisposable
   {
     var orders = new List<OrderInfo>();
     using var curr = _conn.CreateCommand();
-    curr.CommandText = @"SELECT identifier, order_number, status_code, created_at, updated_at, observation FROM ordenacao";
+    curr.CommandText = @"SELECT identifier, order_number, activity_id, status_code, created_at, updated_at, observation FROM ordenacao";
     using var reader = curr.ExecuteReader();
     while (reader.Read())
     {
@@ -215,10 +216,11 @@ public sealed class Database : IDisposable
       {
         Identifier = reader.GetInt64(0),
         OrderNumber = reader.GetInt64(1),
-        StatusCode = reader.GetInt32(2),
-        CreatedAt = reader.GetDateTime(3),
-        UpdatedAt = reader.GetDateTime(4),
-        Observation = reader.IsDBNull(5) ? null : reader.GetString(5)
+        ActivityId = reader.IsDBNull(2) ? 0 : reader.GetInt64(2),
+        StatusCode = reader.GetInt32(3),
+        CreatedAt = reader.GetDateTime(4),
+        UpdatedAt = reader.GetDateTime(5),
+        Observation = reader.IsDBNull(6) ? null : reader.GetString(6)
       });
     }
     return orders;
