@@ -56,7 +56,7 @@ public sealed class WebServer : IDisposable
         lock (_lock)
         {
           var responseInfo = new ResponseInfo();
-          var workHandler = new ServicoHandler(handler, requestInfo.nota);
+          var workHandler = new ServicoHandler(handler, requestInfo.nota, requestInfo.aid);
           workHandler.SearchAndEnterActivity();
           if (requestInfo.info.Contains("INF"))
             responseInfo.GeneralInfo = workHandler.GetActivityGeneralInfo();
