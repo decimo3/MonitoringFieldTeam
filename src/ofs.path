@@ -56,7 +56,11 @@ ESPELHOS=/html/body/div[14]/div[1]/main/div/div[2]/div[3]/div[1]/div[3]/div/div[
 SEARCHBAR_INPUT=.search-bar-input
 SEARCHBAR_CLEAR=.search-bar-input-clear
 SEARCHBAR_LOGO=.logo-image
-SEARCHBAR_ITEM=.found-item-activity
+FOUNDORDERS_DIV=#search-bar-container
+FOUNDORDERS_LIST=//*[@aria-label='search section: Ordem de Serviço']
+FOUNDORDERS_ITENS=//*[contains(@class, 'found-item-activity')]
+FOUNDORDERS_ICON=//*[contains(@class, 'activity-icon')]
+FOUNDORDERS_ATTR=aid
 COLETOR_SERVICOS=//div
 COLETOR_HORALINHA=.toaGantt-hour-line
 COLETOR_TIMELINE=.toaGantt-tl
