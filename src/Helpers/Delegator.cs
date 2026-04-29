@@ -11,20 +11,6 @@ public static class Delegator
 
   private static List<OrderInfo> GetOrdersFromFile(string filepath)
   {
-    if (System.IO.Path.GetFileName(filepath) == "ofs.txt")
-    {
-      return System.IO.File.ReadAllLines(filepath)
-        .Where(line => long.TryParse(line, out _))
-        .Select(l => new OrderInfo
-        {
-          ActivityId = 0,
-          OrderNumber = long.Parse(l)
-        })
-        .ToList();
-    }
-    if (System.IO.Path.GetExtension(filepath) == ".csv" &&
-      System.IO.Path.GetFileName(filepath).StartsWith("Atividades"))
-    {
       using var reader = new StreamReader(filepath);
       using var csv = new CsvReader(reader,
         System.Globalization.CultureInfo.InvariantCulture);
@@ -49,9 +35,6 @@ public static class Delegator
           OrderNumber = long.Parse(r["Ordem de Serviço"]!)
         })
         .ToList();
-    }
-    Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
-    return new List<OrderInfo>();
   }
 
   private static void AddOrdersFromFile()
@@ -66,6 +49,9 @@ public static class Delegator
     }
     foreach (var filepath in files)
     {
+      if (System.IO.Path.GetExtension(filepath) != ".csv" ||
+        !System.IO.Path.GetFileName(filepath).StartsWith("Atividades"))
+          continue;
       Log.Information("Relatório atual {rel}", filepath);
       var orders = GetOrdersFromFile(filepath);
       if (orders.Count == 0)
