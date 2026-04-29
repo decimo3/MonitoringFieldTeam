@@ -122,7 +122,8 @@ public sealed class WebHandler : IDisposable
   {
     var elements = this.GetElements(pathname, timeout, replaceText1, replaceText2);
     if (!elements.Any())
-      throw new ElementNotFoundException();
+      throw new ElementNotFoundException(
+        $"O elemento '{pathname}' não foi encontrado dentro do tempo esperado!");
     var element = elements[0];
     if (setValue is not null)
     {
@@ -172,13 +173,16 @@ public sealed class WebHandler : IDisposable
       throw new MissingValueException($"Não foi possível obter o meio a partir do caminho `{bytype}`!");
     var byvalue = (byfunc == By.XPath) ? '.' + pathvalue : pathvalue[1..];
     var elements = parentElement.FindElements(byfunc(byvalue));
-    if (!elements.Any()) throw new ElementNotFoundException();
+    if (!elements.Any()) throw new ElementNotFoundException(
+      $"Não foram encontrados elementos filhos para o elemento pai com o caminho '{pathname}'!");
     var first = elements[0];
-    if (!first.Enabled) throw new ElementNotEnabledException();
+    if (!first.Enabled) throw new ElementNotEnabledException(
+      $"O elemento encontrado para o caminho '{pathname}' não está habilitado!");
     if (first.GetAttribute("type") == "checkbox") return elements;
     return elements;
     if (first.Displayed) return elements;
-    throw new ElementNotDisplayedException();
+    throw new ElementNotDisplayedException(
+      $"O elemento encontrado para o caminho '{pathname}' não está visível!");
   }
   public List<List<string>> GetTableData(IWebElement tableElement)
   {
@@ -231,7 +235,7 @@ public sealed class WebHandler : IDisposable
     if (!WAYPATH.TryGetValue(pathname, out string? pathvalue) || pathvalue is null)
       throw new MissingValueException($"Não foi possível obter o caminho a partir do valor `{pathname}`");
     if (!pathvalue.StartsWith('.'))
-      throw new ArgumentException($"O valor passado não é um nome de classe!");
+      throw new ArgumentException($"O valor '{pathvalue}' referente a chave '{pathname}' não é um nome de classe!");
     var classes = element.GetAttribute("class").Split(" ");
     return classes.Contains(pathvalue[1..]);
   }
@@ -327,7 +331,7 @@ public sealed class WebHandler : IDisposable
       lastSize = file.Length;
       Thread.Sleep(MILISECONDS_TIMECHECK_INTERVAL);
     }
-    throw new TimeoutException("File is still being written.");
+    throw new TimeoutException($"File '{file.FullName}' is still being written.");
   }
   public string DownloadFile(IWebElement element, String? desiredFilename = null, int? counter = null)
   {
