@@ -68,7 +68,7 @@ public static class Delegator
     {
       Log.Information("Relatório atual {rel}", filepath);
       var orders = GetOrdersFromFile(filepath);
-      if (orders.Length == 0)
+      if (orders.Count == 0)
       {
         Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
         continue;
