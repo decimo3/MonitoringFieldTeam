@@ -73,13 +73,7 @@ public static class Delegator
         Log.Error("Não foram encontradas notas para extração no arquivo {file}!", filepath);
         continue;
       }
-      database.AddOrderList(orders.Select(order => new OrderInfo
-      {
-        OrderNumber = order,
-        StatusCode = 0,
-        CreatedAt = DateTime.Now,
-        UpdatedAt = DateTime.Now,
-      }).ToList());
+        database.AddOrderList(orders);
       System.IO.File.Delete(filepath);
     }
   }
