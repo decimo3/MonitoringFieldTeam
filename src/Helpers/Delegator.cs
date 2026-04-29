@@ -152,7 +152,7 @@ public static class Delegator
             try
             {
               Log.Information("Nota: {nota}, Worker: {worker}", order.OrderNumber, worker);
-              var requestInfo = new RequestInfo(extracao, order.OrderNumber);
+              var requestInfo = new RequestInfo(extracao, order.OrderNumber, order.ActivityId);
               var request = new HttpRequestMessage()
               {
                 Method = HttpMethod.Get,
