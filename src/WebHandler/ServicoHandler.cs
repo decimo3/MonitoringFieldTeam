@@ -64,7 +64,7 @@ namespace MonitoringFieldTeam.WebScraper
       var searchbar = handler.GetElement("FOUNDORDERS_DIV", WebHandler.WAITSEC.Total);
       var list = handler.GetNestedElements(searchbar, "FOUNDORDERS_LIST").First();
       var itens = handler.GetNestedElements(list, "FOUNDORDERS_ITENS");
-      OpenQA.Selenium.IWebElement element;
+      OpenQA.Selenium.IWebElement? element = null;
       if (!itens.Any())
         throw new InvalidOperationException($"Nenhuma atividade encontrada para a nota {servico}!");
       if (activityId == 0)
@@ -84,10 +84,11 @@ namespace MonitoringFieldTeam.WebScraper
           if (string.IsNullOrEmpty(aid) || !long.TryParse(aid, out var idAttr)) continue;
           if (idAttr != activityId) continue;
           element = item;
-          return;
+          break;
         }
-        throw new InvalidOperationException($"Atividade {activityId} não encontrada para a nota {servico}!");
       }
+      if (element is null)
+        throw new InvalidOperationException($"Atividade {activityId} não encontrada para a nota {servico}!");
       Log.Information("Nota encontrada! Entrando...", servico);
       element.Click();
       handler.GetElement("ACTIVITY_CABECALHO", WebHandler.WAITSEC.Medio);
