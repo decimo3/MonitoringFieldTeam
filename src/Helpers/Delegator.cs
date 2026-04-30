@@ -168,14 +168,15 @@ public static class Delegator
             {
               response.StatusCode = System.Net.HttpStatusCode.RequestTimeout;
               order.Observation = erro.Message;
-              Log.Error("O worker {worker} ficou offline durante a requisição da nota {nota}!", worker, order);
+              Log.Error("O worker {worker} ficou offline durante a requisição da nota {nota}!",
+                worker, order.OrderNumber);
             }
             catch (Exception erro)
             {
               response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
               order.Observation = erro.Message;
               Log.Error("Aconteceu um erro na nota {nota} no worker {worker}!\nERRO: {erro}.",
-                order, worker, erro.Message);
+                order.OrderNumber, worker, erro.Message);
             }
             finally
             {
