@@ -124,8 +124,10 @@ public static class Delegator
     var extracao = Configuration.GetArray("EXTRACAO");
     using var database = new Database();
     using var client = new HttpClient();
+    var failCount = 0;
     for (var i = 0; i < orders.Count; i++)
     {
+      if (failCount > 3) throw new Exception("O servidor falhou repetidas vezes!");
       semaphore.Wait();
       var order = orders[i];
       int instanceNumber = i % online_workers.Length;
@@ -163,6 +165,7 @@ public static class Delegator
               if (responseInfo.OcorrenciaInfo is not null)
                 database.AddOcorrenciaInfo(responseInfo.OcorrenciaInfo);
               order.Observation = $"Processada informações {string.Join(", ", extracao)} com sucesso!";
+              failCount = 0; // reset fail count after a sucess!
             }
             catch (TaskCanceledException erro)
             {
@@ -170,6 +173,7 @@ public static class Delegator
               order.Observation = erro.Message;
               Log.Error("O worker {worker} ficou offline durante a requisição da nota {nota}!",
                 worker, order.OrderNumber);
+              failCount++; // increase fail count after a exception!
             }
             catch (Exception erro)
             {
@@ -177,6 +181,7 @@ public static class Delegator
               order.Observation = erro.Message;
               Log.Error("Aconteceu um erro na nota {nota} no worker {worker}!\nERRO: {erro}.",
                 order.OrderNumber, worker, erro.Message);
+              failCount++; // increase fail count after a exception!
             }
             finally
             {
