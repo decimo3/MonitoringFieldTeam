@@ -30,21 +30,21 @@ public static class Configuration
     var obj = GetObject(key);
     if (obj is string s) return s;
     if (obj is string[] a) return a[0];
-    throw new ValueNotFoundException("O objeto de configuração não pode ser convertido para o tipo especificado!");
+    throw new ValueNotFoundException($"A configuração `{key}` não pode ser convertido para texto!");
   }
   public static string[] GetArray(string key)
   {
     var obj = GetObject(key);
     if (obj is string[] a) return a;
     if (obj is string s) return new string[] { s };
-    throw new ValueNotFoundException("O objeto de configuração não pode ser convertido para o tipo especificado!");
+    throw new ValueNotFoundException($"A configuração `{key}` não pode ser convertido para lista!");
   }
   public static (string Key, long Value)[] GetPairs(string key)
   {
     var obj = GetObject(key);
     if (obj is (string Key, long Value)[] a) return a;
     if (obj is ValueTuple<string, long> p) return new[] { (p.Item1, p.Item2) };
-    throw new ValueNotFoundException("O objeto de configuração não pode ser convertido para o tipo especificado!");
+    throw new ValueNotFoundException($"A configuração `{key}` não pode ser convertido para tupla!");
   }
   private static object ParseValue(string value)
   {
