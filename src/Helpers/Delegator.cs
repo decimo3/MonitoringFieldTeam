@@ -190,5 +190,10 @@ public static class Delegator
       );
     }
     Task.WhenAll(tasks).GetAwaiter().GetResult();
+    // Try to get pendents orders, if not raise exception there is something wrong!
+    try { orders = GetOrdersFromBase(); } catch { }
+    if (orders.Any())
+        throw new Exception(
+            $"Ainda há {orders.Count} ordens de serviço pendentes!");
   }
 }
