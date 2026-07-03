@@ -49,7 +49,12 @@ public sealed class WebServer : IDisposable
       {
         using var reader = new StreamReader(context.Request.Body);
         var payload = await reader.ReadToEndAsync();
-        if (string.IsNullOrEmpty(payload)) return Results.Ok();
+        if (string.IsNullOrEmpty(payload))
+        {
+          if (!handler.GetElements("SEARCHBAR_LOGO", WebHandler.WAITSEC.Medio).Any())
+            return Results.Problem("A página está inacessível!", statusCode: 500);
+          return Results.Ok();
+        }
         var requestInfo = JsonSerializer.Deserialize<RequestInfo>(payload);
         if (requestInfo is null)
           return Results.Ok();
