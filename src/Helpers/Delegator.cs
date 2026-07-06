@@ -82,6 +82,7 @@ public static class Delegator
     var workers = Configuration.GetArray("WORKERS");
     // DONE - Check witch workers are on
     using var client = new HttpClient();
+    client.Timeout = new TimeSpan(0, 0, 30);
     var online_workers = Array.Empty<string>();
     foreach (var worker in workers)
     {
