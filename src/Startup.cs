@@ -46,6 +46,11 @@ public class Startup
         }
         using var handler = new WebHandler.WebHandler();
         Autenticador.Autenticar(handler);
+        if (operacao == "AUTOMATO")
+        {
+          Automato.Run(handler);
+          break;
+        }
         if (operacao == "RETRODAY")
         {
           Retroativo.Relatorios(handler);
