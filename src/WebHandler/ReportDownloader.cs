@@ -10,14 +10,16 @@ public static class ReportDownloader
     var datapath = Configuration.GetString("DATAPATH");
     var expectedFilename = $"Atividades-{bucketName}_{date.ToString("dd_MM_yy")}.csv";
     var expectedFilepath = System.IO.Path.Combine(datapath, expectedFilename);
+    Log.Information("Verificando se já foi baixado o relatório do balde {balde}", bucketName);
     return System.IO.File.Exists(expectedFilepath);
   }
   public static string? Download(WebHandler.WebHandler handler, String bucketName, DateOnly date)
   {
+    Log.Information("Realizando o download do relatório do balde {balde}", bucketName);
     Parametrizador.VerificarPagina(handler);
     if (!handler.GetElements("GANNT_ACTIONBTN").Any())
     {
-      Log.Error("Não é possível baixar relatório de um grupo!");
+      Log.Error("Não é possível baixar relatório do balde {balde}!", bucketName);
       return null;
     }
     var parent = handler.GetElement("GANNT_TOOLBAR");

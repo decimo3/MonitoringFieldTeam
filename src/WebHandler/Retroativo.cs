@@ -26,7 +26,7 @@ public static class Retroativo
         Atualizador.Atualizar(handler);
         if (!Finalizador.TemFinalizacao(dia, balde))
         {
-          Log.Information("Finalização retroativa: balde '{balde}', data {data}.", balde, dia);
+          Log.Information("Finalização retroativa: balde '{balde}'", balde);
           var espelhos = Coletor.Coletar(handler);
           var relatorios = Finalizador.Finalizacao(espelhos, dia, false);
           var filename = Finalizador.CreateReport(relatorios, balde, dia);
@@ -36,7 +36,7 @@ public static class Retroativo
         }
         if (!ReportDownloader.TemRelatorio(balde, dia))
         {
-          Log.Information("Relatório retroativo: balde '{balde}', data {data}.", balde, dia);
+          Log.Information("Relatório retroativo: balde '{balde}'", balde);
           var reportpath = ReportDownloader.Download(handler, balde, dia);
           #if !DEBUG
             if (reportpath is not null)
@@ -50,6 +50,7 @@ public static class Retroativo
   }
   public static DateOnly TrocarData(WebHandler.WebHandler handler, DateOnly data)
   {
+    Log.Information("Trocando o dia da visualização para o dia {data}", data);
     const int QUANTIDADE_MAXIMA_DE_PAGINAS_DE_CALENDARIOS = 3;
     var data_atual = DateOnly.Parse(handler.GetElement("GANNT_DATEPICK", WAITSEC.Agora).Text);
     if (data_atual == data) return data_atual;
