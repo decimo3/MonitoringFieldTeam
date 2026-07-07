@@ -10,7 +10,6 @@ public static class Automato
     try
     {
       var isReportAlreadyDownloaded = false;
-      Autenticador.Autenticar(handler);
       Parametrizador.VerificarPagina(handler);
 
       Log.Information("Verificando se já foi realizada a importação de relatórios...");
