@@ -91,9 +91,19 @@ namespace MonitoringFieldTeam.WebScraper
         throw new InvalidOperationException($"Atividade {activityId} não encontrada para a nota {servico}!");
       Log.Information("Nota encontrada! Entrando...", servico);
       element.Click();
-      var currentActivityId = handler.GetElement("ACTIVITY_ATIVIDADE", WebHandler.WAITSEC.Medio).Text;
-      if (activityId != 0 && !currentActivityId.Equals(activityId.ToString()))
-        throw new InvalidOperationException($"Atividade {currentActivityId} não corresponde com a atividade pesquisada {activityId}!");
+      // DONE - aguardar o texto mudar para verificar
+      if (activityId != 0)
+      {
+        var currentActivityId = String.Empty;
+        var expectedActivityId = activityId.ToString();
+        var expirationTime = DateTime.Now.AddSeconds((int)WebHandler.WAITSEC.Medio);
+        do
+        {
+          currentActivityId = handler.GetElement("ACTIVITY_ATIVIDADE", WebHandler.WAITSEC.Medio).Text;
+          if (DateTime.Now >= expirationTime)
+            throw new InvalidOperationException("Tempo limite excedido aguardando a atividade ser carregada!");
+        } while (currentActivityId != expectedActivityId);
+      }
     }
     public GeneralInfo GetActivityGeneralInfo()
     {
