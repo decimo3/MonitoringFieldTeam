@@ -91,6 +91,8 @@ namespace MonitoringFieldTeam.WebScraper
         throw new InvalidOperationException($"Atividade {activityId} não encontrada para a nota {servico}!");
       Log.Information("Nota encontrada! Entrando...", servico);
       element.Click();
+      // DONE - aguardar a nota carregar antes de checar
+      IsFinished();
       // DONE - aguardar o texto mudar para verificar
       if (activityId != 0)
       {
@@ -107,7 +109,6 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public GeneralInfo GetActivityGeneralInfo()
     {
-      IsFinished();
       var result = new GeneralInfo();
       Log.Information("Obtendo informações gerais da nota...");
       var cabecalho = handler.GetElement("ACTIVITY_CABECALHO");
@@ -125,7 +126,6 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public List<String> GetActivityUploads(bool fotografias_ou_evidencias)
     {
-      IsFinished();
       var files = new List<String>();
       Log.Information("Realizando downloads dos arquivos...");
       var pathname = fotografias_ou_evidencias ? "ACTIVITY_ARQUIVOS" : "ACTIIVITY_EVIDENCIAS";
@@ -141,7 +141,6 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public List<FinalizaInfo> GetActivityClosings()
     {
-      IsFinished();
       var result = new List<FinalizaInfo>();
       Log.Information("Obtendo informações da finalização...");
       var rejeicao = handler.GetElements("ACTIVITY_REJEICAO", WebHandler.WAITSEC.Agora).FirstOrDefault();
@@ -180,7 +179,6 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public List<MaterialInfo> GetActivityMaterials()
     {
-      IsFinished();
       var result = new List<MaterialInfo>();
       Log.Information("Obtendo informações do material...");
       handler.GetElement("ACTIVITY_MATERIAL", WebHandler.WAITSEC.Agora).Click();
@@ -210,7 +208,6 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public OcorrenciaInfo GetActivityOcorrencias()
     {
-      IsFinished();
       Log.Information("Obtendo informações da ocorrências...");
       handler.GetElement("ACTIVITY_INSPECAO", WebHandler.WAITSEC.Curto).Click();
       if (!handler.GetElements("IDENTIFICACAO_NUMEROTOI", WebHandler.WAITSEC.Medio).Any()) return null;
