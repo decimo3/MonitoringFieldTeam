@@ -67,11 +67,6 @@ public static class Delegator
     using var database = new Database();
     var orders = database.GetOrderList()
       .Where(x => x.StatusCode != 200).ToList();
-    if (orders.Count == 0)
-    {
-      throw new InvalidOperationException(
-        "Não foram encontradas notas para extração na base de dados!");
-    }
     Log.Information("{qtd} ordens de serviço para extração.", orders.Count);
     return orders;
   }
@@ -115,6 +110,11 @@ public static class Delegator
     AddOrdersFromFile();
     // DONE - Get the list of orders
     var orders = GetOrdersFromBase();
+    if (orders.Count == 0)
+    {
+      Log.Error("Não foram encontradas notas para extração na base de dados!");
+      return;
+    }
     // DONE - Get the list of workers
     var online_workers = GetOnlineWorkers();
     var estimate_time = TimeSpan.FromSeconds(orders.Count * ESTIMATED_TIME_PER_ORDER / online_workers.Length);
