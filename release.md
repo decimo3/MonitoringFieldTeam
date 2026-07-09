@@ -1,17 +1,19 @@
-# Added persistence and filtering activities
+# Implementado novo módulo "AUTONOMO"
 
-Added persistence for occurrences and support for filtering multiple activities.
+O programa agora trabalhará de forma autônoma para coleta de informações do OFS. Ele fará automaticamente:
 
-- Introduced a database-backed progress tracking feature. This allows the program to be interrupted—due to internet or power outages—without restarting the entire process.
+1. O download do relatório oficial do OFS em D+1;
+2. Instanciação de um servidor de coleta local;
+3. Importação da lista de notas "concluídas";
+4. Coleta e persistência no banco de dados.
 
-- The program now processes OFS files and stores them in a database, using it to build the processing queue. If interrupted, execution resumes from the last processed point, eliminating previous data loss issues.
+Essas operações serão realizadas assim que o programa iniciar, mantendo a coleta de dados independente de qualquer interação humana.
 
-- Improved activity retrieval by using the activity ID, ensuring more accurate and reliable results.
+Além dessa nova funcionalidade, foram realizadas as melhorias e correções:
 
-- **Breaking change:** plain text reports are no longer supported for data extraction.
-
-- Extended database storage to include additional information such as:
-  - inclusion date and time
-  - service date and time
-  - status code
-  - observation message
+- Implementada dupla checagem do número da atividade para zerar as coletas erradas;
+- Adicionada instrução para reiniciar a coleta se ainda houver erros após o mesmo;
+- Implementado o sistema de verificação de falhas consecutivas no servidor local;
+    > Isso é, se der um problema, depois de 3 falhas, o programa reiniciará.
+- Alterado o banco de dados de LOCAL (SQLite3) para CENTRAL (PostgreSQL 16);
+- Corrigido problema de download do ChromeDriver em versão superior ao GoogleChrome.
