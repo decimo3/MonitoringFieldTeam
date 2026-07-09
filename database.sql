@@ -1,10 +1,10 @@
--- Schema for MonitoringFieldTeam SQLite database
+-- Schema for MonitoringFieldTeam PostgreSQL database
 -- Created to match INSERT usage in src/Helpers/Database.cs
 
-PRAGMA foreign_keys = ON;
+CREATE DATABASE monitoring;
 
 CREATE TABLE IF NOT EXISTS ordenacao (
-  identifier INTEGER PRIMARY KEY AUTOINCREMENT,
+  identifier SERIAL PRIMARY KEY,
   order_number INTEGER NOT NULL,
   activity_id INTEGER NOT NULL,
   status_code INTEGER NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS ordenacao (
 
 -- General information about activities
 CREATE TABLE IF NOT EXISTS general (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   data TEXT,
   notaservico TEXT,
   recurso TEXT,
@@ -30,7 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_general_notaservico ON general(notaservico);
 
 -- Finalization / parts used in a service
 CREATE TABLE IF NOT EXISTS finaliza (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   notaservico TEXT,
   codigo TEXT,
   quantidade TEXT
@@ -39,7 +39,7 @@ CREATE INDEX IF NOT EXISTS idx_finaliza_notaservico ON finaliza(notaservico);
 
 -- Materials used / delivered
 CREATE TABLE IF NOT EXISTS material (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   nota TEXT,
   tipo TEXT,
   codigo TEXT,
@@ -52,7 +52,7 @@ CREATE INDEX IF NOT EXISTS idx_material_nota ON material(nota);
 
 -- Ocorrencia / inspection reports
 CREATE TABLE IF NOT EXISTS ocorrencia (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id SERIAL PRIMARY KEY,
   notaservico TEXT,
   caixatipo TEXT,
   caixamodelo TEXT,
