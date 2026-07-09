@@ -36,9 +36,9 @@ public class Startup
           Delegator.Run();
           break;
         }
-        Updater.Update();
         InstanceChecker.MultipleRun();
         InstanceChecker.ChromeKiller();
+        Updater.Update();
         if (operacao == "MEGAZORD")
         {
           Megazord.Run();
