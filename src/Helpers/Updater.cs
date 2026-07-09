@@ -1,8 +1,13 @@
+using System.Net.Http.Json;
+using System.Text.Json;
 using Serilog;
 namespace MonitoringFieldTeam.Helpers;
+
 public static class Updater
 {
-  private static readonly String DRIVER_ZIPFILE = "chromedriver-win64.zip";
+  private const String DRIVER_ZIPFILE = "chromedriver-win64.zip";
+  private const String DRIVER_MILESTONES = "https://googlechromelabs.github.io/chrome-for-testing/latest-versions-per-milestone.json";
+  private const String DRIVER_DOWNLOAD = "https://storage.googleapis.com/chrome-for-testing-public/{0}/win64/chromedriver-win64.zip";
 
   private static Int32 GetVersionAplicationOutput(String aplication, String arguments)
   {
@@ -10,32 +15,28 @@ public static class Updater
       var result = Helpers.Executor.Executar(aplication, arguments);
       var match = regex.Match(result);
       if(!match.Success)
-        throw new InvalidOperationException("Não foi encontrada a versão da aplicação nas propriedades do arquivo!");
+        throw new InvalidOperationException($"Não foi encontrada a versão da aplicação `{aplication}` nas propriedades do arquivo!");
       return Int32.Parse(match.Value);
   }
 
-  private static String CheckNewerChromeDriverVersion()
+  private static String CheckNewerChromeDriverVersion(String version)
   {
-    // https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_116
     using(var client = new HttpClient())
     {
-      var last_version_url = "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE";
-      var request = new System.Net.Http.HttpRequestMessage(HttpMethod.Get, last_version_url);
+      var request = new System.Net.Http.HttpRequestMessage(HttpMethod.Get, DRIVER_MILESTONES);
       var response = client.Send(request);
       response.EnsureSuccessStatusCode();
-      using(var stream = new StreamReader(response.Content.ReadAsStream()))
-      {
-        return stream.ReadToEnd();
-      }
+      using var document = response.Content.ReadFromJsonAsync<JsonDocument>().GetAwaiter().GetResult() ??
+          throw new InvalidOperationException("A responsta da requisição para `DRIVER_MILESTONES` recebida é nula");
+      return document.RootElement.GetProperty("milestones").GetProperty(version).GetProperty("version").GetString()!;
     }
   }
 
   private static void DownloadNewerChromeDriver(String driver_version)
   {
-    // https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.88/win64/chromedriver-win64.zip
-    using(var client = new HttpClient())
+    using (var client = new HttpClient())
     {
-      var last_version_url = $"https://storage.googleapis.com/chrome-for-testing-public/{driver_version}/win64/chromedriver-win64.zip";
+      var last_version_url = String.Format(DRIVER_DOWNLOAD, driver_version);
       var request = new System.Net.Http.HttpRequestMessage(HttpMethod.Get, last_version_url);
       var response = client.Send(request);
       response.EnsureSuccessStatusCode();
@@ -84,10 +85,10 @@ public static class Updater
       {
         var driver_version = GetVersionAplicationOutput(driverpath, "--version");
         Log.Information("Driver major version: {driver_version}.", driver_version);
-        if(driver_version >= chrome_version) return;
+        if (driver_version == chrome_version) return;
       }
       Log.Information("Buscando as novas versões do chromedriver...");
-      var newer_version = CheckNewerChromeDriverVersion();
+      var newer_version = CheckNewerChromeDriverVersion(chrome_version.ToString());
       Log.Information("Versão do chromedriver: {newer_version}", newer_version);
       Log.Information("Baixando a nova versão do chromedriver...");
       DownloadNewerChromeDriver(newer_version);
