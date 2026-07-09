@@ -12,25 +12,11 @@ public sealed class Database : IDisposable
   {
     _conn = new SqliteConnection(DNS);
     _conn.Open();
-    CreateDatabaseScheme();
   }
 
   public void Dispose()
   {
     _conn?.Dispose();
-  }
-
-  public void CreateDatabaseScheme()
-  {
-    using var curr = _conn.CreateCommand();
-    var filepath = System.IO.Path.Combine(
-      System.AppContext.BaseDirectory,
-      "database.sql");
-    if (!System.IO.File.Exists(filepath))
-      throw new FileNotFoundException(
-        "O arquivo `database.sql` não foi encontrado!");
-    curr.CommandText = System.IO.File.ReadAllText(filepath);
-    curr.ExecuteNonQuery();
   }
 
   public void AddGeneralInfo(GeneralInfo generalInfo)
