@@ -8,6 +8,8 @@ namespace MonitoringFieldTeam.Persistence
     public string? Tipo { get; set; }
     public string? Codigo { get; set; }
     public string? Serie { get; set; }
+    // TODO - Implementar no banco de dados
+    public string? Lacre { get; set; }
     public string? Descricao { get; set; }
     public string? Quantidade { get; set; }
     public string? Origem { get; set; }
