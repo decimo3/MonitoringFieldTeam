@@ -189,16 +189,52 @@ namespace MonitoringFieldTeam.WebScraper
         var origem = handler.GetElementAttribute(tabela, "ACTIVITY_MATERIAL_ORIGEM");
         var conteudoTabela = handler.GetTableData(tabela);
         result.AddRange(conteudoTabela.Select(linha =>
-          new MaterialInfo
+        {
+          var material = new MaterialInfo
           {
             Nota = servico.ToString(),
             Tipo = linha[0],
-            Codigo = linha[1],
-            Serie = linha[2],
-            Descricao = linha.Count == 5 ? linha[3] : origem == "customer" ? linha[3] : linha[4],
-            Quantidade = linha.Count == 5 ? linha[4] : linha[5],
             Origem = origem
+          };
+          switch (linha.Count)
+          {
+            // Tabela de materiais com 3 colunas:
+            // Tipo de Equipamento, Tipo de Lacre, Quantidade
+            case 3:
+              material.Lacre = linha[1];
+              material.Quantidade = linha[2];
+            break;
+            // Tabela de materiais com 4 colunas:
+            // Tipo de Equipamento, Material, Número de Série, Quantidade
+            case 4:
+              material.Codigo = linha[1];
+              material.Serie = linha[2];
+              material.Quantidade = linha[3];
+            break;
+            // Tabela de materiais com 5 colunas:
+            // Tipo de Equipamento, Material, Número de Série, Descrição, Quantidade
+            case 5:
+              material.Codigo = linha[1];
+              material.Serie = linha[2];
+              material.Descricao = linha[3];
+              material.Quantidade = linha[4];
+            break;
+            // Tabela de materiais com 6 colunas:
+            // Tipo de Equipamento, Material, Número de Série, Tipo de Lacre, Descrição, Quantidade
+            case 6:
+              material.Codigo = linha[1];
+              material.Serie = linha[2];
+              material.Lacre = linha[3];
+              material.Descricao = linha[4];
+              material.Quantidade = linha[5];
+            break;
+            // Caso de tabela fora do padrões estipulados
+            default:
+                throw new InvalidOperationException(
+                    $"Estrutura de tabela desconhecida ({linha.Count} colunas).");
           }
+          return material;
+        }
         ));
       }
       BackToBlack();
