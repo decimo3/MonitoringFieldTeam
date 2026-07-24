@@ -4,15 +4,15 @@ namespace MonitoringFieldTeam.Persistence
 {
   public class MaterialInfo
   {
-    public string? Nota { get; set; }
-    public string? Tipo { get; set; }
-    public string? Codigo { get; set; }
-    public string? Serie { get; set; }
+    public string? Nota { get; set; } = String.Empty;
+    public string? Tipo { get; set; } = String.Empty;
+    public string? Codigo { get; set; } = String.Empty;
+    public string? Serie { get; set; } = String.Empty;
     // TODO - Implementar no banco de dados
-    public string? Lacre { get; set; }
-    public string? Descricao { get; set; }
-    public string? Quantidade { get; set; }
-    public string? Origem { get; set; }
+    public string? Lacre { get; set; } = String.Empty;
+    public string? Descricao { get; set; } = String.Empty;
+    public string? Quantidade { get; set; } = String.Empty;
+    public string? Origem { get; set; } = String.Empty;
     public override string ToString()
     {
       var type = this.GetType();
