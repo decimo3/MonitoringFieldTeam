@@ -1,19 +1,7 @@
-# Implementado novo módulo "AUTONOMO"
+# Resolvido problema com variação da estrutura da tabela de materiais
 
-O programa agora trabalhará de forma autônoma para coleta de informações do OFS. Ele fará automaticamente:
+O programa estava dando erro de índice, ao tentar acessar tabelas com menos de 5 colunas, causando erro no coletor de materiais SERVIDOR.
 
-1. O download do relatório oficial do OFS em D+1;
-2. Instanciação de um servidor de coleta local;
-3. Importação da lista de notas "concluídas";
-4. Coleta e persistência no banco de dados.
+O acúmulo de mais de 4 notas finalizadas como concluídas dessa forma, ou seja, sem medidor na instalação. Causou a impossibilidade de operação do modo AUTOMATO
 
-Essas operações serão realizadas assim que o programa iniciar, mantendo a coleta de dados independente de qualquer interação humana.
-
-Além dessa nova funcionalidade, foram realizadas as melhorias e correções:
-
-- Implementada dupla checagem do número da atividade para zerar as coletas erradas;
-- Adicionada instrução para reiniciar a coleta se ainda houver erros após o mesmo;
-- Implementado o sistema de verificação de falhas consecutivas no servidor local;
-    > Isso é, se der um problema, depois de 3 falhas, o programa reiniciará.
-- Alterado o banco de dados de LOCAL (SQLite3) para CENTRAL (PostgreSQL 16);
-- Corrigido problema de download do ChromeDriver em versão superior ao GoogleChrome.
+Para esses casos, o OFS renderiza uma tabela incompleta, e para resolver o problema, foi implementada coleta para tabela com padrão de 3 e 4 colunas (além das coletas existentes para 5 e 6 colunas), preenchendo os demais valores com texto vazio para possibilitar a inserção no banco de dados.
