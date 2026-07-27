@@ -18,7 +18,7 @@ public static class Automato
         var last = database.GetOrderList()
             .OrderByDescending(x => x.CreatedAt)
             .FirstOrDefault();
-        if (last != null && last.UpdatedAt >= DateTime.Now.AddHours(-6))
+        if (last != null && last.CreatedAt.Date == DateTime.Today)
         {
           isReportAlreadyDownloaded = true;
           Log.Information("Os relatórios foram importados recentemente, pulando...");
