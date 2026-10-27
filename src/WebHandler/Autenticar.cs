@@ -9,6 +9,7 @@ public static class Autenticador
   {
     var usuario = Configuration.GetString("USUARIO");
     var palavra = Configuration.GetString("PALAVRA");
+    var matricula = Configuration.GetString("MATRICULA");
     Log.Information("Autenticando usuário...");
     if (handler.GetElements("AUTENTICAR_SIGNOUT", WAITSEC.Medio).Any()) // FIXME
     {
@@ -19,30 +20,20 @@ public static class Autenticador
       handler.GetElement("AUTENTICAR_OFSUSER", WAITSEC.Agora).SendKeys(usuario);
       handler.GetElement("AUTENTICAR_OFSPASS", WAITSEC.Agora).SendKeys(palavra);
       handler.GetElement("AUTENTICAR_OFSLOGIN", WAITSEC.Agora).Click();
+      if(handler.GetElements("AUTENTICAR_OFSERROR", WAITSEC.Curto).FirstOrDefault()?.Displayed ?? false)
+          throw new InvalidOperationException("A credencial informada está incorreta!");
     }
     if (handler.GetElements("AUTENTICAR_WFMAUTH", WAITSEC.Medio).Any())
     {
-      handler.GetElement("AUTENTICAR_WFMUSER", WAITSEC.Curto).SendKeys(usuario);
-      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Total).Click();
-      if (handler.GetElements("AUTENTICAR_WFMERROR1", WAITSEC.Curto).Any())
-        throw new InvalidOperationException("O usuário informado está incorreto!");
+      handler.GetElement("AUTENTICAR_WFMUSER", WAITSEC.Curto).SendKeys(matricula);
       handler.GetElement("AUTENTICAR_WFMPASS", WAITSEC.Curto).SendKeys(palavra);
       handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
-      if (handler.GetElements("AUTENTICAR_WFMERROR2", WAITSEC.Curto).Any())
-        throw new InvalidOperationException("A senha informada está incorreta!");
+      if (handler.GetElements("AUTENTICAR_WFMERROR", WAITSEC.Curto).FirstOrDefault()?.Displayed ?? false)
+          throw new InvalidOperationException("A credencial informada está incorreta!");
     }
-    if (handler.GetElements("AUTENTICAR_WFMLIST", WAITSEC.Medio).Any())
+    if (handler.GetElements("CONFEDERACAO_CONSENT_PAGE", WAITSEC.Medio).Any())
     {
-      handler.GetElement("AUTENTICAR_WFMLIST", WAITSEC.Agora).Click();
-      handler.GetElement("AUTENTICAR_WFMPASS", WAITSEC.Curto).SendKeys(palavra);
-      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
-      if (handler.GetElements("AUTENTICAR_WFMERROR2", WAITSEC.Curto).Any())
-        throw new InvalidOperationException("A senha informada está incorreta!");
-    }
-    if (handler.GetElements("AUTENTICAR_WFMCHECK", WAITSEC.Medio).Any())
-    {
-      handler.GetElement("AUTENTICAR_WFMCHECK", WAITSEC.Agora).Click();
-      handler.GetElement("AUTENTICAR_WFMBUTTON", WAITSEC.Agora).Click();
+      handler.GetElement("CONFEDERACAO_CONSENT_AGREE", WAITSEC.Curto).Click();
     }
     Log.Information("Autenticação realizada!");
   }

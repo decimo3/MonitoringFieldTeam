@@ -10,15 +10,15 @@ AUTENTICAR_OFSAUTH=#welcome-message
 AUTENTICAR_OFSUSER=#username
 AUTENTICAR_OFSPASS=#password
 AUTENTICAR_OFSLOGIN=#sign-in
+AUTENTICAR_OFSERROR=#notification-message-block
 # Painel de autenticação do WFM
-AUTENTICAR_WFMAUTH=#lightbox
-AUTENTICAR_WFMUSER=//*[@name='loginfmt']
-AUTENTICAR_WFMPASS=//*[@name='passwd']
-AUTENTICAR_WFMBUTTON=#idSIButton9
-AUTENTICAR_WFMERROR1=#usernameError
-AUTENTICAR_WFMERROR2=#passwordError
-AUTENTICAR_WFMLIST=//*[@id='tilesHolder']/div[1]/div/div[1]/div/div[1]/img
-AUTENTICAR_WFMCHECK=//*[@name='DontShowAgain']
+AUTENTICAR_WFMAUTH=#loginForm
+AUTENTICAR_WFMUSER=//*[@name='Ecom_User_ID']
+AUTENTICAR_WFMPASS=//*[@name='Ecom_Password']
+AUTENTICAR_WFMBUTTON=#login-button
+AUTENTICAR_WFMERROR=#notification-pass
+CONFEDERACAO_CONSENT_PAGE=//*[@name='IDPConsent']
+CONFEDERACAO_CONSENT_AGREE=#consentobtainedbutton
 # Painel de exibição GANNT com informações da ROTA
 GANNT_DISPLAY=.toaGantt
 GANNT_BUCKETS=.edt-item
