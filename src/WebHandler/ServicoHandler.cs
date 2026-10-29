@@ -193,7 +193,7 @@ namespace MonitoringFieldTeam.WebScraper
       Log.Information("Obtendo informações do material...");
       handler.GetElement("ACTIVITY_MATERIAL", WebHandler.WAITSEC.Agora).Click();
       var tabelas = handler.GetElements("GLOBAL_TABLE", WebHandler.WAITSEC.Total);
-      if (!tabelas.Any()) throw new InvalidOperationException("Nenhuma tabela foi encontrada!");
+      if (!tabelas.Any()) return result;
       foreach (var tabela in tabelas)
       {
         var origem = handler.GetElementAttribute(tabela, "ACTIVITY_MATERIAL_ORIGEM");
