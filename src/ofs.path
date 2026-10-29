@@ -4,6 +4,8 @@ GLOBAL_TABLEROW=//tr
 GLOBAL_TABLECEL=//td | .//th
 GLOBAL_DIVCHILD=//div
 GLOBAL_BACKBTN=.oj-ux-ico-nav-left
+GLOBAL_NOTIFICATION_POPUP=#notification-message
+GLOBAL_NOTIFICATION_CLEAR=#notification-clear
 # Painel de autenticação do OFS
 AUTENTICAR_SIGNOUT=#SignOutStatusMessage
 AUTENTICAR_OFSAUTH=#welcome-message
