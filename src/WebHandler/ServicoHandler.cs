@@ -98,6 +98,11 @@ namespace MonitoringFieldTeam.WebScraper
         throw new InvalidOperationException($"Atividade {activityId} não encontrada para a nota {servico}!");
       Log.Information("Nota encontrada! Entrando...", servico);
       element.Click();
+      // DONE - Close notification popup if displayed
+      if (handler.GetElements("GLOBAL_NOTIFICATION_POPUP", WebHandler.WAITSEC.Agora).Any())
+      {
+        handler.GetElement("GLOBAL_NOTIFICATION_CLEAR", WebHandler.WAITSEC.Agora).Click();
+      }
       // DONE - aguardar a nota carregar antes de checar
       IsFinished();
       // DONE - aguardar o texto mudar para verificar
