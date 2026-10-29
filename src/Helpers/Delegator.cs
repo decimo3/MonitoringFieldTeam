@@ -8,6 +8,11 @@ namespace MonitoringFieldTeam.Helpers;
 public static class Delegator
 {
   private static readonly int ESTIMATED_TIME_PER_ORDER = 20;
+  private static readonly String[] EXCEPTION_CODES =
+  {
+    "20.5", // Negociação de débitos
+    "7.70", // Vistoria rejeitada
+  };
 
   private static List<OrderInfo> GetOrdersFromFile(string filepath)
   {
@@ -27,7 +32,9 @@ public static class Delegator
         .Where(r =>
           (r["Status da Atividade"] == "concluído") &&
           !string.IsNullOrWhiteSpace(r["Ordem de Serviço"]) &&
-          long.TryParse(r["Ordem de Serviço"], out _)
+          long.TryParse(r["Ordem de Serviço"], out _) &&
+          !EXCEPTION_CODES.Any(c => r["Códs. de Fechamento"]?.Contains(c) ?? false) &&
+          !EXCEPTION_CODES.Any(c => r["Motivo de Rejeição"]?.Contains(c) ?? false)
         )
         .Select(r => new OrderInfo
         {
