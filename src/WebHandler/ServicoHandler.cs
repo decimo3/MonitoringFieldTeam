@@ -19,40 +19,36 @@ namespace MonitoringFieldTeam.WebScraper
       this.servico = servico;
       this.activityId = activityId;
     }
+    public void WaitLoading(string pathname)
+    {
+      var element = handler.GetElement(pathname, WebHandler.WAITSEC.Curto);
+      var expiration = DateTime.Now.AddSeconds((int)WebHandler.WAITSEC.Longo);
+      do
+      {
+        if (DateTime.Now > expiration) throw new OperationCanceledException(
+            $"O elemento {pathname} ainda está coberto após o tempo limite!");
+        Log.Information($"Aguardando pela visibilidade do elemento {pathname}...");
+        Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
+      }
+      while (handler.IsElementCovered(element));
+    }
     private void BackToBlack()
     {
       var container = handler.GetElement("ACTIVITY_CONTAINER", WebHandler.WAITSEC.Agora);
       handler.VerticalScroll(container, -9999);
-      var backbtn = handler.GetElement("GLOBAL_BACKBTN", WebHandler.WAITSEC.Agora);
-      if (!handler.IsElementCovered(backbtn))
-      {
-        backbtn.Click();
-        return;
-      }
-      Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
-      BackToBlack();
+      WaitLoading("GLOBAL_BACKBTN");
+      handler.GetElement("GLOBAL_BACKBTN", WebHandler.WAITSEC.Agora).Click();
     }
     private void IsFinished()
     {
       var finished = handler.GetElement("ACTIVITY_SITUACAO", WebHandler.WAITSEC.Curto);
-      if (!handler.IsElementCovered(finished))
-      {
-        if (finished.Text.Contains("concluído")) return;
-        throw new InvalidOperationException($"A nota de serviço {servico} não está finalizada!");
-      }
-      Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
-      IsFinished();
+      if (finished.Text.Contains("concluído")) return;
+      throw new InvalidOperationException($"A nota de serviço {servico} não está finalizada!");
     }
     public void SearchAndEnterActivity()
     {
+      WaitLoading("SEARCHBAR_INPUT");
       Log.Information("Pesquisando nota {nota}, atividade {atividade}", servico, activityId);
-      var expiration = DateTime.Now.AddSeconds((int)WebHandler.WAITSEC.Medio);
-      var searchbar = handler.GetElement("SEARCHBAR_INPUT", WebHandler.WAITSEC.Curto);
-      while (handler.IsElementCovered(searchbar) && DateTime.Now < expiration)
-      {
-        Log.Information("Aguardando pela visibilidade do elemento SEARCHBAR_INPUT...");
-        Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
-      }
       try
       {
         // Click on search bar to focus cursor on
