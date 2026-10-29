@@ -208,6 +208,11 @@ namespace MonitoringFieldTeam.WebScraper
           };
           switch (linha.Count)
           {
+            // Tabela de materiais com 2 colunas:
+            // Tipo de Equipamento, Quantidade
+            case 2:
+              material.Quantidade = linha[1];
+            break;
             // Tabela de materiais com 3 colunas:
             // Tipo de Equipamento, Tipo de Lacre, Quantidade
             case 3:
