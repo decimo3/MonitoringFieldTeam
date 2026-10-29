@@ -46,6 +46,13 @@ namespace MonitoringFieldTeam.WebScraper
     public void SearchAndEnterActivity()
     {
       Log.Information("Pesquisando nota {nota}, atividade {atividade}", servico, activityId);
+      var expiration = DateTime.Now.AddSeconds((int)WebHandler.WAITSEC.Medio);
+      var searchbar = handler.GetElement("SEARCHBAR_INPUT", WebHandler.WAITSEC.Curto);
+      while (handler.IsElementCovered(searchbar) && DateTime.Now < expiration)
+      {
+        Log.Information("Aguardando pela visibilidade do elemento SEARCHBAR_INPUT...");
+        Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
+      }
       try
       {
         // Click on search bar to focus cursor on
@@ -61,8 +68,8 @@ namespace MonitoringFieldTeam.WebScraper
       // Fill search bar with workorder number char by char
       handler.SendKeyByKey(servico.ToString());
       // Try to click on the first workorder on list
-      var searchbar = handler.GetElement("FOUNDORDERS_DIV", WebHandler.WAITSEC.Total);
-      var list = handler.GetNestedElements(searchbar, "FOUNDORDERS_LIST").First();
+      var div = handler.GetElement("FOUNDORDERS_DIV", WebHandler.WAITSEC.Total);
+      var list = handler.GetNestedElements(div, "FOUNDORDERS_LIST").First();
       var itens = handler.GetNestedElements(list, "FOUNDORDERS_ITENS");
       OpenQA.Selenium.IWebElement? element = null;
       if (!itens.Any())
