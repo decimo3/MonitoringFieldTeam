@@ -1,5 +1,6 @@
 using Serilog;
 using MonitoringFieldTeam.WebHandler;
+using MonitoringFieldTeam.Helpers;
 
 namespace MonitoringFieldTeam.WebScraper
 {
@@ -22,6 +23,14 @@ namespace MonitoringFieldTeam.WebScraper
     public static void VerificarPagina(WebHandler.WebHandler handler)
     {
       Log.Information("Verificando a página...");
+      // FIXME - Se carregar com consulta, dar um jeito de voltar ao GANNT
+      var operacao = Configuration.GetString("OPERACAO");
+      if(handler.GetElements("SEARCHBAR_LOGO", WAITSEC.Curto).Any())
+      {
+        if(operacao != "RETRODAY" && operacao != "MONITORA") return;
+        throw new NotImplementedException(
+            "A página foi carregada com informação de nota de serviço!");
+      }
       handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
     }
   }
