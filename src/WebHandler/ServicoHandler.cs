@@ -97,8 +97,9 @@ namespace MonitoringFieldTeam.WebScraper
       // DONE - Force program to wait to page update
       Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
       // DONE - Close notification popup if displayed
-      if (handler.GetElements("GLOBAL_NOTIFICATION_POPUP", WebHandler.WAITSEC.Agora).Any())
+      if (handler.GetElements("GLOBAL_NOTIFICATION_POPUP", WebHandler.WAITSEC.Agora).FirstOrDefault()?.Displayed ?? false)
       {
+        WaitLoading("GLOBAL_NOTIFICATION_CLEAR");
         handler.GetElement("GLOBAL_NOTIFICATION_CLEAR", WebHandler.WAITSEC.Agora).Click();
       }
       IsFinished();
