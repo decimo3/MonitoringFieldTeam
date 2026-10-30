@@ -387,6 +387,7 @@ public sealed class WebHandler : IDisposable
     var origin = new WheelInputDevice.ScrollOrigin() { Element = container };
     new Actions(driver).ScrollFromOrigin(origin, scrool, 0).Perform();
   }
+  public String GetTitle() => this.driver.Title;
   public void Dispose()
   {
     driver?.Quit();
