@@ -21,6 +21,12 @@ AUTENTICAR_WFMBUTTON=#login-button
 AUTENTICAR_WFMERROR=#notification-pass
 CONFEDERACAO_CONSENT_PAGE=//*[@name='IDPConsent']
 CONFEDERACAO_CONSENT_AGREE=#consentobtainedbutton
+# Painel lateral de menus
+MENU_HAMBURGER_BUTTON=.main-menu-button-region
+MENU_CONSOLE_BUTTON=//*[@class='global-navigation-menu']/a[1]
+MENU_MAPPING_BUTTON=//*[@class='global-navigation-menu']/a[2]
+MENU_CALLENDAR_BUTTON=//*[@class='global-navigation-menu']/a[3]
+MENU_RESOURCES_BUTTON=//*[@class='global-navigation-menu']/a[4]
 # Painel de exibição GANNT com informações da ROTA
 GANNT_DISPLAY=.toaGantt
 GANNT_BUCKETS=.edt-item
