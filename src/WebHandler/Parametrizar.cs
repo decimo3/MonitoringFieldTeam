@@ -22,16 +22,17 @@ namespace MonitoringFieldTeam.WebScraper
     }
     public static void VerificarPagina(WebHandler.WebHandler handler)
     {
-      Log.Information("Verificando a página...");
-      // FIXME - Se carregar com consulta, dar um jeito de voltar ao GANNT
+      Log.Information("Aguardando o carregamento da página...");
+      handler.GetElement("SEARCHBAR_LOGO", WebHandler.WAITSEC.Total);
+      Log.Information("Página '{}' carregada!", handler.GetTitle());
       var operacao = Configuration.GetString("OPERACAO");
-      if(handler.GetElements("SEARCHBAR_LOGO", WAITSEC.Curto).Any())
+      if (new String[] {"RETRODAY", "MONITORA"}.Contains(operacao))
       {
-        if(operacao != "RETRODAY" && operacao != "MONITORA") return;
-        throw new NotImplementedException(
-            "A página foi carregada com informação de nota de serviço!");
+        // TODO - Program should be able to navigate to "Console de Alocação"
+        if(!handler.GetTitle().Contains("Console de Alocação"))
+            throw new NotImplementedException(
+                "A página carregada não é o 'Console de Alocação'!");
       }
-      handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
     }
   }
 }
