@@ -1,7 +1,11 @@
-# Corrigido erro de verificação de página
+# Corrigido problema de navegação de páginas
 
-O método de verificação de página checava se o elemento SEARCHBAR_LOGO estava presente para verificar se o gráfico de GANNT estava carregado.
+O programa não era capaz de alternar entre os paineis "Console de Alocação" e a "Detalhes da Atividade"
 
-Porém esse elemento também está presente na página "Detalhes da Atividade", fazendo as operações de coleta falharem.
+Isso causava erro nos modos RETRODAY, MONITORA, e AUTOMATO, devido a coleta das informações de rota e relatórios
 
-Foi corrigida a lógica de checagem, realizando através do título da página, como sugerido pelo programador [ventacraft](https://github.com/ventacraft).
+Os modos de operação RETRODAY e MONITORA, não eram tão impactados, pois os mesmos não navegam para outro painel
+
+Porém, o modo AUTOMATO, alterna entre ambos painéis para completar o ciclo de coleta de dados, causando erro na coleta
+
+Para solucionar esse problema, foi pesquisado e implementado a navegação para o "Console de Alocação" quando necessário
