@@ -26,7 +26,7 @@ namespace MonitoringFieldTeam.WebScraper
       handler.GetElement("SEARCHBAR_LOGO", WebHandler.WAITSEC.Total);
       Log.Information("Página '{pagina}' carregada!", handler.GetTitle());
       var operacao = Configuration.GetString("OPERACAO");
-      if (new String[] {"RETRODAY", "MONITORA"}.Contains(operacao))
+      if (new String[] {"RETRODAY", "MONITORA", "AUTOMATO"}.Contains(operacao))
       {
         // TODO - Program should be able to navigate to "Console de Alocação"
         if(!handler.GetTitle().Contains("Console de Alocação"))
