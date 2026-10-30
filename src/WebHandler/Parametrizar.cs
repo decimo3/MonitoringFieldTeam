@@ -24,7 +24,7 @@ namespace MonitoringFieldTeam.WebScraper
     {
       Log.Information("Aguardando o carregamento da página...");
       handler.GetElement("SEARCHBAR_LOGO", WebHandler.WAITSEC.Total);
-      Log.Information("Página '{}' carregada!", handler.GetTitle());
+      Log.Information("Página '{pagina}' carregada!", handler.GetTitle());
       var operacao = Configuration.GetString("OPERACAO");
       if (new String[] {"RETRODAY", "MONITORA"}.Contains(operacao))
       {
