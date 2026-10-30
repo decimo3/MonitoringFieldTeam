@@ -28,10 +28,13 @@ namespace MonitoringFieldTeam.WebScraper
       var operacao = Configuration.GetString("OPERACAO");
       if (new String[] {"RETRODAY", "MONITORA", "AUTOMATO"}.Contains(operacao))
       {
-        // TODO - Program should be able to navigate to "Console de Alocação"
         if(!handler.GetTitle().Contains("Console de Alocação"))
-            throw new NotImplementedException(
-                "A página carregada não é o 'Console de Alocação'!");
+        {
+          if(!handler.GetElement("MENU_CONSOLE_BUTTON", WAITSEC.Curto).Displayed)
+              handler.GetElement("MENU_HAMBURGER_BUTTON", WAITSEC.Agora).Click();
+          handler.GetElement("MENU_CONSOLE_BUTTON", WAITSEC.Agora).Click();
+          VerificarPagina(handler);
+        }
       }
     }
   }
