@@ -42,7 +42,7 @@ public static class Coletor
         var j = 0;
         foreach (var atividade in atividades)
         {
-          ProgressBar.SimpleProgressBar(j, atividades.Count, espelho.recurso);
+          ProgressBar.SimpleProgressBar(j + 1, atividades.Count, espelho.recurso);
           // Verifica se é uma ordem de atividade
           if (handler.HasClassElement(atividade, "COLETOR_SERVICO"))
           {
