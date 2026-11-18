@@ -10,7 +10,7 @@ public static class ReportDownloader
     var datapath = Configuration.GetString("DATAPATH");
     var expectedFilename = $"Atividades-{bucketName}_{date.ToString("dd_MM_yy")}.csv";
     var expectedFilepath = System.IO.Path.Combine(datapath, expectedFilename);
-    Log.Information("Verificando se já foi baixado o relatório do balde {balde}", bucketName);
+    Log.Debug("Verificando se já foi baixado o relatório do balde {balde}, dia {data}", bucketName, date);
     return System.IO.File.Exists(expectedFilepath);
   }
   public static string? Download(WebHandler.WebHandler handler, String bucketName, DateOnly date)
