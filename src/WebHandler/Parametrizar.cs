@@ -23,7 +23,8 @@ namespace MonitoringFieldTeam.WebScraper
     public static void VerificarPagina(WebHandler.WebHandler handler)
     {
       Log.Information("Aguardando o carregamento da página...");
-      handler.GetElement("SEARCHBAR_LOGO", WebHandler.WAITSEC.Total);
+      while (handler.GetElements("GLOBAL_LOADING", WAITSEC.Medio).Any(e => e.Displayed))
+          Thread.Sleep(TimeSpan.FromSeconds((int)WAITSEC.Curto));
       Log.Information("Página '{pagina}' carregada!", handler.GetTitle());
       var operacao = Configuration.GetString("OPERACAO");
       if (new String[] {"RETRODAY", "MONITORA", "AUTOMATO"}.Contains(operacao))
