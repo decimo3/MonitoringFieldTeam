@@ -5,31 +5,30 @@ public static class Atualizador
 {
   public static string SelecionarBalde(WebHandler.WebHandler handler, string piscina, bool direcao)
   {
-    Log.Information("Selecionando o(s) balde(s) {piscina}", piscina);
     // Check if it is on GANNT graph display. Throw error if not it is.
     handler.GetElement("GANNT_DISPLAY", WebHandler.WAITSEC.Total);
     // Get bucket parts and order due direction (to open or close buckets)
-    var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().ToArray();
+    var sub_baldes = direcao ? piscina.Split('>') : piscina.Split('>').Reverse().Skip(1).ToArray();
     // Get bucket arrow class due direction (to open or close buckets)
     var arrow_class = direcao ? "GANNT_ARROWPLUS" : "GANNT_ARROWMINUS";
+    Log.Information("Selecionando o(s) balde(s) {piscina}", String.Join(" >> ", sub_baldes));
     String balde_anterior = String.Empty;
     foreach (var sub_balde in sub_baldes)
     {
+      Log.Information("Procurando o balde {sub_balde}...", sub_balde);
       var baldes = handler.GetElements("GANNT_BUCKETS", WebHandler.WAITSEC.Curto);
       foreach (var balde in baldes)
       {
-        // var balde = handler.GetElement("GANNT_BUCKET", WebHandler.WAITSEC.Curto, j + 1);
-        var texto = balde.Text; // handler.GetElementAttribute(balde, "GLOBAL_TEXT");
+        var texto = handler.GetNestedElements(balde, "GANNT_BUCKET_NAME").First().Text;
         if (string.IsNullOrEmpty(texto)) continue;
         Log.Debug("Balde {balde}, Texto: {texto}", balde, texto);
-        if (texto.Contains(sub_balde))
+        if (String.Equals(texto, sub_balde))
         {
-          if (!String.IsNullOrEmpty(balde_anterior) && texto.Contains(balde_anterior)) continue;
           if (sub_balde == sub_baldes.Last())
           {
             handler.GetNestedElements(balde, "GANNT_BUCKET").First().Click();
             Log.Information("Balde '{sub_balde}' selecionado com sucesso!", sub_balde);
-            return direcao ? sub_baldes.Last() : sub_baldes.First();
+            return sub_balde;
           }
           handler.GetNestedElements(balde, arrow_class).FirstOrDefault()?.Click();
           System.Threading.Thread.Sleep(TimeSpan.FromSeconds((int)WebHandler.WAITSEC.Curto));
