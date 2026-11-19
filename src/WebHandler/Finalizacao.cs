@@ -30,7 +30,7 @@ namespace MonitoringFieldTeam.WebScraper
       var tailpath = relatorios.Any() ? "done" : "void";
       var filename = $"{dateLabel.ToString("yyyyMMdd")}_{bucketName}.{tailpath}.csv";
       var filepath = System.IO.Path.Combine(Configuration.GetString("DATAPATH"), filename);
-      var csv = relatorios.Any() ? TableMaker.ListObjectsToCSV(relatorios) : string.Empty;
+      var csv = relatorios.Any() ? ListObjectsToCSV(relatorios) : string.Empty;
       System.IO.File.WriteAllText(filepath, csv);
       Log.Information("Relatório '{filename}' exportado!\n{csv}", filename, csv);
       return filepath;
@@ -144,6 +144,14 @@ namespace MonitoringFieldTeam.WebScraper
       var filename_send = Path.Combine(downfolder, $"{data.ToString("yyyyMMdd")}_{balde}.send.csv");
       var filename_void = Path.Combine(downfolder, $"{data.ToString("yyyyMMdd")}_{balde}.void.csv");
       return File.Exists(filename_done) || File.Exists(filename_send) || File.Exists(filename_void);
+    }
+    public static string ListObjectsToCSV<T>(IList<T> values)
+    {
+      using var text = new StringWriter();
+      using var writer = new CsvHelper.CsvWriter(text,
+          System.Globalization.CultureInfo.CurrentCulture);
+      writer.WriteRecords(values);
+      return text.ToString();
     }
   }
 }
