@@ -1,4 +1,5 @@
 using MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.Persistence;
 using Serilog;
 namespace MonitoringFieldTeam.WebScraper;
 
@@ -32,7 +33,7 @@ public static class Monitorador
       Log.Information("Comparando os resultados...");
       var relatorios = Comparador.Comparar(espelhos, hora_atual, px_por_min);
       Log.Information("Exportando as análises...");
-      var texto = Relator.Relatar(relatorios, piscina, timestamp);
+      var texto = Relatar(relatorios, piscina, timestamp);
       #if !DEBUG
         if (texto is not null)
           Telegram.SendMessage(balde, texto);
@@ -51,5 +52,23 @@ public static class Monitorador
       Telegram.SendDocument(balde, report_path);
       contador_de_baldes = (contador_de_baldes + 1) % piscinas.Length;
     }
+  }
+  public static string? Relatar(List<FeedBack> feedbacks, string balde_nome, DateTime agora)
+  {
+    if (!feedbacks.Any())
+    {
+      Log.Information("Nenhum ofensor do IDG nesta análise!");
+      return null;
+    }
+    var relatorios = new System.Text.StringBuilder();
+    relatorios.Insert(0, $"_Balde de recursos: *{balde_nome}*_\n\n");
+    relatorios.Insert(0, "*MONITORAMENTO DE OFENSORES DO IDG*\n");
+    foreach (var feedback in feedbacks)
+      relatorios.AppendLine(feedback.ToString());
+    relatorios = relatorios.Replace("-", "");
+    relatorios.Append($"\n\n_Relatório extraído em {agora}_");
+    var relatorios_texto = relatorios.ToString();
+    Log.Information("Lista de ofensores:\n{relatorios}", relatorios_texto);
+    return relatorios_texto;
   }
 }
