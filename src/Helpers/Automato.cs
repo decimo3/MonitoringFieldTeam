@@ -43,8 +43,7 @@ public static class Automato
       }
 
       Log.Information("Iniciando o servidor de coleta de informações...");
-      using var server = new WebServer(handler);
-      var task = Task.Run(() => server.Run());
+      var task = Task.Run(() => WebServer.Run(handler));
       var fails = 0;
       Log.Information("Verificando se os servidores estão online...");
       while (fails <= MAX_SERVER_CONNECT_RETRY)

@@ -9,35 +9,22 @@ using MonitoringFieldTeam.WebScraper;
 
 namespace MonitoringFieldTeam.Helpers;
 
-public sealed class WebServer : IDisposable
+public static class WebServer
 {
-  private readonly string url;
-  private WebApplication? app = null;
-  private readonly WebHandler.WebHandler handler;
-  private object _lock = new();
-  private readonly string ROOT = Configuration.GetString("DATAPATH");
-  public string BuildFileUrl(HttpRequest request, string fullPath)
+  private static readonly object _lock = new();
+  private static readonly string ROOT = Configuration.GetString("DATAPATH");
+  public static string BuildFileUrl(HttpRequest request, string fullPath)
   {
     if (!fullPath.StartsWith(ROOT, StringComparison.OrdinalIgnoreCase))
       throw new Exception("O arquivo exportado foi salvo fora da pasta compartilhada!");
     var relativePath = Path.GetRelativePath(ROOT, fullPath).Replace('\\', '/');
     return $"{request.Scheme}://{request.Host}/{relativePath}";
   }
-  public WebServer
-  (
-    WebHandler.WebHandler handler,
-    string url = "http://*:7826"
-  )
-  {
-    this.handler = handler;
-    this.url = url;
-  }
-  public void Run()
+  public static void Run(WebHandler.WebHandler handler)
   {
     // DONE - Implement multi-port instance
     var builder = WebApplication.CreateBuilder();
-    builder.WebHost.UseUrls(url);
-    app = builder.Build();
+    var app = builder.Build();
     app.UseStaticFiles(new StaticFileOptions
     {
       RequestPath = "",
@@ -86,13 +73,6 @@ public sealed class WebServer : IDisposable
         return Results.Text(erro.Message, statusCode: 400);
       }
     });
-    if (Configuration.GetString("OPERACAO") == "MEGAZORD")
-      MonitoringFieldTeam.WebScraper.Autenticador.Autenticar(handler);
-    MonitoringFieldTeam.WebScraper.Parametrizador.VerificarPagina(handler);
     app.Run();
-  }
-  public void Dispose()
-  {
-    Task.Run(() => app?.DisposeAsync()).GetAwaiter().GetResult();
   }
 }

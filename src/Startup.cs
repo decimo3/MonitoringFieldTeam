@@ -39,11 +39,6 @@ public class Startup
         InstanceChecker.MultipleRun();
         InstanceChecker.ChromeKiller();
         Updater.Update();
-        if (operacao == "MEGAZORD")
-        {
-          Megazord.Run();
-          break;
-        }
         using var handler = new WebHandler.WebHandler();
         Autenticador.Autenticar(handler);
         if (operacao == "AUTOMATO")
@@ -63,8 +58,7 @@ public class Startup
         }
         if (operacao == "SERVIDOR")
         {
-          var server = new WebServer(handler);
-          server.Run();
+          WebServer.Run(handler);
           break;
         }
         throw new InvalidOperationException(
