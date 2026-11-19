@@ -56,11 +56,6 @@ public class Startup
           Retroativo.Relatorios(handler);
           break;
         }
-        if (operacao == "EXTRACAO")
-        {
-          MassiveInfo.GetMassiveInfo(handler);
-          break;
-        }
         if (operacao == "MONITORA")
         {
           Monitorador.Monitorar(handler);

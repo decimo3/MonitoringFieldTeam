@@ -49,10 +49,6 @@ public static class Monitorador
       var report_path = Finalizador.CreateReport(finalizacoes, balde, date);
       Log.Information("Enviando o relatório...");
       Telegram.SendDocument(balde, report_path);
-      Log.Information("Realizando a captura de tela...");
-      var print_path = System.IO.Path.Combine(datapath,
-        $"{timestamp.ToString("yyyyMMdd_HHmmss")}_{balde}.png");
-      handler.GetScreenshot(print_path);
       contador_de_baldes = (contador_de_baldes + 1) % piscinas.Length;
     }
   }

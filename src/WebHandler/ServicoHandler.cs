@@ -329,24 +329,5 @@ namespace MonitoringFieldTeam.WebScraper
       Log.Information("Ocorrência obtida:\n{resultado}", result);
       return result;
     }
-    public String GetServico()
-    {
-      var builder = new System.Text.StringBuilder();
-      try
-      {
-        SearchAndEnterActivity();
-        builder.Append(GetActivityGeneralInfo());
-        GetActivityUploads(true);
-        GetActivityUploads(false);
-        builder.Append(GetActivityClosings());
-        builder.Append(GetActivityMaterials());
-      }
-      catch (Exception e)
-      {
-        builder.Append(e.Message);
-        return builder.ToString();
-      }
-      return builder.ToString();
-    }
   }
 }
