@@ -7,7 +7,7 @@ namespace MonitoringFieldTeam.Helpers;
 
 public static class Delegator
 {
-  private static readonly int ESTIMATED_TIME_PER_ORDER = 20;
+  private static readonly int ESTIMATED_TIME_PER_ORDER = 30;
   private static readonly String[] EXCEPTION_CODES = Configuration.GetArray("EXCEPTIONS");
 
   private static List<OrderInfo> GetOrdersFromFile(string filepath)
