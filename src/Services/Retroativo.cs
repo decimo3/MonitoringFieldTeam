@@ -1,7 +1,8 @@
 using Serilog;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.WebHandler;
-namespace MonitoringFieldTeam.WebScraper;
+using MonitoringFieldTeam.WebScraper;
+namespace MonitoringFieldTeam.Service;
 
 public static class Retroativo
 {

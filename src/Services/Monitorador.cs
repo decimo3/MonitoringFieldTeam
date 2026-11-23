@@ -1,7 +1,8 @@
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.Persistence;
 using Serilog;
-namespace MonitoringFieldTeam.WebScraper;
+using MonitoringFieldTeam.WebScraper;
+namespace MonitoringFieldTeam.Service;
 
 public static class Monitorador
 {

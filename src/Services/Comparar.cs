@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.Persistence;
 
-namespace MonitoringFieldTeam.WebScraper
+namespace MonitoringFieldTeam.Service
 {
   public static class Comparador
   {

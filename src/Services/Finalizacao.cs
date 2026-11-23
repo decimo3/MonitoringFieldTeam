@@ -1,7 +1,7 @@
 using Serilog;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.Persistence;
-namespace MonitoringFieldTeam.WebScraper
+namespace MonitoringFieldTeam.Service
 {
   public static class Finalizador
   {

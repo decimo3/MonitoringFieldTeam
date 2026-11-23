@@ -1,6 +1,7 @@
 using Serilog;
 using MonitoringFieldTeam.WebScraper;
-namespace MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.Helpers;
+namespace MonitoringFieldTeam.Service;
 
 public static class Automato
 {

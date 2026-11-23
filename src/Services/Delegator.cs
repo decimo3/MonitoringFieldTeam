@@ -3,7 +3,8 @@ using System.Text.Json;
 using CsvHelper;
 using MonitoringFieldTeam.Persistence;
 using Serilog;
-namespace MonitoringFieldTeam.Helpers;
+using MonitoringFieldTeam.Helpers;
+namespace MonitoringFieldTeam.Service;
 
 public static class Delegator
 {

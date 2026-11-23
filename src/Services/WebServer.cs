@@ -6,8 +6,9 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using MonitoringFieldTeam.Persistence;
 using MonitoringFieldTeam.WebScraper;
+using MonitoringFieldTeam.Helpers;
 
-namespace MonitoringFieldTeam.Helpers;
+namespace MonitoringFieldTeam.Service;
 
 public static class WebServer
 {

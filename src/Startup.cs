@@ -2,6 +2,7 @@ using Serilog;
 using MonitoringFieldTeam.Helpers;
 using MonitoringFieldTeam.WebHandler;
 using MonitoringFieldTeam.WebScraper;
+using MonitoringFieldTeam.Service;
 namespace MonitoringFieldTeam;
 
 public class Startup
